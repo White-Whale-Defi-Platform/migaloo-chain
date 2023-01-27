@@ -1,3 +1,3 @@
 # Changelog
 
-## [Unreleased](https://github.com/CosmWasm/wasmd/tree/HEAD)
+## [Unreleased](https://github.com/White-Whale-Defi-Platform/wasmd/tree/HEAD)

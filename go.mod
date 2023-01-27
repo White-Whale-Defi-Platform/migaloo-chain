@@ -1,4 +1,4 @@
-module github.com/CosmWasm/wasmd
+module github.com/White-Whale-Defi-Platform/migaloo-chain
 
 go 1.18
 
