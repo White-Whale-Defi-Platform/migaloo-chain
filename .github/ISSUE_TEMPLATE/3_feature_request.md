@@ -1,16 +1,16 @@
 ---
 name: Feature request
-about: Suggest a new idea for White Whale Migaloo. This is something that doesn't exist currently, and you want to see.
+about: Suggest a new idea for Migaloo Chain. This is something that doesn't exist currently and you want to see, like a cosmos module.
 title: ''
 labels: 'enhancement'
 assignees: ''
 
 ---
 
-<!-- Thank you for using White Whale Migaloo!
+<!-- Thank you for creating an issue on Migaloo Chain!
 
      If you are looking for support, please check out our documentation
-     or consider asking a question on Discord's smart contract channel:
+     or consider asking a question on Discord:
       * https://whitewhale.money/
       * https://white-whale-defi-platform.github.io/docs/
       * https://discordapp.com/channels/908044702794801233/987301947440767006
@@ -25,7 +25,7 @@ assignees: ''
      Please tell us the challenge you are running into that led to you wanting
      a new feature.
 
-     Did you find a market gap that Migaloo can close?
+     Is there a feature you want to implement that requires a specific cosmos module to be implemented on Migaloo Chain?
 
      Is your feature request related to a problem? Please give a clear and
      concise description of what the problem is.
@@ -36,7 +36,7 @@ assignees: ''
 ## Proposal
 
 <!--
-     Briefly but precisely describe what you would like Migaloo to be able to do.
+     Briefly but precisely describe what you would like the Migaloo to be able to do.
 
      Consider attaching something showing what you are imagining:
       * images
