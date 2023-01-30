@@ -13,9 +13,10 @@ We kept the git history, because that's the way :).
 1. [Website]()
 2. [LitePaper]()
 3. [Docs]()
-4. [Discord]()
-5. [Twitter]()
-6. [Telegram]()
+4. [Roadmap](./docs/ROADMAP.md)
+5. [Discord]()
+6. [Twitter]()
+7. [Telegram]()
 
 ## System Requirements
 
