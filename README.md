@@ -1,5 +1,8 @@
 # Migaloo
 
+![](https://user-images.githubusercontent.com/94062656/215557558-6d0c39f1-9405-439a-aeb5-9baccdbd9df8.png)
+
+
 Migaloo Chain is the home of the White Whale.
 
 This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more 
