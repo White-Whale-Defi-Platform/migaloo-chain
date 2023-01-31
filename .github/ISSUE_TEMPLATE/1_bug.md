@@ -11,9 +11,9 @@ assignees: ''
 
      If you are looking for support, please check out our documentation
      or consider asking a question on Discord:
-      * https://whitewhale.money/
+      * https://migaloo.zone/
       * https://white-whale-defi-platform.github.io/docs/
-      * https://discordapp.com/channels/908044702794801233/987301947440767006
+      * https://discord.com/channels/908044702794801233/1069611972053712947
 
      If you have found a bug or if our documentation doesn't have an answer
      to what you're looking for, then fill out the template below.

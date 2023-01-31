@@ -2,7 +2,6 @@
 
 ![](https://user-images.githubusercontent.com/94062656/215557558-6d0c39f1-9405-439a-aeb5-9baccdbd9df8.png)
 
-
 Migaloo Chain is the home of the White Whale.
 
 This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more 
@@ -13,16 +12,20 @@ We kept the git history, because that's the way :).
 
 ## Resources
 
-1. [Website]()
-2. [LitePaper]()
-3. [Docs]()
+1. [Website](https://migaloo.zone)
+2. [LitePaper]() - Coming Soon
+3. [Docs]() - Coming Soon
 4. [Roadmap](./docs/ROADMAP.md)
-5. [Discord]()
-6. [Twitter]()
-7. [Telegram]()
+5. [Discord](https://discord.com/channels/908044702794801233/1069611972053712947)
+6. [Twitter](https://twitter.com/WhiteWhaleDefi)
+7. [Telegram](https://t.me/whitewhaleofficial)
 
 ## System Requirements
-
+- Operating System: Linux or macOS
+- Disk Space: At least 100GB of free space is recommended.
+- CPU: Multi-core processor, 4+ cores recommended
+- RAM: 8GB+ recommended
+- Network: Good internet connectivity
 
 ## Quick start
 
@@ -45,7 +48,7 @@ migalood version
 
 ## Learn More
 
-- [White Whale Migaloo Protocol](https://whitewhale.money/)
+- [White Whale Protocol](https://whitewhale.money/)
 - [Cosmos SDK documentation](https://docs.cosmos.network/)
 - [Cosmos SDK Tutorials](https://tutorials.cosmos.network/)
 
