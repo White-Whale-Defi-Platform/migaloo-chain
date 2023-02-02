@@ -16,7 +16,7 @@ require (
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.24
 	github.com/tendermint/tm-db v0.6.7
-	github.com/terra-money/alliance v0.0.1-beta3.0.20230202083134-11eb72c48deb
+	github.com/terra-money/alliance v0.0.1-beta4
 )
 
 require (
