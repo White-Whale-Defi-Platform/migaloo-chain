@@ -2,7 +2,8 @@
 
 ![](https://user-images.githubusercontent.com/94062656/215557558-6d0c39f1-9405-439a-aeb5-9baccdbd9df8.png)
 
-[![Go Report Card](https://goreportcard.com/badge/White-Whale-Defi-Platform/migaloo-chain/goreportcard)](https://goreportcard.com/report/White-Whale-Defi-Platform/migaloo-chain/goreportcard)
+[![Go Report Card](https://goreportcard.com/badge/White-Whale-Defi-Platform/migaloo-chain)](https://goreportcard.com/report/White-Whale-Defi-Platform/migaloo-chain)
+
 
 Migaloo Chain is the home of the White Whale.
 
