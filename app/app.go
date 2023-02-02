@@ -380,6 +380,7 @@ func NewWasmApp(
 		maccPerms,
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
 	)
+
 	app.BankKeeper = custombankkeeper.NewBaseKeeper(
 		appCodec,
 		keys[banktypes.StoreKey],
@@ -387,6 +388,7 @@ func NewWasmApp(
 		app.GetSubspace(banktypes.ModuleName),
 		app.BlockedModuleAccountAddrs(),
 	)
+
 	app.AuthzKeeper = authzkeeper.NewKeeper(
 		keys[authzkeeper.StoreKey],
 		appCodec,
