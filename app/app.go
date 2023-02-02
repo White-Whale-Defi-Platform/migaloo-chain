@@ -95,6 +95,7 @@ import (
 	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
+	custombankmodule "github.com/terra-money/alliance/custom/bank"
 	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
@@ -662,7 +663,7 @@ func NewMigalooApp(
 
 		auth.NewAppModule(appCodec, app.AccountKeeper, nil),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
+		custombankmodule.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
@@ -792,7 +793,7 @@ func NewMigalooApp(
 	// transactions
 	app.sm = module.NewSimulationManager(
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
+		custombankmodule.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
