@@ -1,6 +1,6 @@
 module github.com/White-Whale-Defi-Platform/migaloo-chain
 
-go 1.20
+go 1.19
 
 require (
 	cosmossdk.io/math v1.0.0-beta.4
