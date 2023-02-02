@@ -31,6 +31,7 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/capability"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
@@ -95,8 +96,7 @@ import (
 	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
-	custombank "github.com/terra-money/alliance/custom/bank"
-	bankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
+	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. It has no known issues, but do your own research before using it.
@@ -381,12 +381,12 @@ func NewWasmApp(
 		maccPerms,
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
 	)
-	app.BankKeeper = bankkeeper.NewBaseKeeper(
+	app.BankKeeper = custombankkeeper.NewBaseKeeper(
 		appCodec,
 		keys[banktypes.StoreKey],
 		app.AccountKeeper,
 		app.GetSubspace(banktypes.ModuleName),
-		app.ModuleAccountAddrs(),
+		app.BlockedModuleAccountAddrs(),
 	)
 	app.AuthzKeeper = authzkeeper.NewKeeper(
 		keys[authzkeeper.StoreKey],
@@ -415,7 +415,7 @@ func NewWasmApp(
 		&stakingKeeper,
 		app.DistrKeeper,
 	)
-	app.BankKeeper.RegisterKeepers(app.AllianceKeeper, &stakingKeeper)
+
 	app.MintKeeper = mintkeeper.NewKeeper(
 		appCodec,
 		keys[minttypes.StoreKey],
@@ -650,9 +650,10 @@ func NewWasmApp(
 			app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
 		),
+
 		auth.NewAppModule(appCodec, app.AccountKeeper, nil),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
-		custombank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
+		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
@@ -1010,4 +1011,14 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
 
 	return paramsKeeper
+}
+
+// BlockedModuleAccountAddrs returns all the app's blocked module account
+// addresses.
+func (app *WasmApp) BlockedModuleAccountAddrs() map[string]bool {
+	modAccAddrs := app.ModuleAccountAddrs()
+	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(alliancemoduletypes.ModuleName).String())
+
+	return modAccAddrs
 }
