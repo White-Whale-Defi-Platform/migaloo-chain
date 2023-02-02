@@ -4,8 +4,8 @@
 
 Migaloo Chain is the home of the White Whale.
 
-This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more 
-rigorously follow upstream standards. It began as the wasmd repository, and we're hoping that it will end up as a 
+This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more
+rigorously follow upstream standards. It began as the wasmd repository, and we're hoping that it will end up as a
 feather/ignite/whatever template.
 
 We kept the git history, because that's the way :).
@@ -21,6 +21,7 @@ We kept the git history, because that's the way :).
 7. [Telegram](https://t.me/whitewhaleofficial)
 
 ## System Requirements
+
 - Operating System: Linux or macOS
 - Disk Space: At least 100GB of free space is recommended.
 - CPU: Multi-core processor, 4+ cores recommended
@@ -29,7 +30,7 @@ We kept the git history, because that's the way :).
 
 ## Quick start
 
-Requires [Go 1.19](https://go.dev/doc/install) or higher.
+Requires [Go 1.20](https://go.dev/doc/install) or higher.
 
 ```bash
 make install
