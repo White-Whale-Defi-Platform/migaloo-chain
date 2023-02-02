@@ -22,6 +22,19 @@
   },
   "app_hash": "",
   "app_state": {
+    "alliance": {
+      "params": {
+        "reward_delay_time": "604800s",
+        "take_rate_claim_interval": "300s",
+        "last_take_rate_claim_time": "2023-02-02T18:48:13.572740Z"
+      },
+      "assets": [],
+      "validator_infos": [],
+      "reward_weight_change_snaphots": [],
+      "delegations": [],
+      "redelegations": [],
+      "undelegations": []
+    },
     "auth": {
       "params": {
         "max_memo_characters": "512",
