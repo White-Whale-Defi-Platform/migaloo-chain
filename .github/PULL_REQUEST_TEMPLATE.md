@@ -35,4 +35,4 @@
 - [ ] My pull request has a sound title and description (not something vague like `Update index.md`)
 - [ ] All existing and new tests are passing.
 - [ ] I updated/added relevant documentation.
-- [ ] The code is formatted properly `go fmt path/to/your/package`.
+- [ ] The code is formatted properly `golangci-lint run ./... --fix`.
