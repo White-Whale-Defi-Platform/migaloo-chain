@@ -73,20 +73,23 @@ func TestWasmdExport(t *testing.T) {
 // TODO: fix this test.  It should check that module account addresses except for gov and alliance are set to blocked.
 // Have disabled this for now, and will re-enable after a test is written.
 
-/*
 func TestBlockedAddrs(t *testing.T) {
 	db := db.NewMemDB()
 	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 
 	for acc := range maccPerms {
 		t.Run(acc, func(t *testing.T) {
-			require.True(t, gapp.BankKeeper.BlockedAddr(gapp.AccountKeeper.GetModuleAddress(acc)),
-				"ensure that blocked addresses are properly set in bank keeper",
-			)
+			if (acc == "gov") || (acc == "alliance") {
+				require.True(t, !gapp.BankKeeper.BlockedAddr(gapp.AccountKeeper.GetModuleAddress(acc)),
+					"gov and alliance are whitelisted")
+			} else {
+				require.True(t, gapp.BankKeeper.BlockedAddr(gapp.AccountKeeper.GetModuleAddress(acc)),
+					"ensure that blocked addresses are properly set in bank keeper")
+			}
+
 		})
 	}
 }
-*/
 
 func TestGetMaccPerms(t *testing.T) {
 	dup := GetMaccPerms()
