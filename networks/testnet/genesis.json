@@ -1178,13 +1178,13 @@
         "min_deposit": [
           {
             "denom": "uwhale",
-            "amount": "25000000000"
+            "amount": "1000000000"
           }
         ],
-        "max_deposit_period": "1209600s"
+        "max_deposit_period": "172800s"
       },
       "voting_params": {
-        "voting_period": "604800s"
+        "voting_period": "86400s"
       },
       "tally_params": {
         "quorum": "0.334000000000000000",
