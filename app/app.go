@@ -31,7 +31,6 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	authzmodule "github.com/cosmos/cosmos-sdk/x/authz/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/capability"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
@@ -96,6 +95,8 @@ import (
 	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
+	custombankmodule "github.com/terra-money/alliance/custom/bank"
+	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. It has no known issues, but do your own research before using it.
@@ -118,12 +119,17 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
 
+	alliancemodule "github.com/terra-money/alliance/x/alliance"
+	alliancemoduleclient "github.com/terra-money/alliance/x/alliance/client"
+	alliancemodulekeeper "github.com/terra-money/alliance/x/alliance/keeper"
+	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
+
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 )
 
 const (
-	appName            = "WasmApp"
+	appName            = "Migaloo"
 	MockFeePort string = ibcmock.ModuleName + ibcfeetypes.ModuleName
 )
 
@@ -199,6 +205,8 @@ var (
 			upgradeclient.LegacyCancelProposalHandler,
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
+			alliancemoduleclient.CreateAllianceProposalHandler,
+			alliancemoduleclient.UpdateAllianceProposalHandler,
 		)),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -214,30 +222,33 @@ var (
 		ica.AppModuleBasic{},
 		intertx.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
+		alliancemodule.AppModuleBasic{},
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		ibcfeetypes.ModuleName:         nil,
-		icatypes.ModuleName:            nil,
-		wasm.ModuleName:                {authtypes.Burner},
+		authtypes.FeeCollectorName:          nil,
+		distrtypes.ModuleName:               nil,
+		minttypes.ModuleName:                {authtypes.Minter},
+		stakingtypes.BondedPoolName:         {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName:      {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:                 {authtypes.Burner},
+		ibctransfertypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
+		ibcfeetypes.ModuleName:              nil,
+		icatypes.ModuleName:                 nil,
+		wasm.ModuleName:                     {authtypes.Burner},
+		alliancemoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
+		alliancemoduletypes.RewardsPoolName: nil,
 	}
 )
 
 var (
-	_ simapp.App              = (*WasmApp)(nil)
-	_ servertypes.Application = (*WasmApp)(nil)
+	_ simapp.App              = (*MigalooApp)(nil)
+	_ servertypes.Application = (*MigalooApp)(nil)
 )
 
-// WasmApp extended ABCI application
-type WasmApp struct {
+// MigalooApp extended ABCI application
+type MigalooApp struct {
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino //nolint:staticcheck
 	appCodec          codec.Codec
@@ -252,7 +263,7 @@ type WasmApp struct {
 
 	// keepers
 	AccountKeeper       authkeeper.AccountKeeper
-	BankKeeper          bankkeeper.Keeper
+	BankKeeper          custombankkeeper.Keeper
 	CapabilityKeeper    *capabilitykeeper.Keeper
 	StakingKeeper       stakingkeeper.Keeper
 	SlashingKeeper      slashingkeeper.Keeper
@@ -272,6 +283,7 @@ type WasmApp struct {
 	FeeGrantKeeper      feegrantkeeper.Keeper
 	AuthzKeeper         authzkeeper.Keeper
 	WasmKeeper          wasm.Keeper
+	AllianceKeeper      alliancemodulekeeper.Keeper
 
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
@@ -291,8 +303,8 @@ type WasmApp struct {
 	configurator module.Configurator
 }
 
-// NewWasmApp returns a reference to an initialized WasmApp.
-func NewWasmApp(
+// NewMigalooApp returns a reference to an initialized MigalooApp.
+func NewMigalooApp(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,
@@ -305,7 +317,7 @@ func NewWasmApp(
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) *WasmApp {
+) *MigalooApp {
 	appCodec, legacyAmino := encodingConfig.Marshaler, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
@@ -320,11 +332,12 @@ func NewWasmApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasm.StoreKey, icahosttypes.StoreKey,
 		icacontrollertypes.StoreKey, intertxtypes.StoreKey, ibcfeetypes.StoreKey,
+		alliancemoduletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	app := &WasmApp{
+	app := &MigalooApp{
 		BaseApp:           bApp,
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
@@ -368,24 +381,28 @@ func NewWasmApp(
 		maccPerms,
 		sdk.GetConfig().GetBech32AccountAddrPrefix(),
 	)
-	app.BankKeeper = bankkeeper.NewBaseKeeper(
+
+	app.BankKeeper = custombankkeeper.NewBaseKeeper(
 		appCodec,
 		keys[banktypes.StoreKey],
 		app.AccountKeeper,
 		app.GetSubspace(banktypes.ModuleName),
-		app.ModuleAccountAddrs(),
+		app.BlockedModuleAccountAddrs(),
 	)
+
 	app.AuthzKeeper = authzkeeper.NewKeeper(
 		keys[authzkeeper.StoreKey],
 		appCodec,
 		app.BaseApp.MsgServiceRouter(),
 		app.AccountKeeper,
 	)
+
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(
 		appCodec,
 		keys[feegrant.StoreKey],
 		app.AccountKeeper,
 	)
+
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec,
 		keys[stakingtypes.StoreKey],
@@ -393,6 +410,19 @@ func NewWasmApp(
 		app.BankKeeper,
 		app.GetSubspace(stakingtypes.ModuleName),
 	)
+
+	app.AllianceKeeper = alliancemodulekeeper.NewKeeper(
+		appCodec,
+		keys[alliancemoduletypes.StoreKey],
+		app.GetSubspace(alliancemoduletypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		&stakingKeeper,
+		app.DistrKeeper,
+	)
+
+	app.BankKeeper.RegisterKeepers(app.AllianceKeeper, &stakingKeeper)
+
 	app.MintKeeper = mintkeeper.NewKeeper(
 		appCodec,
 		keys[minttypes.StoreKey],
@@ -402,6 +432,7 @@ func NewWasmApp(
 		app.BankKeeper,
 		authtypes.FeeCollectorName,
 	)
+
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec,
 		keys[distrtypes.StoreKey],
@@ -411,12 +442,14 @@ func NewWasmApp(
 		&stakingKeeper,
 		authtypes.FeeCollectorName,
 	)
+
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
 		appCodec,
 		keys[slashingtypes.StoreKey],
 		&stakingKeeper,
 		app.GetSubspace(slashingtypes.ModuleName),
 	)
+
 	app.CrisisKeeper = crisiskeeper.NewKeeper(
 		app.GetSubspace(crisistypes.ModuleName),
 		invCheckPeriod,
@@ -435,7 +468,7 @@ func NewWasmApp(
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks(), app.AllianceKeeper.StakingHooks()),
 	)
 
 	app.IBCKeeper = ibckeeper.NewKeeper(
@@ -456,7 +489,8 @@ func NewWasmApp(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
+		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
+		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper))
 
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
@@ -626,9 +660,10 @@ func NewWasmApp(
 			app.BaseApp.DeliverTx,
 			encodingConfig.TxConfig,
 		),
+
 		auth.NewAppModule(appCodec, app.AccountKeeper, nil),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
+		custombankmodule.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil),
@@ -645,6 +680,7 @@ func NewWasmApp(
 		transfer.NewAppModule(app.TransferKeeper),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
+		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		intertx.NewAppModule(appCodec, app.InterTxKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants), // always be last to make sure that it checks for all invariants and not only part of them
 	)
@@ -677,6 +713,7 @@ func NewWasmApp(
 		ibcfeetypes.ModuleName,
 		intertxtypes.ModuleName,
 		wasm.ModuleName,
+		alliancemoduletypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -703,6 +740,7 @@ func NewWasmApp(
 		ibcfeetypes.ModuleName,
 		intertxtypes.ModuleName,
 		wasm.ModuleName,
+		alliancemoduletypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -737,6 +775,7 @@ func NewWasmApp(
 		intertxtypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
+		alliancemoduletypes.ModuleName,
 	)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -754,7 +793,7 @@ func NewWasmApp(
 	// transactions
 	app.sm = module.NewSimulationManager(
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
+		custombankmodule.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
@@ -768,6 +807,7 @@ func NewWasmApp(
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
+		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -835,30 +875,30 @@ func NewWasmApp(
 }
 
 // Name returns the name of the App
-func (app *WasmApp) Name() string { return app.BaseApp.Name() }
+func (app *MigalooApp) Name() string { return app.BaseApp.Name() }
 
 // ModuleManager returns instance
-func (app *WasmApp) ModuleManager() module.Manager {
+func (app *MigalooApp) ModuleManager() module.Manager {
 	return *app.mm
 }
 
 // ModuleConfigurator returns instance
-func (app *WasmApp) ModuleConfigurator() module.Configurator {
+func (app *MigalooApp) ModuleConfigurator() module.Configurator {
 	return app.configurator
 }
 
 // BeginBlocker application updates every begin block
-func (app *WasmApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *MigalooApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block
-func (app *WasmApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *MigalooApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer application update at chain initialization
-func (app *WasmApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *MigalooApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
@@ -870,12 +910,12 @@ func (app *WasmApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci
 }
 
 // LoadHeight loads a particular height
-func (app *WasmApp) LoadHeight(height int64) error {
+func (app *MigalooApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *WasmApp) ModuleAccountAddrs() map[string]bool {
+func (app *MigalooApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -888,26 +928,26 @@ func (app *WasmApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *WasmApp) LegacyAmino() *codec.LegacyAmino { //nolint:staticcheck
+func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino { //nolint:staticcheck
 	return app.legacyAmino
 }
 
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *WasmApp) GetSubspace(moduleName string) paramstypes.Subspace {
+func (app *MigalooApp) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *WasmApp) SimulationManager() *module.SimulationManager {
+func (app *MigalooApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *WasmApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *MigalooApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	// Register new tx routes from grpc-gateway.
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
@@ -923,12 +963,12 @@ func (app *WasmApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICo
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
-func (app *WasmApp) RegisterTxService(clientCtx client.Context) {
+func (app *MigalooApp) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
 }
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
-func (app *WasmApp) RegisterTendermintService(clientCtx client.Context) {
+func (app *MigalooApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(
 		clientCtx,
 		app.BaseApp.GRPCQueryRouter(),
@@ -937,7 +977,7 @@ func (app *WasmApp) RegisterTendermintService(clientCtx client.Context) {
 	)
 }
 
-func (app *WasmApp) AppCodec() codec.Codec {
+func (app *MigalooApp) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
@@ -978,6 +1018,17 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
+	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
 
 	return paramsKeeper
+}
+
+// BlockedModuleAccountAddrs returns all the app's blocked module account
+// addresses.
+func (app *MigalooApp) BlockedModuleAccountAddrs() map[string]bool {
+	modAccAddrs := app.ModuleAccountAddrs()
+	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
+	delete(modAccAddrs, authtypes.NewModuleAddress(alliancemoduletypes.ModuleName).String())
+
+	return modAccAddrs
 }
