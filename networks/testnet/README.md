@@ -72,4 +72,4 @@ Genesis transaction written to "/home/user/.migalood/config/gentx/gentx-******.j
 - Fork this repo
 - Copy the generated gentx json file to `networks/testnet/gentx/`
 - Commit and push to your repo
-- Create a PR onto https://github.com/White-Whale-Defi-Platform/migaloo-chain
+- Create a PR on this repo
