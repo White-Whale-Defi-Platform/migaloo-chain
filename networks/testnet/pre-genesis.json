@@ -1,6 +1,6 @@
 {
   "genesis_time": "2023-02-01T10:19:04.022252Z",
-  "chain_id": "narwal-1",
+  "chain_id": "narwhal-1",
   "initial_height": "1",
   "consensus_params": {
     "block": {
