@@ -32,7 +32,7 @@ migalood version --long | grep commit
 ### Initialize Chain
 
 ```bash
-migalood init MONIKER --chain-id=beluga-1
+migalood init MONIKER --chain-id=narwhal-1
 ```
 
 ### Download pre-genesis
@@ -58,7 +58,7 @@ migalood add-genesis-account $(migalood keys show KEY_NAME -a) 2000000uwhale
 Use half (`1000000uwhale`) for self-delegation
 
 ```bash
-migalood gentx KEY_NAME 1000000uwhale --chain-id=beluga-1
+migalood gentx KEY_NAME 1000000uwhale --chain-id=narwhal-1
 ```
 
 If all goes well, you will see a message similar to the following:
