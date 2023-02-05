@@ -2,10 +2,13 @@
 
 ![](https://user-images.githubusercontent.com/94062656/215557558-6d0c39f1-9405-439a-aeb5-9baccdbd9df8.png)
 
+[![Go Report Card](https://goreportcard.com/badge/White-Whale-Defi-Platform/migaloo-chain)](https://goreportcard.com/report/White-Whale-Defi-Platform/migaloo-chain)
+
+
 Migaloo Chain is the home of the White Whale.
 
-This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more 
-rigorously follow upstream standards. It began as the wasmd repository, and we're hoping that it will end up as a 
+This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more
+rigorously follow upstream standards. It began as the wasmd repository, and we're hoping that it will end up as a
 feather/ignite/whatever template.
 
 We kept the git history, because that's the way :).
@@ -21,6 +24,7 @@ We kept the git history, because that's the way :).
 7. [Telegram](https://t.me/whitewhaleofficial)
 
 ## System Requirements
+
 - Operating System: Linux or macOS
 - Disk Space: At least 100GB of free space is recommended.
 - CPU: Multi-core processor, 4+ cores recommended
@@ -29,7 +33,7 @@ We kept the git history, because that's the way :).
 
 ## Quick start
 
-Requires [Go 1.19](https://go.dev/doc/install) or higher.
+Requires [Go 1.20](https://go.dev/doc/install) or higher.
 
 ```bash
 make install
