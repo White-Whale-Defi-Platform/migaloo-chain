@@ -36,7 +36,7 @@ migalood init MONIKER --chain-id=migaloo-1
 ```
 Set minimum gas price to 0.
 ```bash
-sed -i 's/minimum-gas-prices = ".*"/minimum-gas-prices = "0uwhale"/' /home/sencom/.migalood/config/app.toml
+sed -i 's/minimum-gas-prices = ".*"/minimum-gas-prices = "0uwhale"/' $HOME/.migalood/config/app.toml
 ```
 
 ### Download pre-genesis
@@ -53,10 +53,10 @@ Create wallet
 migalood keys add KEY_NAME
 ```
 
-Fund yourself `20000000uwhale`
+Fund yourself `25000000uwhale`
 
 ```bash
-migalood add-genesis-account $(migalood keys show KEY_NAME -a) 20000000uwhale
+migalood add-genesis-account $(migalood keys show KEY_NAME -a) 25000000uwhale
 ```
 
 Use half (`10000000uwhale`) for self-delegation
