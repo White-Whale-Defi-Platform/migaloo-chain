@@ -1,7 +1,7 @@
 import json
 
-INPUT_GENESIS_PATH = './genesis.json'
-OUTPUT_GENESIS_PATH = './pre-genesis.json'
+INPUT_GENESIS_PATH = '/home/???/.migalood/config/genesis.json'
+OUTPUT_GENESIS_PATH = '/home/???/.migalood/config/genesis.json'
 
 DENOM = 'uwhale'
 DECIMALS = '000000'
@@ -9,12 +9,15 @@ MILLION = 1000000
 SECONDS_PER_DAY = 24*60*60
 
 # Do not edit. Used to check the total balances in the genesis.
+NUM_GENESIS_VALIDATORS = 7
+INITIAL_GENESIS_ALLOCATION = 25
 THREE_MONTH_AMOUNT = 0
 TWELVE_MONTH_AMOUNT = 0
 TWENTY_FOUR_MONTH_AMOUNT = 0
 THIRTY_SIX_MONTH_AMOUNT = 0
-MULTI_SIG_AMOUNT = 409.55 * MILLION
-COMMUNITY_POOL_AMOUNT = 25 * MILLION
+MULTI_SIG_AMOUNT = 432.55 * MILLION - \
+    (NUM_GENESIS_VALIDATORS * INITIAL_GENESIS_ALLOCATION)
+COMMUNITY_POOL_AMOUNT = 0
 
 # see: https://www.epochconverter.com for more infos on the unix time stamp
 GENESIS_TIME_UNIX = 1676041200
@@ -314,7 +317,8 @@ def create_vesting_genesis_entry(address, amount, end_time):
 
             ],
             "end_time": end_time
-        }
+        },
+        "start_time": '%d' % GENESIS_TIME_UNIX
     }
 
 
@@ -341,12 +345,12 @@ if __name__ == '__main__':
     genesis['app_state']['auth']['params']['max_memo_characters'] = '512'
     genesis['app_state']['crisis']['constant_fee']['denom'] = DENOM
     genesis['app_state']['distribution']['params']['community_tax'] = '0.100000000000000000'
-    genesis['app_state']['gov']['deposit_params']['min_deposit'].append(
+    genesis['app_state']['gov']['deposit_params']['min_deposit'] = [
         {
             "denom": DENOM,
             "amount": "25000" + DECIMALS
         }
-    )
+    ]
     genesis['app_state']['gov']['deposit_params']['max_deposit_period'] = '%ds' % (
         14*SECONDS_PER_DAY)
     genesis['app_state']['gov']['voting_params']['voting_period'] = '%ds' % (
@@ -364,12 +368,12 @@ if __name__ == '__main__':
     genesis['app_state']['staking']['params']['min_commission_rate'] = '0.050000000000000000'
 
     # Add community pool
-    genesis['app_state']['distribution']['fee_pool']['community_pool'].append(
-        {
-            "denom": DENOM,
-            "amount": '%d%s' % (COMMUNITY_POOL_AMOUNT,  DECIMALS)
-        }
-    )
+    # genesis['app_state']['distribution']['fee_pool']['community_pool'].append(
+    #    {
+    #       "denom": DENOM,
+    #      "amount": '%d%s' % (COMMUNITY_POOL_AMOUNT,  DECIMALS)
+    # }
+    # )
 
     # Add multi-sig
     genesis["app_state"]["bank"]["balances"].append(
@@ -381,6 +385,12 @@ if __name__ == '__main__':
 
     # Add vesting accounts
     for account in VESTING_ACCOUNTS:
+        genesis['app_state']['bank']['balances'].append(
+            create_account_genesis_entry(
+                address=account["address"],
+                amount='%d%s' % (account['amount'], DECIMALS),
+            )
+        )
         genesis['app_state']['auth']['accounts'].append(
             create_vesting_genesis_entry(
                 address=account['address'],
@@ -388,10 +398,6 @@ if __name__ == '__main__':
                 end_time='%d' % (GENESIS_TIME_UNIX + account['duration']),
             )
         )
-
-    # Store genesis
-    with open(OUTPUT_GENESIS_PATH, 'w') as FILE:
-        json.dump(genesis, FILE, indent=2)
 
     # Check how many tokens are vested to each category of initial holders.
     for account in VESTING_ACCOUNTS:
@@ -403,6 +409,8 @@ if __name__ == '__main__':
             TWENTY_FOUR_MONTH_AMOUNT += account["amount"]
         elif account["duration"] == THIRTY_SIX_MONTH_UNIX:
             THIRTY_SIX_MONTH_AMOUNT += account["amount"]
+        else:
+            ...
 
     # TODO
     # Print results with some minor adjustments
@@ -416,5 +424,17 @@ if __name__ == '__main__':
           MILLION - 1 + 22.1652 + 3 + 3)
     print('Community Pool', COMMUNITY_POOL_AMOUNT / MILLION)
     print('Multi Sig', MULTI_SIG_AMOUNT / MILLION)
-    print('Total', (THREE_MONTH_AMOUNT + TWELVE_MONTH_AMOUNT+TWENTY_FOUR_MONTH_AMOUNT +
-          THIRTY_SIX_MONTH_AMOUNT+COMMUNITY_POOL_AMOUNT + MULTI_SIG_AMOUNT) / MILLION)
+    TOTAL = THREE_MONTH_AMOUNT + TWELVE_MONTH_AMOUNT+TWENTY_FOUR_MONTH_AMOUNT + \
+        THIRTY_SIX_MONTH_AMOUNT+COMMUNITY_POOL_AMOUNT + MULTI_SIG_AMOUNT
+    print('Total', (TOTAL) / MILLION)
+
+    # Update total supply
+    genesis['app_state']['bank']['supply'].append(
+        {
+            'amount': '%d%s' % (TOTAL, DECIMALS),  # TODO
+            'denom': DENOM,
+        }
+    )
+    # Store genesis
+    with open(OUTPUT_GENESIS_PATH, 'w') as FILE:
+        json.dump(genesis, FILE, indent=2)
