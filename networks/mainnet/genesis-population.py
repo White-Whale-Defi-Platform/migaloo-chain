@@ -1,7 +1,7 @@
 import json
 
-INPUT_GENESIS_PATH = '/home/???/.migalood/config/genesis.json'
-OUTPUT_GENESIS_PATH = '/home/???/.migalood/config/genesis.json'
+INPUT_GENESIS_PATH = '/home/sencom/.migalood/config/genesis.json'
+OUTPUT_GENESIS_PATH = '/home/sencom/.migalood/config/genesis.json'
 
 DENOM = 'uwhale'
 DECIMALS = '000000'
@@ -15,9 +15,9 @@ THREE_MONTH_AMOUNT = 0
 TWELVE_MONTH_AMOUNT = 0
 TWENTY_FOUR_MONTH_AMOUNT = 0
 THIRTY_SIX_MONTH_AMOUNT = 0
-MULTI_SIG_AMOUNT = 432.55 * MILLION - \
+MULTI_SIG_AMOUNT = 407.55 * MILLION - \
     (NUM_GENESIS_VALIDATORS * INITIAL_GENESIS_ALLOCATION)
-COMMUNITY_POOL_AMOUNT = 0
+COMMUNITY_POOL_AMOUNT = 25 * MILLION
 
 # see: https://www.epochconverter.com for more infos on the unix time stamp
 GENESIS_TIME_UNIX = 1676041200
@@ -368,12 +368,18 @@ if __name__ == '__main__':
     genesis['app_state']['staking']['params']['min_commission_rate'] = '0.050000000000000000'
 
     # Add community pool
-    # genesis['app_state']['distribution']['fee_pool']['community_pool'].append(
-    #    {
-    #       "denom": DENOM,
-    #      "amount": '%d%s' % (COMMUNITY_POOL_AMOUNT,  DECIMALS)
-    # }
-    # )
+    genesis['app_state']['distribution']['fee_pool']['community_pool'].append(
+        {
+            "denom": DENOM,
+            "amount": '%d%s' % (COMMUNITY_POOL_AMOUNT,  DECIMALS)
+        }
+    )
+    genesis["app_state"]["bank"]["balances"].append(
+        create_account_genesis_entry(
+            address='migaloo1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82tdxu3',
+            amount='%d%s' % (COMMUNITY_POOL_AMOUNT, DECIMALS)
+        )
+    )
 
     # Add multi-sig
     genesis["app_state"]["bank"]["balances"].append(
