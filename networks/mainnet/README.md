@@ -42,7 +42,7 @@ sed -i 's/minimum-gas-prices = ".*"/minimum-gas-prices = "0uwhale"/' $HOME/.miga
 ### Download pre-genesis
 
 ```bash
-curl -s https://raw.githubusercontent.com/White-Whale-Defi-Platform/migaloo-chain/main/networks/mainnet/pre-genesis.json > ~/.migalood/config/genesis.json
+curl -s https://raw.githubusercontent.com/White-Whale-Defi-Platform/migaloo-chain/release/v1.0.x/networks/mainnet/pre-genesis.json > ~/.migalood/config/genesis.json
 ```
 
 ## Create gentx
