@@ -1,5 +1,5 @@
 {
-  "genesis_time": "2023-02-10T15:00:00Z",
+  "genesis_time": "2023-02-10T15:00:00.000000Z",
   "chain_id": "migaloo-1",
   "initial_height": "1",
   "consensus_params": {
@@ -128,6 +128,27 @@
               {
                 "denom": "uwhale",
                 "amount": "1200000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683930429"
+          },
+          "start_time": "1676041200"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1e82da9n6jz4t42eh0wn5hrt6hdmf7jyqvq0np0",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
               }
             ],
             "delegated_free": [],
@@ -1038,13 +1059,6 @@
             "end_time": "1770711948"
           },
           "start_time": "1676041200"
-        },
-        {
-          "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "migaloo1szxh9pvtj7cyzcejv2vzz90sr4t39xsg6yuaj2",
-          "pub_key": null,
-          "account_number": "0",
-          "sequence": "0"
         }
       ]
     },
@@ -1058,29 +1072,11 @@
       },
       "balances": [
         {
-          "address": "migaloo1qp8flhtcev6ag8av3mwr3eessuq8sxjrukh7tw",
+          "address": "migaloo1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82tdxu3",
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "1000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1pen8w6rshxqrt9t5fsd8zhc0ux54mrlw4al4mw",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "4000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1zz9ppl2wy4ruzzv8mmnx6cente9ygvcx2r3qap",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "3000000000000"
+              "amount": "25000000000000"
             }
           ]
         },
@@ -1089,48 +1085,12 @@
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "407549825000000"
+              "amount": "404549825000000"
             }
           ]
         },
         {
-          "address": "migaloo1z46x9kfmp64qqk7rxun6ll9peqapmswpjqyx6q",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "1000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1zkdvn6j7k6dqtknhxqyysdpne5mft4r97p0k4g",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1z62c730l6u8v2q8kadenjtp8tf45m3yjwmsdz7",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "1500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1ycaqrfzyfue40vey36q02l2zrvqzw6sfryur5l",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "3000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1938p0dxg9s2wdfcy8j747gfuyf40wqzkdcmuxt",
+          "address": "migaloo1spge4nh9r5l9lepst79rvksdz0qjgtate3d4mu",
           "coins": [
             {
               "denom": "uwhale",
@@ -1139,56 +1099,20 @@
           ]
         },
         {
-          "address": "migaloo19lrmt9pl06hz6d96pqvcs0jl86wdldhj5dd8fp",
+          "address": "migaloo1e98m6za0tc446jjdzt7ux2muajf0uj4k4p538s",
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "1000000000000"
+              "amount": "2000000000000"
             }
           ]
         },
         {
-          "address": "migaloo18a9m9stu3dyvewwcq9qmp85euxqcvln5mefync",
+          "address": "migaloo1lm0ewsgtysmntfzqyvf89n43g33zkdytlmsshj",
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "12500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1fc4kjfau480nr503yl0r8ml7vvn07d2r7ztjky",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "3000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo12743c6vye8nnluqvxdylc9flsj4fjhzmth6l4l",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "1000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1typsgj0nvketwusvaakyerjp9exr2fuxtmda9v",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "4250000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1v8n2jpmq8a97xtv9j28c557q3ztqn7rkrxtykg",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "24000000000000"
+              "amount": "2000000000000"
             }
           ]
         },
@@ -1202,11 +1126,110 @@
           ]
         },
         {
-          "address": "migaloo1dfx3smd93xhz5j04sncdkgnrqnawkt9svt99e0",
+          "address": "migaloo1sksw9c946ann4w5a2d7kgphrm06frtsqqgp2sv",
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "2000000000000"
+              "amount": "1200000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1e82da9n6jz4t42eh0wn5hrt6hdmf7jyqvq0np0",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1wuu8l4srf3k7phewhc5sqjvvqtax0ch8mntfc3",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nat09n7vfkgrv3p78vyan203umugmrkxzr3e3s",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1ycaqrfzyfue40vey36q02l2zrvqzw6sfryur5l",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nfk64t5cygztmgf7ycq0yjkh72udgpqftmrsjp",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1la4nlstynp2wl0r236du0evjpqh8h9fqxs8xpa",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1z62c730l6u8v2q8kadenjtp8tf45m3yjwmsdz7",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo19lrmt9pl06hz6d96pqvcs0jl86wdldhj5dd8fp",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1cgdjruw7602qerr72wpzl4jyg46d0rq802v93l",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1z46x9kfmp64qqk7rxun6ll9peqapmswpjqyx6q",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1l5py295agfhqfmnh76n428s6f7tkhaypzjdras",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
             }
           ]
         },
@@ -1220,7 +1243,7 @@
           ]
         },
         {
-          "address": "migaloo1wuu8l4srf3k7phewhc5sqjvvqtax0ch8mntfc3",
+          "address": "migaloo156fmcjwlzgj8gt9h8zh43phmc4p9xmjc06jw0u",
           "coins": [
             {
               "denom": "uwhale",
@@ -1238,7 +1261,25 @@
           ]
         },
         {
-          "address": "migaloo10layywwtg6kcjr0nunvnsr9g78n6veae85zx8j",
+          "address": "migaloo1zkdvn6j7k6dqtknhxqyysdpne5mft4r97p0k4g",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1cev3vxz9t0vcef68s4ghgm6yj9lxum9h7535yh",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1dfx3smd93xhz5j04sncdkgnrqnawkt9svt99e0",
           "coins": [
             {
               "denom": "uwhale",
@@ -1247,65 +1288,38 @@
           ]
         },
         {
-          "address": "migaloo1spge4nh9r5l9lepst79rvksdz0qjgtate3d4mu",
+          "address": "migaloo14uwnqvrjkux5fah6m2r7z24ztzdw9ns4n58wyq",
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "2000000000000"
+              "amount": "500000000000"
             }
           ]
         },
         {
-          "address": "migaloo1szxh9pvtj7cyzcejv2vzz90sr4t39xsg6yuaj2",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "25000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1sksw9c946ann4w5a2d7kgphrm06frtsqqgp2sv",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "1200000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo13w00xz4t7gftnur9q6w8ychlpxc4pw02hzdx5z",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "14000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1jr6m4eu65kgf6flncd7nrhd4gcaexexr0swxm9",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "8000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82tdxu3",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "25000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1nyjpegzqq47jvwc94g8lf5t5mhng976lmszz9r",
+          "address": "migaloo1mnpjf7ay5n08nw0hrzx0mpg324nh6pumxwqrv8",
           "coins": [
             {
               "denom": "uwhale",
               "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1lwzh84q7ffa7xrnj8x3k6nlxcuz8k5c32xcl3v",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo12743c6vye8nnluqvxdylc9flsj4fjhzmth6l4l",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
             }
           ]
         },
@@ -1319,11 +1333,29 @@
           ]
         },
         {
-          "address": "migaloo1nfk64t5cygztmgf7ycq0yjkh72udgpqftmrsjp",
+          "address": "migaloo1nyjpegzqq47jvwc94g8lf5t5mhng976lmszz9r",
           "coins": [
             {
               "denom": "uwhale",
-              "amount": "1000000000000"
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1lns0rwwzpahe0hx7ctlz66nmlwhm6dzrp5dqk2",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1cnykulmrjx928ylhtms5cq66nwac32a67lpsq2",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
             }
           ]
         },
@@ -1346,7 +1378,115 @@
           ]
         },
         {
-          "address": "migaloo1nat09n7vfkgrv3p78vyan203umugmrkxzr3e3s",
+          "address": "migaloo1v8n2jpmq8a97xtv9j28c557q3ztqn7rkrxtykg",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "24000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo16u8ljxqr2sjfpxur5nmkpdu0j86vxh2udhunsu",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "15000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo13w00xz4t7gftnur9q6w8ychlpxc4pw02hzdx5z",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "14000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo18a9m9stu3dyvewwcq9qmp85euxqcvln5mefync",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "12500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1eenffmetkkyzf5rejtn0jq5l2p7nz35klxlgff",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "8000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1jr6m4eu65kgf6flncd7nrhd4gcaexexr0swxm9",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "8000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1typsgj0nvketwusvaakyerjp9exr2fuxtmda9v",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4250000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1pen8w6rshxqrt9t5fsd8zhc0ux54mrlw4al4mw",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo10layywwtg6kcjr0nunvnsr9g78n6veae85zx8j",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo16k4493edgkpy4apthg6m3m5wp0s36fvmkkampn",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1ug5h3wn9qlmn00h7dvws8h68vdeh8c0paazv8z",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1938p0dxg9s2wdfcy8j747gfuyf40wqzkdcmuxt",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1qp8flhtcev6ag8av3mwr3eessuq8sxjrukh7tw",
           "coins": [
             {
               "denom": "uwhale",
@@ -1355,7 +1495,16 @@
           ]
         },
         {
-          "address": "migaloo156fmcjwlzgj8gt9h8zh43phmc4p9xmjc06jw0u",
+          "address": "migaloo1fc4kjfau480nr503yl0r8ml7vvn07d2r7ztjky",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo17gcjmzpz2sfjj9waa6f2e8pr7s70v3hcudtsqj",
           "coins": [
             {
               "denom": "uwhale",
@@ -1373,142 +1522,7 @@
           ]
         },
         {
-          "address": "migaloo14uwnqvrjkux5fah6m2r7z24ztzdw9ns4n58wyq",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1cgdjruw7602qerr72wpzl4jyg46d0rq802v93l",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1cnykulmrjx928ylhtms5cq66nwac32a67lpsq2",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "3000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1cev3vxz9t0vcef68s4ghgm6yj9lxum9h7535yh",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "3000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1e98m6za0tc446jjdzt7ux2muajf0uj4k4p538s",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "2000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1eenffmetkkyzf5rejtn0jq5l2p7nz35klxlgff",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "8000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo16k4493edgkpy4apthg6m3m5wp0s36fvmkkampn",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "4000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo16u8ljxqr2sjfpxur5nmkpdu0j86vxh2udhunsu",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "15000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1mnpjf7ay5n08nw0hrzx0mpg324nh6pumxwqrv8",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "1500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1ug5h3wn9qlmn00h7dvws8h68vdeh8c0paazv8z",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "4000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo17gcjmzpz2sfjj9waa6f2e8pr7s70v3hcudtsqj",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "3000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1lwzh84q7ffa7xrnj8x3k6nlxcuz8k5c32xcl3v",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1lns0rwwzpahe0hx7ctlz66nmlwhm6dzrp5dqk2",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "1500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1l5py295agfhqfmnh76n428s6f7tkhaypzjdras",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "500000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1lm0ewsgtysmntfzqyvf89n43g33zkdytlmsshj",
-          "coins": [
-            {
-              "denom": "uwhale",
-              "amount": "2000000000000"
-            }
-          ]
-        },
-        {
-          "address": "migaloo1la4nlstynp2wl0r236du0evjpqh8h9fqxs8xpa",
+          "address": "migaloo1zz9ppl2wy4ruzzv8mmnx6cente9ygvcx2r3qap",
           "coins": [
             {
               "denom": "uwhale",
@@ -1519,8 +1533,8 @@
       ],
       "supply": [
         {
-          "denom": "uwhale",
-          "amount": "599999850000000"
+          "amount": "599999825000000",
+          "denom": "uwhale"
         }
       ],
       "denom_metadata": []
@@ -1573,70 +1587,7 @@
       "forward_relayers": []
     },
     "genutil": {
-      "gen_txs": [
-        {
-          "body": {
-            "messages": [
-              {
-                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
-                "description": {
-                  "moniker": "testnode",
-                  "identity": "",
-                  "website": "",
-                  "security_contact": "",
-                  "details": ""
-                },
-                "commission": {
-                  "rate": "0.100000000000000000",
-                  "max_rate": "0.200000000000000000",
-                  "max_change_rate": "0.010000000000000000"
-                },
-                "min_self_delegation": "1",
-                "delegator_address": "migaloo1szxh9pvtj7cyzcejv2vzz90sr4t39xsg6yuaj2",
-                "validator_address": "migaloovaloper1szxh9pvtj7cyzcejv2vzz90sr4t39xsgg4c3sp",
-                "pubkey": {
-                  "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "ffp3BzEwvW8RgIRG3tk0iyjTW6UUhfrJ+a9MR/crauk="
-                },
-                "value": {
-                  "denom": "uwhale",
-                  "amount": "20000000"
-                }
-              }
-            ],
-            "memo": "0c40cd33c3f0f38544963c4fc7afb03172323c35@192.168.178.176:26656",
-            "timeout_height": "0",
-            "extension_options": [],
-            "non_critical_extension_options": []
-          },
-          "auth_info": {
-            "signer_infos": [
-              {
-                "public_key": {
-                  "@type": "/cosmos.crypto.secp256k1.PubKey",
-                  "key": "AuJqvlPVx1UxK2fGHzXzSGUjDbtodEbd3pVs75Spm9UB"
-                },
-                "mode_info": {
-                  "single": {
-                    "mode": "SIGN_MODE_DIRECT"
-                  }
-                },
-                "sequence": "0"
-              }
-            ],
-            "fee": {
-              "amount": [],
-              "gas_limit": "200000",
-              "payer": "",
-              "granter": ""
-            },
-            "tip": null
-          },
-          "signatures": [
-            "MZmv81rJVQCHaBq+jkS0cEwV1KmDxaL86268iIpu1rEZ+t6ARdugAJHCyInlw5oRHe0DVGQMe6h5Tzei3Kp98w=="
-          ]
-        }
-      ]
+      "gen_txs": []
     },
     "gov": {
       "starting_proposal_id": "1",

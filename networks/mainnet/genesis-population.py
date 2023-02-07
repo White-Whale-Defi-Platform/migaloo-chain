@@ -1,7 +1,7 @@
 import json
 
-INPUT_GENESIS_PATH = '/home/sencom/.migalood/config/genesis.json'
-OUTPUT_GENESIS_PATH = '/home/sencom/.migalood/config/genesis.json'
+INPUT_GENESIS_PATH = '???/.migalood/config/genesis.json'
+OUTPUT_GENESIS_PATH = '???/.migalood/config/pre-genesis.json'
 
 DENOM = 'uwhale'
 DECIMALS = '000000'
@@ -15,7 +15,7 @@ THREE_MONTH_AMOUNT = 0
 TWELVE_MONTH_AMOUNT = 0
 TWENTY_FOUR_MONTH_AMOUNT = 0
 THIRTY_SIX_MONTH_AMOUNT = 0
-MULTI_SIG_AMOUNT = 407.55 * MILLION - \
+MULTI_SIG_AMOUNT = 404.55 * MILLION - \
     (NUM_GENESIS_VALIDATORS * INITIAL_GENESIS_ALLOCATION)
 COMMUNITY_POOL_AMOUNT = 25 * MILLION
 
@@ -56,6 +56,11 @@ VESTING_ACCOUNTS = [
     {
         "address": "migaloo1sksw9c946ann4w5a2d7kgphrm06frtsqqgp2sv",
         "amount": 1.2 * MILLION,
+        "duration": THREE_MONTH_UNIX,
+    },
+    {
+        "address": "migaloo1e82da9n6jz4t42eh0wn5hrt6hdmf7jyqvq0np0",
+        "amount": 3 * MILLION,
         "duration": THREE_MONTH_UNIX,
     },
     # Seed Investors
