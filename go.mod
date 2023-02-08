@@ -170,6 +170,6 @@ replace (
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	// use informal's tendermint fork with p2p fixes
-	github.com/tendermint/tendermint => github.com/informalsystems/tendermint v0.34.26
+	// use tendermint v0.34.25
+	github.com/tendermint/tendermint => github.com/skip-mev/mev-tendermint v0.34.25-mev.15
 )
