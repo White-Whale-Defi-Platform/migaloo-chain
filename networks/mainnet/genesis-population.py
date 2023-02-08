@@ -1,23 +1,27 @@
 import json
 
+# Set this to your home directory.
 INPUT_GENESIS_PATH = '???/.migalood/config/genesis.json'
 OUTPUT_GENESIS_PATH = '???/.migalood/config/pre-genesis.json'
 
+# Convenience variables
 DENOM = 'uwhale'
 DECIMALS = '000000'
 MILLION = 1000000
 SECONDS_PER_DAY = 24*60*60
 
-# Do not edit. Used to check the total balances in the genesis.
-NUM_GENESIS_VALIDATORS = 7
+NUM_GENESIS_VALIDATORS = 5
 INITIAL_GENESIS_ALLOCATION = 25
+INITIAL_AMOUNT = NUM_GENESIS_VALIDATORS * INITIAL_GENESIS_ALLOCATION
+
+# Do not edit. Used to check the total balances in the genesis.
 THREE_MONTH_AMOUNT = 0
 TWELVE_MONTH_AMOUNT = 0
 TWENTY_FOUR_MONTH_AMOUNT = 0
 THIRTY_SIX_MONTH_AMOUNT = 0
-MULTI_SIG_AMOUNT = 404.55 * MILLION - \
-    (NUM_GENESIS_VALIDATORS * INITIAL_GENESIS_ALLOCATION)
 COMMUNITY_POOL_AMOUNT = 25 * MILLION
+MULTI_SIG_AMOUNT = 382.3848 * MILLION - INITIAL_AMOUNT
+
 
 # see: https://www.epochconverter.com for more infos on the unix time stamp
 GENESIS_TIME_UNIX = 1676041200
@@ -261,11 +265,11 @@ VESTING_ACCOUNTS = [
         "duration": TWENTY_FOUR_MONTH_UNIX,
     },
     # Genesis Validators
-    # {
-    #  "address": "",
-    #   "amount": 22165200,
-    # "duration": THIRTY_SIX_MONTH_UNIX
-    # },
+    {
+        "address": "migaloo1alga5e8vr6ccr9yrg0kgxevpt5xgmgrvqgujs6",
+        "amount": 22.1652 * MILLION,
+        "duration": THIRTY_SIX_MONTH_UNIX
+    },
     {
         "address": "migaloo1fc4kjfau480nr503yl0r8ml7vvn07d2r7ztjky",
         "amount": 3 * MILLION,
@@ -286,16 +290,6 @@ VESTING_ACCOUNTS = [
         "amount": 3 * MILLION,
         "duration": THIRTY_SIX_MONTH_UNIX
     },
-    # {
-    #    "address": "",
-    #    "amount": 3 * MILLION,
-    #    "duration": THIRTY_SIX_MONTH_UNIX
-    # },
-    # {
-    #    "address": "",
-    #   "amount": 3 * MILLION,
-    #   "duration": THIRTY_SIX_MONTH_UNIX
-    # },
 ]
 
 
@@ -423,19 +417,18 @@ if __name__ == '__main__':
         else:
             ...
 
-    # TODO
     # Print results with some minor adjustments
     # migaloo14kqr9fjjzl24gwfndf05wkelncm76ynkk04zjk: Substract 1M from 36 and add to 12
     # migaloo18a9m9stu3dyvewwcq9qmp85euxqcvln5mefync: Substract 0.5M from 24 and add to 12
     # migaloo1typsgj0nvketwusvaakyerjp9exr2fuxtmda9v: Substract 0.25M from 24 and add to 12
+    print('Initial', INITIAL_AMOUNT / MILLION)
     print('Three Month', THREE_MONTH_AMOUNT / MILLION)
     print('Twelve Month', TWELVE_MONTH_AMOUNT / MILLION + 0.25 + 0.5)
     print('Twenty Four Month', TWENTY_FOUR_MONTH_AMOUNT / MILLION - 0.25 - 0.5)
-    print('Thirty Six Month', (THIRTY_SIX_MONTH_AMOUNT) /
-          MILLION - 1 + 22.1652 + 3 + 3)
+    print('Thirty Six Month', (THIRTY_SIX_MONTH_AMOUNT) / MILLION - 1)
     print('Community Pool', COMMUNITY_POOL_AMOUNT / MILLION)
     print('Multi Sig', MULTI_SIG_AMOUNT / MILLION)
-    TOTAL = THREE_MONTH_AMOUNT + TWELVE_MONTH_AMOUNT+TWENTY_FOUR_MONTH_AMOUNT + \
+    TOTAL = INITIAL_AMOUNT + THREE_MONTH_AMOUNT + TWELVE_MONTH_AMOUNT+TWENTY_FOUR_MONTH_AMOUNT + \
         THIRTY_SIX_MONTH_AMOUNT+COMMUNITY_POOL_AMOUNT + MULTI_SIG_AMOUNT
     print('Total', (TOTAL) / MILLION)
 
