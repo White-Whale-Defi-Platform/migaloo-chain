@@ -5,7 +5,7 @@ on:
     tags:
       - v*
     branches:
-      - master
+      - release/v*
       - main
   pull_request:
 permissions:
