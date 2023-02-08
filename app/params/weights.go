@@ -39,4 +39,41 @@ const (
 	DefaultWeightUnpinCodesProposal                  int = 5
 	DefaultWeightUpdateInstantiateConfigProposal     int = 5
 	DefaultWeightStoreAndInstantiateContractProposal int = 5
+
+	//token factory
+	DefaultWeightMsgCreateDenom                     int = 100
+	DefaultWeightMsgMint                            int = 100
+	DefaultWeightMsgBurn                            int = 100
+	DefaultWeightMsgEditDenom                       int = 100
+	DefaultWeightMsgTransferDenomOwner              int = 100
+	DefaultWeightMsgAddDenomMetadata                int = 100
+	DefaultWeightMsgRemoveDenomMetadata             int = 100
+	DefaultWeightMsgAddDenomMetadataAddress         int = 100
+	DefaultWeightMsgRemoveDenomMetadataAddress      int = 100
+	DefaultWeightMsgAddDenomMetadataURI             int = 100
+	DefaultWeightMsgRemoveDenomMetadataURI          int = 100
+	DefaultWeightMsgAddDenomMetadataHash            int = 100
+	DefaultWeightMsgRemoveDenomMetadataHash         int = 100
+	DefaultWeightMsgAddDenomMetadataDescription     int = 100
+	DefaultWeightMsgRemoveDenomMetadataDescription  int = 100
+	DefaultWeightMsgAddDenomMetadataName            int = 100
+	DefaultWeightMsgRemoveDenomMetadataName         int = 100
+	DefaultWeightMsgAddDenomMetadataSymbol          int = 100
+	DefaultWeightMsgRemoveDenomMetadataSymbol       int = 100
+	DefaultWeightMsgAddDenomMetadataDecimals        int = 100
+	DefaultWeightMsgRemoveDenomMetadataDecimals     int = 100
+	DefaultWeightMsgAddDenomMetadataTotalSupply     int = 100
+	DefaultWeightMsgRemoveDenomMetadataTotalSupply  int = 100
+	DefaultWeightMsgAddDenomMetadataMintable        int = 100
+	DefaultWeightMsgRemoveDenomMetadataMintable     int = 100
+	DefaultWeightMsgAddDenomMetadataBurnable        int = 100
+	DefaultWeightMsgRemoveDenomMetadataBurnable     int = 100
+	DefaultWeightMsgAddDenomMetadataTransferable    int = 100
+	DefaultWeightMsgRemoveDenomMetadataTransferable int = 100
+	DefaultWeightMsgAddDenomMetadataRestricted      int = 100
+	DefaultWeightMsgRemoveDenomMetadataRestricted   int = 100
+	DefaultWeightMsgAddDenomMetadataMaxSupply       int = 100
+	DefaultWeightMsgRemoveDenomMetadataMaxSupply    int = 100
+	DefaultWeightMsgAddDenomMetadataDenomUnits      int = 100
+	DefaultWeightMsgRemoveDenomMetadataDenomUnits   int = 100
 )
