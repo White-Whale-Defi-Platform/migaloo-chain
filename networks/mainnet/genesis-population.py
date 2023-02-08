@@ -1,8 +1,8 @@
 import json
 
 # Set this to your home directory.
-INPUT_GENESIS_PATH = '???/.migalood/config/genesis.json'
-OUTPUT_GENESIS_PATH = '???/.migalood/config/pre-genesis.json'
+INPUT_GENESIS_PATH = '/???/.migalood/config/genesis.json'
+OUTPUT_GENESIS_PATH = '/???/.migalood/config/pre-genesis.json'
 
 # Convenience variables
 DENOM = 'uwhale'
@@ -25,11 +25,10 @@ MULTI_SIG_AMOUNT = 382.3848 * MILLION - INITIAL_AMOUNT
 
 # see: https://www.epochconverter.com for more infos on the unix time stamp
 GENESIS_TIME_UNIX = 1676041200
-ONE_MONTH_UNIX = 2629743
-THREE_MONTH_UNIX = 3 * ONE_MONTH_UNIX
-TWELVE_MONTH_UNIX = 12 * ONE_MONTH_UNIX
-TWENTY_FOUR_MONTH_UNIX = 24 * ONE_MONTH_UNIX
-THIRTY_SIX_MONTH_UNIX = 36 * ONE_MONTH_UNIX
+THREE_MONTH_UNIX = 1683730800
+TWELVE_MONTH_UNIX = 1707577200
+TWENTY_FOUR_MONTH_UNIX = 1739199600
+THIRTY_SIX_MONTH_UNIX = 1770735600
 
 # List of all accounts that get continously vested tokens.
 # Address: Address of the account.
@@ -400,7 +399,7 @@ if __name__ == '__main__':
             create_vesting_genesis_entry(
                 address=account['address'],
                 amount='%d%s' % (account['amount'], DECIMALS),
-                end_time='%d' % (GENESIS_TIME_UNIX + account['duration']),
+                end_time='%d' % account['duration'],
             )
         )
 
