@@ -46,6 +46,8 @@ const (
 	DefaultWeightMsgBurn                            int = 100
 	DefaultWeightMsgEditDenom                       int = 100
 	DefaultWeightMsgTransferDenomOwner              int = 100
+	DefaultWeightMsgChangeAdmin                     int = 100
+	DefaultWeightMsgSetDenomMetadata                int = 100
 	DefaultWeightMsgAddDenomMetadata                int = 100
 	DefaultWeightMsgRemoveDenomMetadata             int = 100
 	DefaultWeightMsgAddDenomMetadataAddress         int = 100
