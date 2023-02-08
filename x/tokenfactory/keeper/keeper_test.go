@@ -2,7 +2,6 @@ package keeper_test
 
 //NOTE: this whole file needs to be refactored.
 
-/*
 import (
 	"testing"
 
@@ -67,4 +66,3 @@ func (suite *KeeperTestSuite) TestCreateModuleAccount() {
 	tokenfactoryModuleAccount = app.AccountKeeper.GetAccount(suite.Ctx, app.AccountKeeper.GetModuleAddress(types.ModuleName))
 	suite.Require().NotNil(tokenfactoryModuleAccount)
 }
-*/

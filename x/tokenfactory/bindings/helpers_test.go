@@ -7,8 +7,6 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -26,7 +24,7 @@ func CreateTestInput() (*app.MigalooApp, sdk.Context) {
 }
 
 func FundAccount(t *testing.T, ctx sdk.Context, migaloo *app.MigalooApp, acct sdk.AccAddress) {
-	err := FAShim(migaloo.BankKeeper, ctx, acct, sdk.NewCoins(
+	err := app.FAShim(migaloo.BankKeeper, ctx, acct, sdk.NewCoins(
 		sdk.NewCoin("uosmo", sdk.NewInt(10000000000)),
 	))
 	require.NoError(t, err)
@@ -71,7 +69,7 @@ func instantiateReflectContract(t *testing.T, ctx sdk.Context, tokenz *app.Migal
 }
 
 func fundAccount(t *testing.T, ctx sdk.Context, tokenz *app.MigalooApp, addr sdk.AccAddress, coins sdk.Coins) {
-	err := FAShim(
+	err := app.FAShim(
 		tokenz.BankKeeper,
 		ctx,
 		addr,
@@ -90,12 +88,4 @@ func SetupCustomApp(t *testing.T, addr sdk.AccAddress) (*app.MigalooApp, sdk.Con
 	require.NotNil(t, cInfo)
 
 	return tokenz, ctx
-}
-
-func FAShim(bankKeeper bankkeeper.Keeper, ctx sdk.Context, addr sdk.AccAddress, amounts sdk.Coins) error {
-	if err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, amounts); err != nil {
-		return err
-	}
-
-	return bankKeeper.SendCoinsFromModuleToAccount(ctx, minttypes.ModuleName, addr, amounts)
 }

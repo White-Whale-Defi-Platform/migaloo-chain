@@ -16,10 +16,11 @@ func CustomQuerier(qp *QueryPlugin) func(ctx sdk.Context, request json.RawMessag
 	return func(ctx sdk.Context, request json.RawMessage) ([]byte, error) {
 		var contractQuery bindingstypes.TokenFactoryQuery
 		if err := json.Unmarshal(request, &contractQuery); err != nil {
-			return nil, sdkerrors.Wrap(err, "osmosis query")
+			//TODO: what's the context of this error?  do we need to change "osmosis" or do we leave it the same because we haven't changed the .proto files?
+			return nil, sdkerrors.Wrap(err, "osmosis query") //nolint:staticcheck // SA1019: sdkerrors.Wrap is deprecated: functionality of this package has been moved to it's own module
 		}
 		if contractQuery.Token == nil {
-			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "nil token field")
+			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "nil token field") //nolint:staticcheck // SA1019: sdkerrors.Wrap is deprecated: functionality of this package has been moved to it's own module
 		}
 		tokenQuery := contractQuery.Token
 
@@ -30,7 +31,7 @@ func CustomQuerier(qp *QueryPlugin) func(ctx sdk.Context, request json.RawMessag
 
 			fullDenom, err := GetFullDenom(creator, subdenom)
 			if err != nil {
-				return nil, sdkerrors.Wrap(err, "osmo full denom query")
+				return nil, sdkerrors.Wrap(err, "osmo full denom query") //nolint:staticcheck // SA1019: sdkerrors.Wrap is deprecated: functionality of this package has been moved to it's own module
 			}
 
 			res := bindingstypes.FullDenomResponse{
@@ -39,7 +40,7 @@ func CustomQuerier(qp *QueryPlugin) func(ctx sdk.Context, request json.RawMessag
 
 			bz, err := json.Marshal(res)
 			if err != nil {
-				return nil, sdkerrors.Wrap(err, "failed to marshal FullDenomResponse")
+				return nil, sdkerrors.Wrap(err, "failed to marshal FullDenomResponse") //nolint:staticcheck // SA1019: sdkerrors.Wrap is deprecated: functionality of this package has been moved to it's own module
 			}
 
 			return bz, nil
