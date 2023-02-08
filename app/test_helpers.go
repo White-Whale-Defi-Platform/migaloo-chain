@@ -62,7 +62,7 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*WasmApp, GenesisState) {
 	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
-	snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir) //nolint:staticcheck
+	snapshotDB, err := dbm.NewDB("metadata", dbm.MemDBBackend, snapshotDir) //nolint:staticcheck
 	require.NoError(t, err)
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
 	require.NoError(t, err)
@@ -480,7 +480,7 @@ func NewPubKeyFromHex(pk string) (res cryptotypes.PubKey) {
 		panic(err)
 	}
 	if len(pkBytes) != ed25519.PubKeySize {
-		panic(errors.Wrap(errors.ErrInvalidPubKey, "invalid pubkey size"))
+		panic(errors.Wrap(errors.ErrInvalidPubKey, "invalid pubkey size")) //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
 	}
 	return &ed25519.PubKey{Key: pkBytes}
 }
