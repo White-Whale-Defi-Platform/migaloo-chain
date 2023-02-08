@@ -4,14 +4,21 @@
 
 [![Go Report Card](https://goreportcard.com/badge/White-Whale-Defi-Platform/migaloo-chain)](https://goreportcard.com/report/White-Whale-Defi-Platform/migaloo-chain)
 
-
 Migaloo Chain is the home of the White Whale.
 
 This chain began as a fork of wasmd, and is an exploration into better CosmWasm enabled chain templates that more
 rigorously follow upstream standards. It began as the wasmd repository, and we're hoping that it will end up as a
 feather/ignite/whatever template.
 
-We kept the git history, because that's the way :).
+## Helpful Information
+
+Our testnet has Alliance on it, but our mainnet won't have alliance until there's a more-stable release from <https://github.com/terra-money/alliance>.
+
+Because of this, branching is like:
+
+* `main` is the tip of the repository and may not reflect working testnet or mainnet state
+* `release/v1.0.x` is the tip of the mainnet branch, and reflects working mainnet state
+* `release/v2.0.x` is the tip of the testnet branch, and reflects working testnet state (and is alliance enabled)
 
 ## Resources
 
@@ -25,11 +32,11 @@ We kept the git history, because that's the way :).
 
 ## System Requirements
 
-- Operating System: Linux or macOS
-- Disk Space: At least 100GB of free space is recommended.
-- CPU: Multi-core processor, 4+ cores recommended
-- RAM: 8GB+ recommended
-- Network: Good internet connectivity
+* Operating System: Linux or macOS
+* Disk Space: At least 100GB of free space is recommended.
+* CPU: Multi-core processor, 4+ cores recommended
+* RAM: 8GB+ recommended
+* Network: Good internet connectivity
 
 ## Quick start
 
@@ -52,9 +59,9 @@ migalood version
 
 ## Learn More
 
-- [White Whale Protocol](https://whitewhale.money/)
-- [Cosmos SDK documentation](https://docs.cosmos.network/)
-- [Cosmos SDK Tutorials](https://tutorials.cosmos.network/)
+* [White Whale Protocol](https://whitewhale.money/)
+* [Cosmos SDK documentation](https://docs.cosmos.network/)
+* [Cosmos SDK Tutorials](https://tutorials.cosmos.network/)
 
 ## Disclaimer
 

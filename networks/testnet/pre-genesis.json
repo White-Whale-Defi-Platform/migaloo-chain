@@ -1,6 +1,6 @@
 {
   "genesis_time": "2023-02-01T10:19:04.022252Z",
-  "chain_id": "migaloo-1",
+  "chain_id": "narwhal-1",
   "initial_height": "1",
   "consensus_params": {
     "block": {
@@ -1181,10 +1181,10 @@
             "amount": "25000000000"
           }
         ],
-        "max_deposit_period": "1209600s"
+        "max_deposit_period": "86400s"
       },
       "voting_params": {
-        "voting_period": "604800s"
+        "voting_period": "86400s"
       },
       "tally_params": {
         "quorum": "0.334000000000000000",
