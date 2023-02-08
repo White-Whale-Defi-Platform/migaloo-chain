@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	sdkerrors "cosmossdk.io/errors"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	bindingstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/x/tokenfactory/bindings/types"
 )

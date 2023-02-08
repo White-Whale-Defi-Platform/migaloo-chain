@@ -7,25 +7,26 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
 )
 
-func CreateTestInput() (*app.TokenApp, sdk.Context) {
-	osmosis := app.Setup(false)
-	ctx := osmosis.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "osmosis-1", Time: time.Now().UTC()})
-	return osmosis, ctx
+func CreateTestInput() (*app.MigalooApp, sdk.Context) {
+	migaloo := app.Setup(false)
+	ctx := migaloo.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "migaloo-1", Time: time.Now().UTC()})
+	return migaloo, ctx
 }
 
-func FundAccount(t *testing.T, ctx sdk.Context, osmosis *app.TokenApp, acct sdk.AccAddress) {
-	err := simapp.FundAccount(osmosis.BankKeeper, ctx, acct, sdk.NewCoins(
+func FundAccount(t *testing.T, ctx sdk.Context, migaloo *app.MigalooApp, acct sdk.AccAddress) {
+	err := FAShim(migaloo.BankKeeper, ctx, acct, sdk.NewCoins(
 		sdk.NewCoin("uosmo", sdk.NewInt(10000000000)),
 	))
 	require.NoError(t, err)
@@ -48,7 +49,7 @@ func RandomBech32AccountAddress() string {
 	return RandomAccountAddress().String()
 }
 
-func storeReflectCode(t *testing.T, ctx sdk.Context, tokenz *app.TokenApp, addr sdk.AccAddress) uint64 {
+func storeReflectCode(t *testing.T, ctx sdk.Context, tokenz *app.MigalooApp, addr sdk.AccAddress) uint64 {
 	wasmCode, err := os.ReadFile("./testdata/token_reflect.wasm")
 	require.NoError(t, err)
 
@@ -59,7 +60,7 @@ func storeReflectCode(t *testing.T, ctx sdk.Context, tokenz *app.TokenApp, addr 
 	return codeID
 }
 
-func instantiateReflectContract(t *testing.T, ctx sdk.Context, tokenz *app.TokenApp, funder sdk.AccAddress) sdk.AccAddress {
+func instantiateReflectContract(t *testing.T, ctx sdk.Context, tokenz *app.MigalooApp, funder sdk.AccAddress) sdk.AccAddress {
 	initMsgBz := []byte("{}")
 	contractKeeper := keeper.NewDefaultPermissionKeeper(tokenz.WasmKeeper)
 	codeID := uint64(1)
@@ -69,8 +70,8 @@ func instantiateReflectContract(t *testing.T, ctx sdk.Context, tokenz *app.Token
 	return addr
 }
 
-func fundAccount(t *testing.T, ctx sdk.Context, tokenz *app.TokenApp, addr sdk.AccAddress, coins sdk.Coins) {
-	err := simapp.FundAccount(
+func fundAccount(t *testing.T, ctx sdk.Context, tokenz *app.MigalooApp, addr sdk.AccAddress, coins sdk.Coins) {
+	err := FAShim(
 		tokenz.BankKeeper,
 		ctx,
 		addr,
@@ -79,7 +80,7 @@ func fundAccount(t *testing.T, ctx sdk.Context, tokenz *app.TokenApp, addr sdk.A
 	require.NoError(t, err)
 }
 
-func SetupCustomApp(t *testing.T, addr sdk.AccAddress) (*app.TokenApp, sdk.Context) {
+func SetupCustomApp(t *testing.T, addr sdk.AccAddress) (*app.MigalooApp, sdk.Context) {
 	tokenz, ctx := CreateTestInput()
 	wasmKeeper := tokenz.WasmKeeper
 
@@ -89,4 +90,12 @@ func SetupCustomApp(t *testing.T, addr sdk.AccAddress) (*app.TokenApp, sdk.Conte
 	require.NotNil(t, cInfo)
 
 	return tokenz, ctx
+}
+
+func FAShim(bankKeeper bankkeeper.Keeper, ctx sdk.Context, addr sdk.AccAddress, amounts sdk.Coins) error {
+	if err := bankKeeper.MintCoins(ctx, minttypes.ModuleName, amounts); err != nil {
+		return err
+	}
+
+	return bankKeeper.SendCoinsFromModuleToAccount(ctx, minttypes.ModuleName, addr, amounts)
 }
