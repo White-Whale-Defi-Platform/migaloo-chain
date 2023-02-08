@@ -49,16 +49,16 @@ Create wallet
 migalood keys add KEY_NAME
 ```
 
-Fund yourself `2000000uwhale`
+Fund yourself `20000000uwhale`
 
 ```bash
-migalood add-genesis-account $(migalood keys show KEY_NAME -a) 2000000uwhale
+migalood add-genesis-account $(migalood keys show KEY_NAME -a) 20000000uwhale
 ```
 
-Use half (`1000000uwhale`) for self-delegation
+Use half (`10000000uwhale`) for self-delegation
 
 ```bash
-migalood gentx KEY_NAME 1000000uwhale --chain-id=narwhal-1
+migalood gentx KEY_NAME 10000000uwhale --chain-id=narwhal-1
 ```
 
 If all goes well, you will see a message similar to the following:
