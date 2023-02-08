@@ -428,14 +428,14 @@ if __name__ == '__main__':
     print('Thirty Six Month', (THIRTY_SIX_MONTH_AMOUNT) / MILLION - 1)
     print('Community Pool', COMMUNITY_POOL_AMOUNT / MILLION)
     print('Multi Sig', MULTI_SIG_AMOUNT / MILLION)
-    TOTAL = INITIAL_AMOUNT + THREE_MONTH_AMOUNT + TWELVE_MONTH_AMOUNT+TWENTY_FOUR_MONTH_AMOUNT + \
+    TOTAL = THREE_MONTH_AMOUNT + TWELVE_MONTH_AMOUNT+TWENTY_FOUR_MONTH_AMOUNT + \
         THIRTY_SIX_MONTH_AMOUNT+COMMUNITY_POOL_AMOUNT + MULTI_SIG_AMOUNT
-    print('Total', (TOTAL) / MILLION)
+    print('Total', (TOTAL + INITIAL_AMOUNT) / MILLION)
 
     # Update total supply
     genesis['app_state']['bank']['supply'].append(
         {
-            'amount': '%d%s' % (TOTAL, DECIMALS),  # TODO
+            'amount': '%d%s' % (TOTAL, DECIMALS),
             'denom': DENOM,
         }
     )
