@@ -1,0 +1,50 @@
+{
+  "body": {
+    "messages": [
+      {
+        "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+        "description": {
+          "moniker": "polkachu",
+          "identity": "",
+          "website": "",
+          "security_contact": "",
+          "details": ""
+        },
+        "commission": {
+          "rate": "0.100000000000000000",
+          "max_rate": "0.200000000000000000",
+          "max_change_rate": "0.010000000000000000"
+        },
+        "min_self_delegation": "1",
+        "delegator_address": "migaloo1jt9w26mpxxjsk63mvd4m2ynj0af09cslw4huul",
+        "validator_address": "migaloovaloper1jt9w26mpxxjsk63mvd4m2ynj0af09csluyns75",
+        "pubkey": {
+          "@type": "/cosmos.crypto.ed25519.PubKey",
+          "key": "7iAXo72V8wS5nzOkQ9kfmMO5XkOW0uW09ZNm/zGAk7o="
+        },
+        "value": { "denom": "uwhale", "amount": "10000000" }
+      }
+    ],
+    "memo": "123e2d64c308bcd260dd579d343aec511f09727c@95.217.144.107:26656",
+    "timeout_height": "0",
+    "extension_options": [],
+    "non_critical_extension_options": []
+  },
+  "auth_info": {
+    "signer_infos": [
+      {
+        "public_key": {
+          "@type": "/cosmos.crypto.secp256k1.PubKey",
+          "key": "As1WcJsvf1NQgRlS8a2PHuueKhHlCYrFe3VooMxQdflR"
+        },
+        "mode_info": { "single": { "mode": "SIGN_MODE_DIRECT" } },
+        "sequence": "0"
+      }
+    ],
+    "fee": { "amount": [], "gas_limit": "200000", "payer": "", "granter": "" },
+    "tip": null
+  },
+  "signatures": [
+    "4c49wKj3WoK3pqZA+nwh0/e8Wdm+OK/yk5/fMZsprh4eJWmEg8dTNpomS0qRzIbdXEK4TiU9suqZ4L5gK24Fig=="
+  ]
+}
