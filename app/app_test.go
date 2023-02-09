@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	db "github.com/tendermint/tm-db"
+	dbm "github.com/tendermint/tm-db"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -28,7 +28,7 @@ import (
 var emptyWasmOpts []wasm.Option
 
 func TestWasmdExport(t *testing.T) {
-	db := db.NewMemDB()
+	db := dbm.NewMemDB()
 	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 	// generate validator private/public key
 	privVal := mock.NewPV()
@@ -74,7 +74,7 @@ func TestWasmdExport(t *testing.T) {
 // Have disabled this for now, and will re-enable after a test is written.
 
 func TestBlockedAddrs(t *testing.T) {
-	db := db.NewMemDB()
+	db := dbm.NewMemDB()
 	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 
 	for acc := range maccPerms {
