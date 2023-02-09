@@ -1,9 +1,10 @@
 package app
 
 import (
+	sdkerrors "cosmossdk.io/errors"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	errorstypes "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	ibcante "github.com/cosmos/ibc-go/v6/modules/core/ante"
 	"github.com/cosmos/ibc-go/v6/modules/core/keeper"
@@ -24,19 +25,19 @@ type HandlerOptions struct {
 
 func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.AccountKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "account keeper is required for AnteHandler") //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
+		return nil, sdkerrors.Wrap(errorstypes.ErrLogic, "account keeper is required for AnteHandler")
 	}
 	if options.BankKeeper == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "bank keeper is required for AnteHandler") //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
+		return nil, sdkerrors.Wrap(errorstypes.ErrLogic, "bank keeper is required for AnteHandler")
 	}
 	if options.SignModeHandler == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for ante builder") //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
+		return nil, sdkerrors.Wrap(errorstypes.ErrLogic, "sign mode handler is required for ante builder")
 	}
 	if options.WasmConfig == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "wasm config is required for ante builder") //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
+		return nil, sdkerrors.Wrap(errorstypes.ErrLogic, "wasm config is required for ante builder")
 	}
 	if options.TXCounterStoreKey == nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "tx counter key is required for ante builder") //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
+		return nil, sdkerrors.Wrap(errorstypes.ErrLogic, "tx counter key is required for ante builder")
 	}
 
 	sigGasConsumer := options.SigGasConsumer

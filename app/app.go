@@ -250,7 +250,7 @@ var (
 // MigalooApp extended ABCI application
 type MigalooApp struct {
 	*baseapp.BaseApp
-	legacyAmino       *codec.LegacyAmino //nolint:staticcheck
+	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
 	interfaceRegistry types.InterfaceRegistry
 
@@ -928,7 +928,7 @@ func (app *MigalooApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino { //nolint:staticcheck
+func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
