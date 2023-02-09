@@ -207,6 +207,7 @@ var (
 			ibcclientclient.UpgradeProposalHandler,
 			alliancemoduleclient.CreateAllianceProposalHandler,
 			alliancemoduleclient.UpdateAllianceProposalHandler,
+			alliancemoduleclient.DeleteAllianceProposalHandler,
 		)),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
