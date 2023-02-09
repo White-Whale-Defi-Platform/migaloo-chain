@@ -15,11 +15,11 @@ import (
 
 func TestCreateDenom(t *testing.T) {
 	actor := RandomAccountAddress()
-	tokenz, ctx := SetupCustomApp(t, actor)
+	migaloo, ctx := SetupCustomApp(t, actor)
 
 	// Fund actor with 100 base denom creation fees
 	actorAmount := sdk.NewCoins(sdk.NewCoin(types.DefaultParams().DenomCreationFee[0].Denom, types.DefaultParams().DenomCreationFee[0].Amount.MulRaw(100)))
-	fundAccount(t, ctx, tokenz, actor, actorAmount)
+	fundAccount(t, ctx, migaloo, actor, actorAmount)
 
 	specs := map[string]struct {
 		createDenom *bindings.CreateDenom
@@ -50,7 +50,7 @@ func TestCreateDenom(t *testing.T) {
 	for name, spec := range specs {
 		t.Run(name, func(t *testing.T) {
 			// when
-			_, gotErr := wasmbinding.PerformCreateDenom(&tokenz.TokenFactoryKeeper, &tokenz.BankKeeper, ctx, actor, spec.createDenom)
+			_, gotErr := wasmbinding.PerformCreateDenom(&migaloo.TokenFactoryKeeper, migaloo.BankKeeper, ctx, actor, spec.createDenom)
 			// then
 			if spec.expErr {
 				require.Error(t, gotErr)
