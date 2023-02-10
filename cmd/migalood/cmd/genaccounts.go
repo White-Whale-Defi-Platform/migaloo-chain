@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bufio"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	wasmcli "github.com/CosmWasm/wasmd/x/wasm/client/cli"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -24,6 +25,7 @@ const (
 	flagVestingStart = "vesting-start-time"
 	flagVestingEnd   = "vesting-end-time"
 	flagVestingAmt   = "vesting-amount"
+	flagAppendMode   = "append"
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
@@ -48,10 +50,8 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 			addr, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
-				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
-				if err != nil {
-					return fmt.Errorf("failed to parse keyring backend: %w", err)
-				}
+				keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
+
 				if keyringBackend != "" && clientCtx.Keyring == nil {
 					var err error
 					kr, err = keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, clientCtx.Codec)
@@ -62,13 +62,14 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 					kr = clientCtx.Keyring
 				}
 
-				info, err := kr.Key(args[0])
+				k, err := kr.Key(args[0])
 				if err != nil {
 					return fmt.Errorf("failed to get address from Keyring: %w", err)
 				}
-				addr, err = info.GetAddress()
+
+				addr, err = k.GetAddress()
 				if err != nil {
-					return fmt.Errorf("failed to get address from Keyring: %w", err)
+					return err
 				}
 			}
 
@@ -77,18 +78,9 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				return fmt.Errorf("failed to parse coins: %w", err)
 			}
 
-			vestingStart, err := cmd.Flags().GetInt64(flagVestingStart)
-			if err != nil {
-				return fmt.Errorf("failed to parse vesting start: %w", err)
-			}
-			vestingEnd, err := cmd.Flags().GetInt64(flagVestingEnd)
-			if err != nil {
-				return fmt.Errorf("failed to parse vesting end: %w", err)
-			}
-			vestingAmtStr, err := cmd.Flags().GetString(flagVestingAmt)
-			if err != nil {
-				return fmt.Errorf("failed to parse vesting amount: %w", err)
-			}
+			vestingStart, _ := cmd.Flags().GetInt64(flagVestingStart)
+			vestingEnd, _ := cmd.Flags().GetInt64(flagVestingEnd)
+			vestingAmtStr, _ := cmd.Flags().GetString(flagVestingAmt)
 
 			vestingAmt, err := sdk.ParseCoinsNormalized(vestingAmtStr)
 			if err != nil {
@@ -140,38 +132,51 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				return fmt.Errorf("failed to get accounts from any: %w", err)
 			}
 
-			if accs.Contains(addr) {
-				return fmt.Errorf("cannot add account at existing address %s", addr)
-			}
-
-			// Add the new account to the set of genesis accounts and sanitize the
-			// accounts afterwards.
-			accs = append(accs, genAccount)
-			accs = authtypes.SanitizeGenesisAccounts(accs)
-
-			genAccs, err := authtypes.PackAccounts(accs)
-			if err != nil {
-				return fmt.Errorf("failed to convert accounts into any's: %w", err)
-			}
-			authGenState.Accounts = genAccs
-
-			authGenStateBz, err := clientCtx.Codec.MarshalJSON(&authGenState)
-			if err != nil {
-				return fmt.Errorf("failed to marshal auth genesis state: %w", err)
-			}
-
-			appState[authtypes.ModuleName] = authGenStateBz
-
 			bankGenState := banktypes.GetGenesisStateFromAppState(clientCtx.Codec, appState)
-			bankGenState.Balances = append(bankGenState.Balances, balances)
+			if accs.Contains(addr) {
+				appendflag, _ := cmd.Flags().GetBool(flagAppendMode)
+				if !appendflag {
+					return fmt.Errorf("cannot add account at existing address %s", addr)
+				}
+
+				genesisB := banktypes.GetGenesisStateFromAppState(clientCtx.Codec, appState)
+				for idx, acc := range genesisB.Balances {
+					if acc.Address != addr.String() {
+						continue
+					}
+
+					updatedCoins := acc.Coins.Add(coins...)
+					bankGenState.Balances[idx] = banktypes.Balance{Address: addr.String(), Coins: updatedCoins.Sort()}
+					break
+				}
+			} else {
+				// Add the new account to the set of genesis accounts and sanitize the accounts afterwards.
+				accs = append(accs, genAccount)
+				accs = authtypes.SanitizeGenesisAccounts(accs)
+
+				genAccs, err := authtypes.PackAccounts(accs)
+				if err != nil {
+					return fmt.Errorf("failed to convert accounts into any's: %w", err)
+				}
+				authGenState.Accounts = genAccs
+
+				authGenStateBz, err := clientCtx.Codec.MarshalJSON(&authGenState)
+				if err != nil {
+					return fmt.Errorf("failed to marshal auth genesis state: %w", err)
+				}
+				appState[authtypes.ModuleName] = authGenStateBz
+
+				bankGenState.Balances = append(bankGenState.Balances, balances)
+			}
+
 			bankGenState.Balances = banktypes.SanitizeGenesisBalances(bankGenState.Balances)
+
 			bankGenState.Supply = bankGenState.Supply.Add(balances.Coins...)
 
 			bankGenStateBz, err := clientCtx.Codec.MarshalJSON(bankGenState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal bank genesis state: %w", err)
 			}
-
 			appState[banktypes.ModuleName] = bankGenStateBz
 
 			appStateJSON, err := json.Marshal(appState)
@@ -189,7 +194,27 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 	cmd.Flags().String(flagVestingAmt, "", "amount of coins for vesting accounts")
 	cmd.Flags().Int64(flagVestingStart, 0, "schedule start time (unix epoch) for vesting accounts")
 	cmd.Flags().Int64(flagVestingEnd, 0, "schedule end time (unix epoch) for vesting accounts")
+	cmd.Flags().Bool(flagAppendMode, false, "append the coins to an account already in the genesis.json file")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
+}
+
+func AddGenesisWasmMsgCmd(defaultNodeHome string) *cobra.Command {
+	txCmd := &cobra.Command{
+		Use:                        "add-wasm-genesis-message",
+		Short:                      "Wasm genesis subcommands",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+	genesisIO := wasmcli.NewDefaultGenesisIO()
+	txCmd.AddCommand(
+		wasmcli.GenesisStoreCodeCmd(defaultNodeHome, genesisIO),
+		wasmcli.GenesisInstantiateContractCmd(defaultNodeHome, genesisIO),
+		wasmcli.GenesisExecuteContractCmd(defaultNodeHome, genesisIO),
+		wasmcli.GenesisListContractsCmd(defaultNodeHome, genesisIO),
+		wasmcli.GenesisListCodesCmd(defaultNodeHome, genesisIO),
+	)
+	return txCmd
 }
