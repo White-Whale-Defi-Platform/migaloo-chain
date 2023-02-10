@@ -70,7 +70,7 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 		bam.SetSnapshot(snapshotStore, snapshottypes.NewSnapshotOptions(50000, 2)),
 	}
 	db := dbm.NewMemDB()
-	app := NewWasmApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, nodeHome, invCheckPeriod, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts, baseAppOpts...)
+	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, nodeHome, invCheckPeriod, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts, baseAppOpts...)
 	if withGenesis {
 		return app, NewDefaultGenesisState()
 	}
@@ -80,7 +80,7 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 // Setup initializes a new WasmApp with DefaultNodeHome for integration tests
 func Setup(isCheckTx bool, opts ...wasm.Option) *WasmApp {
 	db := dbm.NewMemDB()
-	app := NewWasmApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts)
+	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts)
 
 	if !isCheckTx {
 		genesisState := NewDefaultGenesisState()
@@ -121,8 +121,8 @@ func SetupWasmAppWithValSet(t *testing.T) *WasmApp {
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, amount)),
 	}
 
-	wasmApp := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "notional", nil, balance)
-	return wasmApp
+	migalooApp := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "notional", nil, balance)
+	return migalooApp
 }
 
 // SetupWithGenesisValSet initializes a new WasmApp with a validator set and genesis accounts

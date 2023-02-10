@@ -306,8 +306,8 @@ type WasmApp struct {
 	configurator module.Configurator
 }
 
-// NewWasmApp returns a reference to an initialized WasmApp.
-func NewWasmApp(
+// NewMigalooApp returns a reference to an initialized WasmApp.
+func NewMigalooApp(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,
