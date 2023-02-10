@@ -249,7 +249,6 @@ type appCreator struct {
 
 // newApp is an appCreator
 func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, appOpts servertypes.AppOptions) servertypes.Application {
-	baseappOptions := server.DefaultBaseappOptions(appOpts)
 	var wasmOpts []wasm.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
@@ -269,9 +268,9 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)),
 		a.encCfg,
+		app.GetEnabledProposals(),
 		appOpts,
 		wasmOpts,
-		baseappOptions...,
 	)
 }
 
@@ -308,5 +307,5 @@ func (a appCreator) appExport(
 		}
 	}
 
-	return app.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return migalooApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }
