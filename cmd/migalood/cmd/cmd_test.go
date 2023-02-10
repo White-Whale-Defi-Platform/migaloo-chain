@@ -6,10 +6,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/cmd/migalood/cmd"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/simapp/simd/cmd"
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 )
 
@@ -21,7 +22,7 @@ func TestInitCmd(t *testing.T) {
 		fmt.Sprintf("--%s=%s", cli.FlagOverwrite, "true"), // Overwrite genesis.json, in case it already exists
 	})
 
-	require.NoError(t, svrcmd.Execute(rootCmd, "", simapp.DefaultNodeHome))
+	require.NoError(t, svrcmd.Execute(rootCmd, "", app.DefaultNodeHome))
 }
 
 func TestHomeFlagRegistration(t *testing.T) {

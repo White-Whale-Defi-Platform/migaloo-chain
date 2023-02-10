@@ -221,7 +221,7 @@ func TestFullAppSimulation(t *testing.T) {
 	encConf := MakeEncodingConfig()
 	app := NewMigalooApp(logger, db, nil, true, map[int64]bool{}, t.TempDir(), simapp.FlagPeriodValue,
 		encConf, wasm.EnableAllProposals, simapp.EmptyAppOptions{}, nil, fauxMerkleModeOpt)
-	require.Equal(t, "WasmApp", app.Name())
+	require.Equal(t, "MigalooApp", app.Name())
 
 	// run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
