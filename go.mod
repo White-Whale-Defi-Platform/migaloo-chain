@@ -14,6 +14,7 @@ require (
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
+	github.com/spf13/viper v1.14.0
 	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.2
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.26
@@ -134,7 +135,6 @@ require (
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.14.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tendermint/go-amino v0.16.0 // indirect
@@ -177,4 +177,6 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// use tendermint v0.34.25
 	github.com/tendermint/tendermint => github.com/skip-mev/mev-tendermint v0.34.25-mev.15
+	// tmdb enforcement
+	github.com/tendermint/tm-db => github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 )

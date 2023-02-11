@@ -29,7 +29,7 @@ var emptyWasmOpts []wasm.Option
 
 func TestWasmdExport(t *testing.T) {
 	db := db.NewMemDB()
-	gapp := NewWasmApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
+	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 	// generate validator private/public key
 	privVal := mock.NewPV()
 	pubKey, err := privVal.GetPubKey()
@@ -64,7 +64,7 @@ func TestWasmdExport(t *testing.T) {
 	gapp.Commit()
 
 	// Making a new app object with the db, so that initchain hasn't been called
-	newGapp := NewWasmApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
+	newGapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 	_, err = newGapp.ExportAppStateAndValidators(false, []string{})
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")
 }
@@ -72,7 +72,7 @@ func TestWasmdExport(t *testing.T) {
 // ensure that blocked addresses are properly set in bank keeper
 func TestBlockedAddrs(t *testing.T) {
 	db := db.NewMemDB()
-	gapp := NewWasmApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
+	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 
 	for acc := range maccPerms {
 		t.Run(acc, func(t *testing.T) {
@@ -119,7 +119,7 @@ func TestGetEnabledProposals(t *testing.T) {
 	}
 }
 
-func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, opts []wasm.Option, app *WasmApp, balances ...banktypes.Balance) GenesisState {
+func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, opts []wasm.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
 	genesisState := NewDefaultGenesisState()
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
