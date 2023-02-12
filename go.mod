@@ -165,17 +165,18 @@ require (
 )
 
 replace (
-	// use sdk 46 token factory
-	github.com/CosmWasm/token-factory => github.com/notional-labs/token-factory v0.0.4
-	// use notional's wasmd fork
+	// use notional's wasmd fork with token factory
 	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.0-sdk469.4
+
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
+
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	// use tendermint v0.34.25
+
+	// use mev-tendermint v0.34.25
 	github.com/tendermint/tendermint => github.com/skip-mev/mev-tendermint v0.34.25-mev.15
 	// tmdb enforcement
 	github.com/tendermint/tm-db => github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
