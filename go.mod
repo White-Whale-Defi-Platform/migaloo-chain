@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	cosmossdk.io/math v1.0.0-beta.6
-	github.com/CosmWasm/token-factory v0.0.0-00010101000000-000000000000
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.46.9
 	github.com/cosmos/ibc-go/v6 v6.1.0
@@ -18,7 +17,7 @@ require (
 	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.2
 	github.com/stretchr/testify v1.8.1
 	github.com/tendermint/tendermint v0.34.26
-	github.com/tendermint/tm-db v0.6.8-0.20220506192307-f628bb5dc95b
+	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 )
 
 require (
@@ -118,6 +117,7 @@ require (
 	github.com/mitchellh/go-testing-interface v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mtibben/percent v0.2.1 // indirect
+	github.com/onsi/gomega v1.20.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
@@ -168,7 +168,7 @@ replace (
 	// use sdk 46 token factory
 	github.com/CosmWasm/token-factory => github.com/notional-labs/token-factory v0.0.4
 	// use notional's wasmd fork
-	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.0-sdk469-second
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.0-sdk469.4
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1

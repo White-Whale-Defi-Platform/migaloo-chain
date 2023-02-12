@@ -101,10 +101,10 @@ import (
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v6/router/types"
 
 	// Token Factory for sdk 46
-	"github.com/CosmWasm/token-factory/x/tokenfactory"
-	bindings "github.com/CosmWasm/token-factory/x/tokenfactory/bindings"
-	tokenfactorykeeper "github.com/CosmWasm/token-factory/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/CosmWasm/token-factory/x/tokenfactory/types"
+	"github.com/CosmWasm/wasmd/x/tokenfactory"
+	bindings "github.com/CosmWasm/wasmd/x/tokenfactory/bindings"
+	tokenfactorykeeper "github.com/CosmWasm/wasmd/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/CosmWasm/wasmd/x/tokenfactory/types"
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. It has no known issues, but do your own research before using it.
