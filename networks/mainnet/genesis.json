@@ -1,0 +1,2190 @@
+{
+  "genesis_time": "2023-02-13T15:00:00Z",
+  "chain_id": "migaloo-1",
+  "initial_height": "1",
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "-1",
+      "time_iota_ms": "1000"
+    },
+    "evidence": {
+      "max_age_num_blocks": "100000",
+      "max_age_duration": "172800000000000",
+      "max_bytes": "1048576"
+    },
+    "validator": {
+      "pub_key_types": [
+        "ed25519"
+      ]
+    },
+    "version": {}
+  },
+  "app_hash": "",
+  "app_state": {
+    "auth": {
+      "params": {
+        "max_memo_characters": "512",
+        "tx_sig_limit": "7",
+        "tx_size_cost_per_byte": "10",
+        "sig_verify_cost_ed25519": "590",
+        "sig_verify_cost_secp256k1": "1000"
+      },
+      "accounts": [
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1spge4nh9r5l9lepst79rvksdz0qjgtate3d4mu",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1e98m6za0tc446jjdzt7ux2muajf0uj4k4p538s",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1lm0ewsgtysmntfzqyvf89n43g33zkdytlmsshj",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1vnpc90shne5ncs2ddr7g4rrttqjudz4cyp4tu4",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1sksw9c946ann4w5a2d7kgphrm06frtsqqgp2sv",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1200000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1e82da9n6jz4t42eh0wn5hrt6hdmf7jyqvq0np0",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo19chphxqsduplg5qfsjae2ync94c3cgh9h049fj",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1683990000"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1wuu8l4srf3k7phewhc5sqjvvqtax0ch8mntfc3",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1nat09n7vfkgrv3p78vyan203umugmrkxzr3e3s",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1ycaqrfzyfue40vey36q02l2zrvqzw6sfryur5l",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1nfk64t5cygztmgf7ycq0yjkh72udgpqftmrsjp",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1la4nlstynp2wl0r236du0evjpqh8h9fqxs8xpa",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1z62c730l6u8v2q8kadenjtp8tf45m3yjwmsdz7",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo19lrmt9pl06hz6d96pqvcs0jl86wdldhj5dd8fp",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1cgdjruw7602qerr72wpzl4jyg46d0rq802v93l",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1z46x9kfmp64qqk7rxun6ll9peqapmswpjqyx6q",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1l5py295agfhqfmnh76n428s6f7tkhaypzjdras",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1w8yjx8ku3xj4zv3nxrycv5536qq5kvy7nsn7y0",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo156fmcjwlzgj8gt9h8zh43phmc4p9xmjc06jw0u",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo10ep3rpmjjhumzeglgxfd9zs5cmt5awxh0zreuh",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1zkdvn6j7k6dqtknhxqyysdpne5mft4r97p0k4g",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1cev3vxz9t0vcef68s4ghgm6yj9lxum9h7535yh",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1dfx3smd93xhz5j04sncdkgnrqnawkt9svt99e0",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo14uwnqvrjkux5fah6m2r7z24ztzdw9ns4n58wyq",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1mnpjf7ay5n08nw0hrzx0mpg324nh6pumxwqrv8",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1lwzh84q7ffa7xrnj8x3k6nlxcuz8k5c32xcl3v",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo12743c6vye8nnluqvxdylc9flsj4fjhzmth6l4l",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1ng379qqcdpw8nhc8fa9s006dukt0h6p6uyhr6k",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1nyjpegzqq47jvwc94g8lf5t5mhng976lmszz9r",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1lns0rwwzpahe0hx7ctlz66nmlwhm6dzrp5dqk2",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1cnykulmrjx928ylhtms5cq66nwac32a67lpsq2",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1nty7kgguz5fhxz0fta5f593wygnzdkr6ut2k2z",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1nnumc3e3nykgqtr8nr0gk09js2k4qtt4n8a93q",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "5000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1707836400"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1v8n2jpmq8a97xtv9j28c557q3ztqn7rkrxtykg",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "24000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo16u8ljxqr2sjfpxur5nmkpdu0j86vxh2udhunsu",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "15000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo13w00xz4t7gftnur9q6w8ychlpxc4pw02hzdx5z",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "14000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo18a9m9stu3dyvewwcq9qmp85euxqcvln5mefync",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "12500000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1eenffmetkkyzf5rejtn0jq5l2p7nz35klxlgff",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "8000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1jr6m4eu65kgf6flncd7nrhd4gcaexexr0swxm9",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "8000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1typsgj0nvketwusvaakyerjp9exr2fuxtmda9v",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "4250000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1pen8w6rshxqrt9t5fsd8zhc0ux54mrlw4al4mw",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "4000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo10layywwtg6kcjr0nunvnsr9g78n6veae85zx8j",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo16k4493edgkpy4apthg6m3m5wp0s36fvmkkampn",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "4000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1ug5h3wn9qlmn00h7dvws8h68vdeh8c0paazv8z",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "4000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1938p0dxg9s2wdfcy8j747gfuyf40wqzkdcmuxt",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "2000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1qp8flhtcev6ag8av3mwr3eessuq8sxjrukh7tw",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "1000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1739458800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1alga5e8vr6ccr9yrg0kgxevpt5xgmgrvqgujs6",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "22165200000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1770994800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1fc4kjfau480nr503yl0r8ml7vvn07d2r7ztjky",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1770994800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo17gcjmzpz2sfjj9waa6f2e8pr7s70v3hcudtsqj",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1770994800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo14kqr9fjjzl24gwfndf05wkelncm76ynkk04zjk",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "4000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1770994800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.vesting.v1beta1.ContinuousVestingAccount",
+          "base_vesting_account": {
+            "base_account": {
+              "address": "migaloo1zz9ppl2wy4ruzzv8mmnx6cente9ygvcx2r3qap",
+              "pub_key": null,
+              "account_number": "0",
+              "sequence": "0"
+            },
+            "original_vesting": [
+              {
+                "denom": "uwhale",
+                "amount": "3000000000000"
+              }
+            ],
+            "delegated_free": [],
+            "delegated_vesting": [],
+            "end_time": "1770994800"
+          },
+          "start_time": "1676300400"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "migaloo1820a86x8e70ecsw486uvh5af6zqk3tq0r09v6g",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "migaloo1epyycuzx0u0c44w354pu99u4wujldhultfr66a",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "migaloo1rqvctgdpafvc0k9fx4ng8ckt94x723zmnqvrs8",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "migaloo127nprdxstd5t5wt6frxk3fgj74zdp5memt454e",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        }
+      ]
+    },
+    "authz": {
+      "authorization": []
+    },
+    "bank": {
+      "params": {
+        "send_enabled": [],
+        "default_send_enabled": true
+      },
+      "balances": [
+        {
+          "address": "migaloo1qp8flhtcev6ag8av3mwr3eessuq8sxjrukh7tw",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1pen8w6rshxqrt9t5fsd8zhc0ux54mrlw4al4mw",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1zz9ppl2wy4ruzzv8mmnx6cente9ygvcx2r3qap",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1zfpqclh862kcdr8czul2k2lu2gvwk5gfg26fpx",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "380384750000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1z46x9kfmp64qqk7rxun6ll9peqapmswpjqyx6q",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1zkdvn6j7k6dqtknhxqyysdpne5mft4r97p0k4g",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1z62c730l6u8v2q8kadenjtp8tf45m3yjwmsdz7",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1rqvctgdpafvc0k9fx4ng8ckt94x723zmnqvrs8",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "10000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1ycaqrfzyfue40vey36q02l2zrvqzw6sfryur5l",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1938p0dxg9s2wdfcy8j747gfuyf40wqzkdcmuxt",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo19chphxqsduplg5qfsjae2ync94c3cgh9h049fj",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo19lrmt9pl06hz6d96pqvcs0jl86wdldhj5dd8fp",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1820a86x8e70ecsw486uvh5af6zqk3tq0r09v6g",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "10000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo18a9m9stu3dyvewwcq9qmp85euxqcvln5mefync",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "12500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1fc4kjfau480nr503yl0r8ml7vvn07d2r7ztjky",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo127nprdxstd5t5wt6frxk3fgj74zdp5memt454e",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "20000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo12743c6vye8nnluqvxdylc9flsj4fjhzmth6l4l",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1typsgj0nvketwusvaakyerjp9exr2fuxtmda9v",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4250000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1v8n2jpmq8a97xtv9j28c557q3ztqn7rkrxtykg",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "24000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1vnpc90shne5ncs2ddr7g4rrttqjudz4cyp4tu4",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1dfx3smd93xhz5j04sncdkgnrqnawkt9svt99e0",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1w8yjx8ku3xj4zv3nxrycv5536qq5kvy7nsn7y0",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1wuu8l4srf3k7phewhc5sqjvvqtax0ch8mntfc3",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo10ep3rpmjjhumzeglgxfd9zs5cmt5awxh0zreuh",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo10layywwtg6kcjr0nunvnsr9g78n6veae85zx8j",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1spge4nh9r5l9lepst79rvksdz0qjgtate3d4mu",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1sksw9c946ann4w5a2d7kgphrm06frtsqqgp2sv",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1200000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo13w00xz4t7gftnur9q6w8ychlpxc4pw02hzdx5z",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "14000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1jr6m4eu65kgf6flncd7nrhd4gcaexexr0swxm9",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "8000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1jv65s3grqf6v6jl3dp4t6c9t9rk99cd82tdxu3",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "25000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nyjpegzqq47jvwc94g8lf5t5mhng976lmszz9r",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1ng379qqcdpw8nhc8fa9s006dukt0h6p6uyhr6k",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nfk64t5cygztmgf7ycq0yjkh72udgpqftmrsjp",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nty7kgguz5fhxz0fta5f593wygnzdkr6ut2k2z",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nnumc3e3nykgqtr8nr0gk09js2k4qtt4n8a93q",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "5000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1nat09n7vfkgrv3p78vyan203umugmrkxzr3e3s",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo156fmcjwlzgj8gt9h8zh43phmc4p9xmjc06jw0u",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo14kqr9fjjzl24gwfndf05wkelncm76ynkk04zjk",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo14uwnqvrjkux5fah6m2r7z24ztzdw9ns4n58wyq",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1cgdjruw7602qerr72wpzl4jyg46d0rq802v93l",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1cnykulmrjx928ylhtms5cq66nwac32a67lpsq2",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1cev3vxz9t0vcef68s4ghgm6yj9lxum9h7535yh",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1epyycuzx0u0c44w354pu99u4wujldhultfr66a",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "10000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1e98m6za0tc446jjdzt7ux2muajf0uj4k4p538s",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1e82da9n6jz4t42eh0wn5hrt6hdmf7jyqvq0np0",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1eenffmetkkyzf5rejtn0jq5l2p7nz35klxlgff",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "8000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo16k4493edgkpy4apthg6m3m5wp0s36fvmkkampn",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo16u8ljxqr2sjfpxur5nmkpdu0j86vxh2udhunsu",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "15000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1mnpjf7ay5n08nw0hrzx0mpg324nh6pumxwqrv8",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1ug5h3wn9qlmn00h7dvws8h68vdeh8c0paazv8z",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "4000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1alga5e8vr6ccr9yrg0kgxevpt5xgmgrvqgujs6",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "22165200000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo17gcjmzpz2sfjj9waa6f2e8pr7s70v3hcudtsqj",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1lwzh84q7ffa7xrnj8x3k6nlxcuz8k5c32xcl3v",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1lns0rwwzpahe0hx7ctlz66nmlwhm6dzrp5dqk2",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "1500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1l5py295agfhqfmnh76n428s6f7tkhaypzjdras",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "500000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1lm0ewsgtysmntfzqyvf89n43g33zkdytlmsshj",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "2000000000000"
+            }
+          ]
+        },
+        {
+          "address": "migaloo1la4nlstynp2wl0r236du0evjpqh8h9fqxs8xpa",
+          "coins": [
+            {
+              "denom": "uwhale",
+              "amount": "3000000000000"
+            }
+          ]
+        }
+      ],
+      "supply": [
+        {
+          "denom": "uwhale",
+          "amount": "600000000000000"
+        }
+      ],
+      "denom_metadata": []
+    },
+    "capability": {
+      "index": "1",
+      "owners": []
+    },
+    "crisis": {
+      "constant_fee": {
+        "denom": "uwhale",
+        "amount": "1000"
+      }
+    },
+    "distribution": {
+      "params": {
+        "community_tax": "0.100000000000000000",
+        "base_proposer_reward": "0.010000000000000000",
+        "bonus_proposer_reward": "0.040000000000000000",
+        "withdraw_addr_enabled": true
+      },
+      "fee_pool": {
+        "community_pool": [
+          {
+            "denom": "uwhale",
+            "amount": "25000000000000"
+          }
+        ]
+      },
+      "delegator_withdraw_infos": [],
+      "previous_proposer": "",
+      "outstanding_rewards": [],
+      "validator_accumulated_commissions": [],
+      "validator_historical_rewards": [],
+      "validator_current_rewards": [],
+      "delegator_starting_infos": [],
+      "validator_slash_events": []
+    },
+    "evidence": {
+      "evidence": []
+    },
+    "feegrant": {
+      "allowances": []
+    },
+    "feeibc": {
+      "identified_fees": [],
+      "fee_enabled_channels": [],
+      "registered_payees": [],
+      "registered_counterparty_payees": [],
+      "forward_relayers": []
+    },
+    "genutil": {
+      "gen_txs": [
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "Enigma",
+                  "identity": "6223697ACA24A4FF",
+                  "website": "https://enigma-validator.com/",
+                  "security_contact": "contact@enigma-validator.com",
+                  "details": "Proof of Stake Validator on different projects -- Passionate about Data Science and Technology"
+                },
+                "commission": {
+                  "rate": "0.050000000000000000",
+                  "max_rate": "0.200000000000000000",
+                  "max_change_rate": "0.010000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "migaloo1820a86x8e70ecsw486uvh5af6zqk3tq0r09v6g",
+                "validator_address": "migaloovaloper1820a86x8e70ecsw486uvh5af6zqk3tq037pqcr",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "++67Cobjs0LzD1iFYcQ6+vdCACIj+Gcauj2LJTpjbA0="
+                },
+                "value": {
+                  "denom": "uwhale",
+                  "amount": "10000000"
+                }
+              }
+            ],
+            "memo": "3ef97d0e832e9e1312da0e5217a9297dd7f4b900@135.181.215.62:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/cosmos.crypto.secp256k1.PubKey",
+                  "key": "A+mlGBQlUDrgO71g2233Da/7eMM8b1iOQdsagDlfnanj"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "200000",
+              "payer": "",
+              "granter": ""
+            },
+            "tip": null
+          },
+          "signatures": [
+            "IB0CdgCfEGqJKW9ZMsazy3syNULUKnrWRl2TTakiTL8a3EljVxPthJuCGS71lg49LH0QA3wb35aVwTJwUOPSbg=="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "Smart Stake",
+                  "identity": "DD06F013A474ACA3",
+                  "website": "smartstake.io",
+                  "security_contact": "info@smartstake.io",
+                  "details": "Your hub for validator, network, and decentralization analytics. Support @ t.me/SmartStake. Like our services? Delegate on any of the networks listed at smartstake.io"
+                },
+                "commission": {
+                  "rate": "0.050000000000000000",
+                  "max_rate": "0.100000000000000000",
+                  "max_change_rate": "0.010000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "migaloo1epyycuzx0u0c44w354pu99u4wujldhultfr66a",
+                "validator_address": "migaloovaloper1epyycuzx0u0c44w354pu99u4wujldhulec8kck",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "EhctdjH27MhQRs98yZmqqgeG7L8pPV5/kns4P/lqA6M="
+                },
+                "value": {
+                  "denom": "uwhale",
+                  "amount": "10000000"
+                }
+              }
+            ],
+            "memo": "d8aa44568130ec24f953ce12708cb3ea72763cf5@88.208.241.28:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/cosmos.crypto.secp256k1.PubKey",
+                  "key": "AokCleUix1H2Z60rnqnITN9emA5qmwyPnF5UxnaLulFS"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "200000",
+              "payer": "",
+              "granter": ""
+            },
+            "tip": null
+          },
+          "signatures": [
+            "XYyqB5xttHJigxEsZgf0ae12CN6YMQkOhokybs6gX4MRL4eu1A7/mOYobpdOjJ1miX2b7IjzABJ7CaSSL+5Eeg=="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "Notional",
+                  "identity": "0E480E2B83B23D80",
+                  "website": "notional.ventures",
+                  "security_contact": "contact@notional.ventures",
+                  "details": "Open Source, Organic edge validation and relaying. See more at: https://notional.ventures/ and https://github.com/notional-labs/notional"
+                },
+                "commission": {
+                  "rate": "0.050000000000000000",
+                  "max_rate": "0.200000000000000000",
+                  "max_change_rate": "0.050000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "migaloo1rqvctgdpafvc0k9fx4ng8ckt94x723zmnqvrs8",
+                "validator_address": "migaloovaloper1rqvctgdpafvc0k9fx4ng8ckt94x723zmp3g0jv",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "xKbZd5nFFo6uQiwwSXxMHIwd6IjwydkIPAcfUhYELSY="
+                },
+                "value": {
+                  "denom": "uwhale",
+                  "amount": "10000000"
+                }
+              }
+            ],
+            "memo": "ad9d79aba19b176117aa0c73e519ee66d205b6ea@135.181.223.115:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/cosmos.crypto.secp256k1.PubKey",
+                  "key": "A+fiLn1mH0KlxHvAcDEiNzCg3LCfSXt7vYDSKIiVcydx"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "200000",
+              "payer": "",
+              "granter": ""
+            },
+            "tip": null
+          },
+          "signatures": [
+            "wPzpX9TmKMOhjwlVLaL2URApCwwIydwo9L6pPMAeEQc/8zzxPJxCHLQ6cV4FUmPnnQTsCIL5bc6RO1kTJcvo5A=="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "✅ CryptoCrew Validators #IBCgang",
+                  "identity": "9AE70F9E3EDA8956",
+                  "website": "https://ccvalidators.com",
+                  "security_contact": "support@ccvalidators.com",
+                  "details": "CryptoCrew validator \u0026 multi-chain IBC-relayer service for MIGALOO. Based in Europe. t.me/cryptocrew_validators"
+                },
+                "commission": {
+                  "rate": "0.050000000000000000",
+                  "max_rate": "0.200000000000000000",
+                  "max_change_rate": "0.010000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "migaloo127nprdxstd5t5wt6frxk3fgj74zdp5memt454e",
+                "validator_address": "migaloovaloper127nprdxstd5t5wt6frxk3fgj74zdp5mef63chj",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "Xxfr57p7wPGK1iRdZI6/G9K0PjgPm1JiUakqhW7GqbQ="
+                },
+                "value": {
+                  "denom": "uwhale",
+                  "amount": "10000000"
+                }
+              }
+            ],
+            "memo": "78dcc31fa1a9ab103b1041a149e6fe55d0fe06f5@127.0.0.1:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/cosmos.crypto.secp256k1.PubKey",
+                  "key": "AhB15p2r0oOiulhy2yd9n1sXXGs1t2JUKWkPAJu+rOpi"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_LEGACY_AMINO_JSON"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "200000",
+              "payer": "",
+              "granter": ""
+            },
+            "tip": null
+          },
+          "signatures": [
+            "pyB6zrl+QdH0XebzbFryDJUAx2l/GU0b63ReDDcwyQpubvzJRSagG2kg9be1QQF9G6RUQU52AIpXrO7yS00/Zg=="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "polkachu.com",
+                  "identity": "0A6AF02D1557E5B4",
+                  "website": "https://polkachu.com",
+                  "security_contact": "hello@polkachu.com",
+                  "details": "Polkachu is the trusted staking service provider for blockchain projects. 100% refund for downtime slash. Contact us at hello@polkachu.com"
+                },
+                "commission": {
+                  "rate": "0.050000000000000000",
+                  "max_rate": "0.200000000000000000",
+                  "max_change_rate": "0.010000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "migaloo1fc4kjfau480nr503yl0r8ml7vvn07d2r7ztjky",
+                "validator_address": "migaloovaloper1fc4kjfau480nr503yl0r8ml7vvn07d2rvn0750",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "r7M9lA/PdsvfTlZCXq7B7V7gp13HZFAeSTAZYpvu7YI="
+                },
+                "value": {
+                  "denom": "uwhale",
+                  "amount": "10000000"
+                }
+              }
+            ],
+            "memo": "538b5c109a7b7d64ddb50b7d3de518321bc833c4@192.99.44.79:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/cosmos.crypto.secp256k1.PubKey",
+                  "key": "A9QN0BFTSjYgxKAe61Zz3LT+KPRS/o/N+f31QdssWem0"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "200000",
+              "payer": "",
+              "granter": ""
+            },
+            "tip": null
+          },
+          "signatures": [
+            "aMR2ZteYWO4yD20dLacD5CaQIyUvljXKX6ml5L1rfZN91hDWoxWfyVfx7+BkQmkDwTjT3H8TZRw9nraUyFBOrA=="
+          ]
+        }
+      ]
+    },
+    "gov": {
+      "starting_proposal_id": "1",
+      "deposits": [],
+      "votes": [],
+      "proposals": [],
+      "deposit_params": {
+        "min_deposit": [
+          {
+            "denom": "uwhale",
+            "amount": "25000000000"
+          }
+        ],
+        "max_deposit_period": "1209600s"
+      },
+      "voting_params": {
+        "voting_period": "604800s"
+      },
+      "tally_params": {
+        "quorum": "0.334000000000000000",
+        "threshold": "0.500000000000000000",
+        "veto_threshold": "0.334000000000000000"
+      }
+    },
+    "ibc": {
+      "client_genesis": {
+        "clients": [],
+        "clients_consensus": [],
+        "clients_metadata": [],
+        "params": {
+          "allowed_clients": [
+            "06-solomachine",
+            "07-tendermint"
+          ]
+        },
+        "create_localhost": false,
+        "next_client_sequence": "0"
+      },
+      "connection_genesis": {
+        "connections": [],
+        "client_connection_paths": [],
+        "next_connection_sequence": "0",
+        "params": {
+          "max_expected_time_per_block": "30000000000"
+        }
+      },
+      "channel_genesis": {
+        "channels": [],
+        "acknowledgements": [],
+        "commitments": [],
+        "receipts": [],
+        "send_sequences": [],
+        "recv_sequences": [],
+        "ack_sequences": [],
+        "next_channel_sequence": "0"
+      }
+    },
+    "interchainaccounts": {
+      "controller_genesis_state": {
+        "active_channels": [],
+        "interchain_accounts": [],
+        "ports": [],
+        "params": {
+          "controller_enabled": true
+        }
+      },
+      "host_genesis_state": {
+        "active_channels": [],
+        "interchain_accounts": [],
+        "port": "icahost",
+        "params": {
+          "host_enabled": true,
+          "allow_messages": [
+            "*"
+          ]
+        }
+      }
+    },
+    "intertx": null,
+    "mint": {
+      "minter": {
+        "inflation": "0.040000000000000000",
+        "annual_provisions": "0.000000000000000000"
+      },
+      "params": {
+        "mint_denom": "uwhale",
+        "inflation_rate_change": "0.130000000000000000",
+        "inflation_max": "0.040000000000000000",
+        "inflation_min": "0.040000000000000000",
+        "goal_bonded": "0.750000000000000000",
+        "blocks_per_year": "6311520"
+      }
+    },
+    "packetfowardmiddleware": {
+      "params": {
+        "fee_percentage": "0.000000000000000000"
+      },
+      "in_flight_packets": {}
+    },
+    "params": null,
+    "slashing": {
+      "params": {
+        "signed_blocks_window": "10000",
+        "min_signed_per_window": "0.100000000000000000",
+        "downtime_jail_duration": "600s",
+        "slash_fraction_double_sign": "0.050000000000000000",
+        "slash_fraction_downtime": "0.001000000000000000"
+      },
+      "signing_infos": [],
+      "missed_blocks": []
+    },
+    "staking": {
+      "params": {
+        "unbonding_time": "1814400s",
+        "max_validators": 50,
+        "max_entries": 7,
+        "historical_entries": 10000,
+        "bond_denom": "uwhale",
+        "min_commission_rate": "0.050000000000000000"
+      },
+      "last_total_power": "0",
+      "last_validator_powers": [],
+      "validators": [],
+      "delegations": [],
+      "unbonding_delegations": [],
+      "redelegations": [],
+      "exported": false
+    },
+    "tokenfactory": {
+      "params": {
+        "denom_creation_fee": [
+          {
+            "denom": "stake",
+            "amount": "10000000"
+          }
+        ]
+      },
+      "factory_denoms": []
+    },
+    "transfer": {
+      "port_id": "transfer",
+      "denom_traces": [],
+      "params": {
+        "send_enabled": true,
+        "receive_enabled": true
+      }
+    },
+    "upgrade": {},
+    "vesting": {},
+    "wasm": {
+      "params": {
+        "code_upload_access": {
+          "permission": "Everybody",
+          "address": "",
+          "addresses": []
+        },
+        "instantiate_default_permission": "Everybody"
+      },
+      "codes": [],
+      "contracts": [],
+      "sequences": [],
+      "gen_msgs": []
+    }
+  }
+}
