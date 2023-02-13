@@ -1,6 +1,6 @@
 # Migaloo Mainnet
 
-This testnet will start with the node version `b4fbc78`.
+This mainnet will start with the node version `b4fbc78`.
 
 ## Minimum hardware requirements
 
