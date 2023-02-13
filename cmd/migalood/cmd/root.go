@@ -8,6 +8,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
+	"github.com/cosmos/cosmos-sdk/version"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 	tmcfg "github.com/tendermint/tendermint/config"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
@@ -30,31 +32,31 @@ import (
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 )
 
-// NewRootCmd creates a new root command for simd. It is called once in the
+// NewRootCmd creates a new root command for wasmd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
-	encodingConfig := params.MakeEncodingConfig()
+	encodingConfig := app.MakeEncodingConfig()
+
 	initClientCtx := client.Context{}.
 		WithCodec(encodingConfig.Codec).
 		WithInterfaceRegistry(encodingConfig.InterfaceRegistry).
 		WithTxConfig(encodingConfig.TxConfig).
 		WithLegacyAmino(encodingConfig.Amino).
 		WithInput(os.Stdin).
-		WithAccountRetriever(types.AccountRetriever{}).
+		WithAccountRetriever(authtypes.AccountRetriever{}).
+		WithBroadcastMode(flags.BroadcastBlock).
 		WithHomeDir(app.DefaultNodeHome).
-		WithViper("") // In simapp, we don't use any prefix for env variables.
+		WithViper("")
 
 	rootCmd := &cobra.Command{
-		Use:   "simd",
-		Short: "simulation app",
+		Use:   version.AppName,
+		Short: "Migaloo Daemon (server)",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
@@ -92,8 +94,8 @@ func initTendermintConfig() *tmcfg.Config {
 	cfg := tmcfg.DefaultConfig()
 
 	// these values put a higher strain on node memory
-	// cfg.P2P.MaxNumInboundPeers = 100
-	// cfg.P2P.MaxNumOutboundPeers = 40
+	cfg.P2P.MaxNumInboundPeers = 320
+	cfg.P2P.MaxNumOutboundPeers = 40
 
 	return cfg
 }
@@ -133,7 +135,7 @@ func initAppConfig() (string, interface{}) {
 	//   own app.toml to override, or use this default value.
 	//
 	// In simapp, we set the min gas prices to 0.
-	srvCfg.MinGasPrices = "0stake"
+	srvCfg.MinGasPrices = "0whale"
 	// srvCfg.BaseConfig.IAVLDisableFastNode = true // disable fastnode by default
 
 	customAppConfig := CustomAppConfig{
@@ -156,9 +158,6 @@ lru_size = 0`
 }
 
 func initRootCmd(rootCmd *cobra.Command, encodingConfig params.EncodingConfig) {
-	cfg := sdk.GetConfig()
-	cfg.Seal()
-
 	a := appCreator{encodingConfig}
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(app.ModuleBasics, app.DefaultNodeHome),
