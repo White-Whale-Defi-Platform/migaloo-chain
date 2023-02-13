@@ -9,7 +9,7 @@ import (
 
 var (
 	Bech32Prefix = "migaloo"
-	
+
 	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
 	Bech32PrefixAccAddr = Bech32Prefix
 	// Bech32PrefixAccPub defines the Bech32 prefix of an account's public key
@@ -35,16 +35,16 @@ func SetAddressPrefixes() {
 	// source: https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-beta1/types/address.go#L141
 	config.SetAddressVerifier(func(bytes []byte) error {
 		if len(bytes) == 0 {
-			return sdkerrors.Wrap(sdkerrors.ErrUnknownAddress, "addresses cannot be empty")
+			return sdkerrors.Wrap(sdkerrors.ErrUnknownAddress, "addresses cannot be empty") //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
 		}
 
 		if len(bytes) > address.MaxAddrLen {
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "address max length is %d, got %d", address.MaxAddrLen, len(bytes))
+			return sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "address max length is %d, got %d", address.MaxAddrLen, len(bytes)) //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
 		}
 
 		// TODO: Do we want to allow addresses of lengths other than 20 and 32 bytes?
 		if len(bytes) != 20 && len(bytes) != 32 {
-			return sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "address length must be 20 or 32 bytes, got %d", len(bytes))
+			return sdkerrors.Wrapf(sdkerrors.ErrUnknownAddress, "address length must be 20 or 32 bytes, got %d", len(bytes)) //nolint:staticcheck // ignore SA1019 // TODO: migrate to cosmossdk.io/errors
 		}
 
 		return nil
