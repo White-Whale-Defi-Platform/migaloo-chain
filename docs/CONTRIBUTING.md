@@ -16,6 +16,7 @@ Before you can write any code, please take a look at the list of prerequisites b
 To download the necessary tools, clone the repository and so on, you need network access.
 
 The following are the tools you'll need:
+
 - [Git](https://git-scm.com/)
 - [Go](https://go.dev/doc/install)
 - [Docker](https://www.docker.com/)
@@ -23,7 +24,7 @@ The following are the tools you'll need:
   but feel free to use your preferred code editor.
 - [Go Plugin](https://plugins.jetbrains.com/plugin/9568-go) for Intellij Idea or the [Go extension](https://marketplace.visualstudio.com/items?itemName=golang.go) for VS Code.
 
---- 
+---
 Then fork the code and read it through. We encourage you to make your own contributions, though you might look at the
 [issue tracker](https://github.com/White-Whale-Defi-Platform/migaloo-chain/issues) if you want to solve something that has
 been pointed out already.
@@ -109,9 +110,10 @@ Are you a graphic designer and want to help out with some NFTs? Are you a copywr
 Whatever it is, we would love to hear from you and see how we can make White Whale better for everybody.
 
 ## Docs
+
 When in doubt, please take a look at our [litepaper]() or our [documentation]([]()).
 
-# Thank you!
+# Thank you
 
 All contributions to Migaloo are of great value and make this chain possible. Thanks for taking the time to make
 Migaloo better! We really appreciate it.
