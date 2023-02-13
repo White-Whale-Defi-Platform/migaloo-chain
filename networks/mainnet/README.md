@@ -34,7 +34,9 @@ migalood version --long | grep commit
 ```bash
 migalood init MONIKER --chain-id=migaloo-1
 ```
+
 Set minimum gas price to 0.
+
 ```bash
 sed -i 's/minimum-gas-prices = ".*"/minimum-gas-prices = "0uwhale"/' $HOME/.migalood/config/app.toml
 ```
