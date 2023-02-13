@@ -11,7 +11,7 @@ MILLION = 1000000
 SECONDS_PER_DAY = 24*60*60
 
 NUM_GENESIS_VALIDATORS = 5
-INITIAL_GENESIS_ALLOCATION = 25
+INITIAL_GENESIS_ALLOCATION = 10
 INITIAL_AMOUNT = NUM_GENESIS_VALIDATORS * INITIAL_GENESIS_ALLOCATION
 
 # Do not edit. Used to check the total balances in the genesis.
@@ -20,15 +20,15 @@ TWELVE_MONTH_AMOUNT = 0
 TWENTY_FOUR_MONTH_AMOUNT = 0
 THIRTY_SIX_MONTH_AMOUNT = 0
 COMMUNITY_POOL_AMOUNT = 25 * MILLION
-MULTI_SIG_AMOUNT = 382.3848 * MILLION - INITIAL_AMOUNT
+MULTI_SIG_AMOUNT = 380.3848 * MILLION - INITIAL_AMOUNT
 
 
 # see: https://www.epochconverter.com for more infos on the unix time stamp
-GENESIS_TIME_UNIX = 1676041200
-THREE_MONTH_UNIX = 1683730800
-TWELVE_MONTH_UNIX = 1707577200
-TWENTY_FOUR_MONTH_UNIX = 1739199600
-THIRTY_SIX_MONTH_UNIX = 1770735600
+GENESIS_TIME_UNIX = 1676300400
+THREE_MONTH_UNIX = 1683990000
+TWELVE_MONTH_UNIX = 1707836400
+TWENTY_FOUR_MONTH_UNIX = 1739458800
+THIRTY_SIX_MONTH_UNIX = 1770994800
 
 # List of all accounts that get continously vested tokens.
 # Address: Address of the account.
@@ -64,6 +64,11 @@ VESTING_ACCOUNTS = [
     {
         "address": "migaloo1e82da9n6jz4t42eh0wn5hrt6hdmf7jyqvq0np0",
         "amount": 3 * MILLION,
+        "duration": THREE_MONTH_UNIX,
+    },
+     {
+        "address": "migaloo19chphxqsduplg5qfsjae2ync94c3cgh9h049fj",
+        "amount": 2 * MILLION,
         "duration": THREE_MONTH_UNIX,
     },
     # Seed Investors
@@ -338,7 +343,7 @@ if __name__ == '__main__':
         genesis = json.load(FILE)
 
     # Modify genesis parameters
-    genesis['genesis_time'] = '2023-02-10T15:00:00.000000Z'
+    genesis['genesis_time'] = '2023-02-13T15:00:00.000000Z'
     genesis['chain_id'] = 'migaloo-1'
     genesis['app_state']['auth']['params']['max_memo_characters'] = '512'
     genesis['app_state']['crisis']['constant_fee']['denom'] = DENOM
