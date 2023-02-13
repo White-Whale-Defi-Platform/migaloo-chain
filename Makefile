@@ -17,7 +17,7 @@ TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf
 BUILDDIR ?= $(CURDIR)/build
-HTTPS_GIT := https://github.com/notional-labs/fee-abstraction.git
+HTTPS_GIT := https://github.com/White-Whale-Defi-Platform/migaloo-chain.git
 
 export GO111MODULE = on
 
