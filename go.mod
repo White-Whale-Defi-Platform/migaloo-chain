@@ -5,7 +5,7 @@ go 1.20
 require (
 	cosmossdk.io/math v1.0.0-beta.6
 	github.com/CosmWasm/wasmd v0.30.0
-	github.com/cosmos/cosmos-sdk v0.46.10
+	github.com/cosmos/cosmos-sdk v0.46.11
 	github.com/cosmos/ibc-go/v6 v6.1.0
 	github.com/cosmos/interchain-accounts v0.4.3
 	github.com/gorilla/mux v1.8.0
@@ -16,7 +16,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.2
 	github.com/stretchr/testify v1.8.1
-	github.com/tendermint/tendermint v0.34.26
+	github.com/tendermint/tendermint v0.34.27
 	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 )
 
@@ -145,11 +145,11 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/exp v0.0.0-20221205204356-47842c84f3db // indirect
-	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/oauth2 v0.3.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/term v0.4.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/term v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/api v0.107.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
