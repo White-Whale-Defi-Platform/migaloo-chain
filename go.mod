@@ -185,3 +185,5 @@ replace (
 	// tmdb enforcement
 	github.com/tendermint/tm-db => github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 )
+
+replace github.com/terra-money/alliance => github.com/notional-labs/alliance v0.0.0-20230308143913-52bf392b42cf
