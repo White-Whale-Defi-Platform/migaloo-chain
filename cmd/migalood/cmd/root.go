@@ -4,8 +4,7 @@ import (
 	"errors"
 	"io"
 	"os"
-        "path/filepath"
-	
+
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
 
@@ -19,7 +18,8 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/cosmos/cosmos-sdk/baseapp"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
@@ -30,9 +30,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-        "github.com/cosmos/cosmos-sdk/snapshots"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
 
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -309,23 +306,4 @@ func (a appCreator) appExport(
 	}
 
 	return migalooApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
-}
-
-// Add snapshots
-	snapshotDir := filepath.Join(cast.ToString(appOpts.Get(flags.FlagHome)), "data", "snapshots")
-        snapshotDB, err := sdk.NewLevelDB("metadata", snapshotDir)
-        if err != nil {
-                panic(err)
-        }
-        snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-        if err != nil {
-                panic(err)
-        }
-
-return app.New(
-	appOpts,
-	baseapp.SetSnapshotStore(snapshotStore),
-	baseapp.SetSnapshotInterval(cast.ToUint64(appOpts.Get(server.FlagStateSyncSnapshotInterval))),
-	baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOpts.Get(server.FlagStateSyncSnapshotKeepRecent))),
-	)
 }
