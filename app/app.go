@@ -1045,7 +1045,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	return paramsKeeper
 }
 
-// BlockedAddrs returns all the app's module account and fee collector module account addresses, except for gov and alliance.
+// BlockedModuleAccountAddrs returns all the app's module account and fee collector module account addresses, except for gov and alliance.
 func (app *MigalooApp) BlockedModuleAccountAddrs() map[string]bool {
 	modAccAddrs := app.ModuleAccountAddrs()
 	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
