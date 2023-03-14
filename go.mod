@@ -18,7 +18,7 @@ require (
 	github.com/stretchr/testify v1.8.2
 	github.com/tendermint/tendermint v0.34.27
 	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
-	github.com/terra-money/alliance v0.0.0-00010101000000-000000000000
+	github.com/terra-money/alliance v0.1.0
 )
 
 require (
@@ -49,7 +49,7 @@ require (
 	github.com/cometbft/cometbft-db v0.7.0 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
-	github.com/cosmos/cosmos-proto v1.0.0-beta.2 // indirect
+	github.com/cosmos/cosmos-proto v1.0.0-beta.3 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gogoproto v1.4.6 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
@@ -186,5 +186,3 @@ replace (
 	// tmdb enforcement
 	github.com/tendermint/tm-db => github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 )
-
-replace github.com/terra-money/alliance => github.com/notional-labs/alliance v0.0.0-20230308143913-52bf392b42cf
