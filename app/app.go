@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -944,6 +945,22 @@ func (app *MigalooApp) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
+// BlockedModuleAccountAddrs returns all the app's blocked module account
+// addresses.
+func (app *MigalooApp) BlockedModuleAccountAddrs() map[string]bool {
+	modAccAddrs := make(map[string]bool)
+	// DO NOT REMOVE: StringMapKeys fixes non-deterministic map iteration
+	for _, acc := range StringMapKeys(maccPerms) {
+		// don't blacklist alliance module account, so that it can ibc transfer tokens
+		if acc == alliancemoduletypes.ModuleName {
+			continue
+		} 
+		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
+	}
+
+	return modAccAddrs
+}
+
 // LegacyAmino returns legacy amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
@@ -1021,6 +1038,15 @@ func GetMaccPerms() map[string][]string {
 	return dupMaccPerms
 }
 
+func StringMapKeys[V any](m map[string]V) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 // initParamsKeeper init params keeper and its subspaces
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
@@ -1043,13 +1069,4 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
 
 	return paramsKeeper
-}
-
-// BlockedModuleAccountAddrs returns all the app's module account and fee collector module account addresses, except for gov and alliance.
-func (app *MigalooApp) BlockedModuleAccountAddrs() map[string]bool {
-	modAccAddrs := app.ModuleAccountAddrs()
-	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
-	delete(modAccAddrs, authtypes.NewModuleAddress(alliancemoduletypes.ModuleName).String())
-
-	return modAccAddrs
 }
