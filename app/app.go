@@ -949,8 +949,8 @@ func (app *MigalooApp) ModuleAccountAddrs() map[string]bool {
 // addresses.
 func (app *MigalooApp) BlockedModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
-	// DO NOT REMOVE: StringMapKeys fixes non-deterministic map iteration
-	for _, acc := range StringMapKeys(maccPerms) {
+	// DO NOT REMOVE: stringMapKeys fixes non-deterministic map iteration
+	for _, acc := range stringMapKeys(maccPerms) {
 		// don't blacklist alliance module account, so that it can ibc transfer tokens
 		if acc == alliancemoduletypes.ModuleName {
 			continue
@@ -1038,7 +1038,7 @@ func GetMaccPerms() map[string][]string {
 	return dupMaccPerms
 }
 
-func StringMapKeys[V any](m map[string]V) []string {
+func stringMapKeys[V any](m map[string]V) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
