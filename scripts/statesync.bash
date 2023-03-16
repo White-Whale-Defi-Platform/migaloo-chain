@@ -21,7 +21,7 @@ go install ./...
 migalood init test 
 
 # get genesis
-wget -O ~/.migalood/config/genesis.json https://raw.githubusercontent.com/White-Whale-Defi-Platform/migaloo-chain/main/networks/mainnet/genesis.json
+wget -O ~/.migalood/config/genesis.json https://github.com/White-Whale-Defi-Platform/migaloo-chain/raw/release/v2.0.x/networks/mainnet/genesis.json
 
 # Set minimum gas price.
 sed -i'' 's/minimum-gas-prices = ""/minimum-gas-prices = "0.0025uwhale"/' $HOME/.migalood/config/app.toml
