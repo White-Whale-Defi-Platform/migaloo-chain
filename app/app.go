@@ -139,7 +139,7 @@ const (
 
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
-	NodeDir      = ".migalood"
+	NodeDir = ".migalood"
 	// If EnabledSpecificProposals is "", and this is "true", then enable all x/wasm proposals.
 	// If EnabledSpecificProposals is "", and this is not "true", then disable all x/wasm proposals.
 	ProposalsEnabled = "false"
@@ -237,7 +237,7 @@ var (
 // MigalooApp extended ABCI application
 type MigalooApp struct {
 	*baseapp.BaseApp
-	legacyAmino       *codec.LegacyAmino //nolint:staticcheck
+	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
 	interfaceRegistry types.InterfaceRegistry
 
@@ -914,7 +914,7 @@ func (app *MigalooApp) ModuleAccountAddrs() map[string]bool {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino { //nolint:staticcheck
+func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
