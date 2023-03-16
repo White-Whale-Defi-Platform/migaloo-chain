@@ -92,6 +92,9 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 func initTendermintConfig() *tmcfg.Config {
 	cfg := tmcfg.DefaultConfig()
 
+	cfg.P2P.Seeds = "20e1000e88125698264454a884812746c2eb4807@seeds.lavenderfive.com:12856,c936ae78abca1169362e068e3e94c87a0ace96c7@seeds.cros-nest.com:27656,ebc272824924ea1a27ea3183dd0b9ba713494f83@whitewhale-mainnet-seed.autostake.net:27096,ade4d8bc8cbe014af6ebdf3cb7b1e9ad36f412c0@seeds.polkachu.com:20756"
+
+
 	// these values put a higher strain on node memory
 	cfg.P2P.MaxNumInboundPeers = 320
 	cfg.P2P.MaxNumOutboundPeers = 40
