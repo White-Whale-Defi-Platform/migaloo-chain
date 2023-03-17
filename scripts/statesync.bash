@@ -6,7 +6,11 @@ set -uxe
 export GOPATH=~/go
 export PATH=$PATH:~/go/bin
 
+# remove genesis if exist
+rm -rf $HOME/.migalood/config/genesis.json
+
 # Install Migaloo.
+cd ../
 go install ./...
 
 # NOTE: ABOVE YOU CAN USE ALTERNATIVE DATABASES, HERE ARE THE EXACT COMMANDS
@@ -15,8 +19,6 @@ go install ./...
 # go install -ldflags '-w -s -X github.com/cosmos/cosmos-sdk/types.DBBackend=boltdb' -tags boltdb ./...
 # Tendermint team is currently focusing efforts on badgerdb.
 
-
-
 # Initialize chain.
 migalood init test 
 
@@ -24,13 +26,13 @@ migalood init test
 wget -O ~/.migalood/config/genesis.json https://github.com/White-Whale-Defi-Platform/migaloo-chain/raw/release/v2.0.x/networks/mainnet/genesis.json
 
 # Set minimum gas price.
-sed -i'' 's/minimum-gas-prices = ""/minimum-gas-prices = "0.0025uwhale"/' $HOME/.migalood/config/app.toml
+sed -i '' 's/minimum-gas-prices = ""/minimum-gas-prices = "0.0025uwhale"/' $HOME/.migalood/config/app.toml
 
 # Get "trust_hash" and "trust_height".
 INTERVAL=1000
-LATEST_HEIGHT=$(curl -s https://https://rpc-whitewhale.goldenratiostaking.net/block | jq -r .result.block.header.height)
+LATEST_HEIGHT=$(curl -s https://rpc-whitewhale-h93nh9ykmqnzbrez-ie.internalendpoints.notional.ventures/block | jq -r .result.block.header.height)
 BLOCK_HEIGHT=$(($LATEST_HEIGHT-$INTERVAL)) 
-TRUST_HASH=$(curl -s "https://https://rpc-whitewhale.goldenratiostaking.net/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+TRUST_HASH=$(curl -s "https://rpc-whitewhale-h93nh9ykmqnzbrez-ie.internalendpoints.notional.ventures/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
 
 # Print out block and transaction hash from which to sync state.
 echo "trust_height: $BLOCK_HEIGHT"
@@ -39,7 +41,8 @@ echo "trust_hash: $TRUST_HASH"
 # Export state sync variables.
 export MIGALOOD_STATESYNC_ENABLE=true
 export MIGALOOD_P2P_MAX_NUM_OUTBOUND_PEERS=200
-export MIGALOOD_STATESYNC_RPC_SERVERS="https://https://whitewhale-rpc.lavenderfive.com:443,https://rpc-whitewhale.goldenratiostaking.net:443"
+# replace the url below with a working one
+export MIGALOOD_STATESYNC_RPC_SERVERS="http://65.108.5.173:2481"
 export MIGALOOD_STATESYNC_TRUST_HEIGHT=$BLOCK_HEIGHT
 export MIGALOOD_STATESYNC_TRUST_HASH=$TRUST_HASH
 
