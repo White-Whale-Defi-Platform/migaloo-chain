@@ -1038,7 +1038,7 @@ func GetMaccPerms() map[string][]string {
 	return dupMaccPerms
 }
 
-func stringMapKeys[V any](m map[string]V) []string {
+func stringMapKeys(m map[string][]string) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
