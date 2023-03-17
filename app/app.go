@@ -954,7 +954,7 @@ func (app *MigalooApp) BlockedModuleAccountAddrs() map[string]bool {
 		// don't blacklist alliance module account, so that it can ibc transfer tokens
 		if acc == alliancemoduletypes.ModuleName {
 			continue
-		} 
+		}
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
 	}
 
