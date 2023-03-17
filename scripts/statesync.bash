@@ -15,7 +15,6 @@ go install ./...
 # go install -ldflags '-w -s -X github.com/cosmos/cosmos-sdk/types.DBBackend=rocksdb' -tags rocksdb ./...
 # go install -ldflags '-w -s -X github.com/cosmos/cosmos-sdk/types.DBBackend=badgerdb' -tags badgerdb ./...
 # go install -ldflags '-w -s -X github.com/cosmos/cosmos-sdk/types.DBBackend=boltdb' -tags boltdb ./...
-# Tendermint team is currently focusing efforts on badgerdb.
 
 # Initialize chain.
 migalood init test 
@@ -41,7 +40,7 @@ echo "trust_hash: $TRUST_HASH"
 export MIGALOOD_STATESYNC_ENABLE=true
 export MIGALOOD_P2P_MAX_NUM_OUTBOUND_PEERS=200
 # replace the url below with a working one
-export MIGALOOD_STATESYNC_RPC_SERVERS="http://65.108.5.173:2481"
+export MIGALOOD_STATESYNC_RPC_SERVERS="https://rpc-whitewhale-h93nh9ykmqnzbrez-ie.internalendpoints.notional.ventures:443,http://65.108.5.173:2481"
 export MIGALOOD_STATESYNC_TRUST_HEIGHT=$BLOCK_HEIGHT
 export MIGALOOD_STATESYNC_TRUST_HASH=$TRUST_HASH
 
