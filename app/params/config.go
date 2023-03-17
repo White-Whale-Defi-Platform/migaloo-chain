@@ -31,6 +31,7 @@ func SetAddressPrefixes() {
 	cfg.SetBech32PrefixForConsensusNode(Bech32PrefixConsAddr, Bech32PrefixConsPub)
 	cfg.SetAddressVerifier(wasmtypes.VerifyAddressLen())
 }
+
 func init() {
 	SetAddressPrefixes()
 }
