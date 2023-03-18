@@ -47,7 +47,7 @@ echo "trust_hash: $TRUST_HASH"
 export MIGALOOD_STATESYNC_ENABLE=true
 export MIGALOOD_P2P_MAX_NUM_OUTBOUND_PEERS=200
 # replace the url below with a working one, get it from chain registry
-export MIGALOOD_STATESYNC_RPC_SERVERS="https://whitewhale-mainnet-rpc.autostake.net:443,https://rpc-whitewhale.goldenratiostaking.net,https://whitewhale-rpc.lavenderfive.com,https://rpc-whitewhale.carbonzero.zone:443,https://rpc-whitewhale.whispernode.com:443,https://migaloo-rpc.kleomedes.network:443"
+export MIGALOOD_STATESYNC_RPC_SERVERS="https://whitewhale-mainnet-rpc.autostake.net:443,https://rpc-whitewhale.goldenratiostaking.net:443,https://whitewhale-rpc.lavenderfive.com:443,https://rpc-whitewhale.carbonzero.zone:443,https://rpc-whitewhale.whispernode.com:443,https://migaloo-rpc.kleomedes.network:443"
 export MIGALOOD_STATESYNC_TRUST_HEIGHT=$BLOCK_HEIGHT
 export MIGALOOD_STATESYNC_TRUST_HASH=$TRUST_HASH
 
