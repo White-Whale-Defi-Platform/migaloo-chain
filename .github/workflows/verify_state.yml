@@ -1,0 +1,25 @@
+name: Verify Statesync
+
+on: [push, pull_request]
+
+jobs:
+  verify_statesync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up shell
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Run verify.sh script
+        run: |
+          chmod +x scripts/statesync.bash
+          timeout 5m bash scripts/statesync.bash || true
+
+      - name: Check script with ShellCheck
+        run: |
+          shellcheck scripts/statesync.bash
