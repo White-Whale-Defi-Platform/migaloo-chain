@@ -22,4 +22,4 @@ jobs:
 
       - name: Check script with ShellCheck
         run: |
-          shellcheck ./statesync.bash
+          shellcheck scripts/statesync.bash
