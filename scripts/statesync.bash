@@ -33,7 +33,7 @@ fi
 
 
 # Set minimum gas price.
-sed -i '' 's/minimum-gas-prices = ""/minimum-gas-prices = "0.0025uwhale"/' "$HOME/.migalood/config/app.toml"
+sed -i'' 's/minimum-gas-prices = ""/minimum-gas-prices = "0.0025uwhale"/' "$HOME/.migalood/config/app.toml"
 
 # Get "trust_hash" and "trust_height".
 INTERVAL=1000
