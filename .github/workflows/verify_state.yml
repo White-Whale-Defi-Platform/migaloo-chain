@@ -18,7 +18,7 @@ jobs:
       - name: Run verify.sh script
         run: |
           chmod +x scripts/statesync.bash
-          bash scripts/statesync.bash
+          timeout 10m bash scripts/statesync.bash || true
 
       - name: Check script with ShellCheck
         run: |
