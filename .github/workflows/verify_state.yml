@@ -17,7 +17,7 @@ jobs:
 
       - name: Run verify.sh script
         run: |
-          chmod +x ./statesync.bash
+          chmod +x scripts/statesync.bash
           bash scripts/statesync.bash
 
       - name: Check script with ShellCheck
