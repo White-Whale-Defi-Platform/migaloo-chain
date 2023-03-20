@@ -570,7 +570,7 @@ func NewMigalooApp(
 
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
-	availableCapabilities := "iterator,staking,stargate,cosmwasm_1_1,token_factory"
+	availableCapabilities := "iterator,staking,stargate,cosmwasm_1_1,cosmwasm_1_2,token_factory"
 	wasmOpts = append(bindings.RegisterCustomPlugins(&app.BankKeeper.BaseKeeper, &app.TokenFactoryKeeper), wasmOpts...)
 	app.WasmKeeper = wasm.NewKeeper(
 		appCodec,
@@ -585,7 +585,6 @@ func NewMigalooApp(
 		scopedWasmKeeper,
 		app.TransferKeeper,
 		app.MsgServiceRouter(),
-		app.GRPCQueryRouter(),
 		wasmDir,
 		wasmConfig,
 		availableCapabilities,
