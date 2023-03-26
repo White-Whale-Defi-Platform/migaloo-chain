@@ -1048,7 +1048,7 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 			upgrade.CreateUpgradeHandler(
 				app.mm,
 				cfg,
-				app,
+				app.BaseApp,
 			),
 		)
 	}
