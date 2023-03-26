@@ -135,6 +135,10 @@ import (
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
+
+	//Upgrade Handler
+	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades"
+	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
 )
 
 const (
@@ -152,6 +156,8 @@ var (
 	// of "EnableAllProposals" (takes precedence over ProposalsEnabled)
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
+
+	Upgrades = []upgrades.Upgrade{v2.Upgrade}
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
@@ -655,6 +661,10 @@ func NewMigalooApp(
 		// register the governance hooks
 		),
 	)
+
+	// upgrade handlers
+	cfg := module.NewConfigurator(appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
+
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -835,6 +845,8 @@ func NewMigalooApp(
 	app.MountKVStores(keys)
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
+	// register upgrade
+	app.setupUpgradeHandlers(cfg)
 
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
@@ -1026,6 +1038,20 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 	staticServer := http.FileServer(statikFS)
 	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
+}
+
+// Setup Upgrade Handler
+func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
+	for _, upgrade := range Upgrades {
+		app.UpgradeKeeper.SetUpgradeHandler(
+			upgrade.UpgradeName,
+			upgrade.CreateUpgradeHandler(
+				app.mm,
+				cfg,
+				app,
+			),
+		)
+	}
 }
 
 // GetMaccPerms returns a copy of the module account permissions
