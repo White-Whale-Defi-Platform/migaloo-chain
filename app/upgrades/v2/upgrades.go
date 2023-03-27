@@ -13,9 +13,9 @@ import (
 func CreateUpgradeHandler(
 	mm *module.Manager,
 	configurator module.Configurator,
-	bpm upgrades.BaseAppParamManager,
+	_ upgrades.BaseAppParamManager,
 ) upgradetypes.UpgradeHandler {
-	//todo
+	// todo
 	return func(ctx sdk.Context, _plan upgradetypes.Plan, vm module.VersionMap) (module.VersionMap, error) {
 		return mm.RunMigrations(ctx, configurator, vm)
 	}
