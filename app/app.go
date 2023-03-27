@@ -136,7 +136,7 @@ import (
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
-	//Upgrade Handler
+	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
 )
@@ -1055,7 +1055,6 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 			upgrade.CreateUpgradeHandler(
 				app.mm,
 				cfg,
-				app.BaseApp,
 			),
 		)
 	}
