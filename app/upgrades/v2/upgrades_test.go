@@ -24,21 +24,6 @@ func TestKeeperTestSuite(t *testing.T) {
 
 const dummyUpgradeHeight = 5
 
-func dummyUpgrade(suite *UpgradeTestSuite) {
-	suite.Ctx = suite.Ctx.WithBlockHeight(dummyUpgradeHeight - 1)
-	plan := upgradetypes.Plan{Name: v2.UpgradeName, Height: dummyUpgradeHeight}
-	err := suite.App.UpgradeKeeper.ScheduleUpgrade(suite.Ctx, plan)
-	suite.Require().NoError(err)
-	plan, exists := suite.App.UpgradeKeeper.GetUpgradePlan(suite.Ctx)
-	suite.Require().True(exists)
-
-	suite.Ctx = suite.Ctx.WithBlockHeight(dummyUpgradeHeight)
-	suite.Require().NotPanics(func() {
-		beginBlockRequest := abci.RequestBeginBlock{}
-		suite.App.BeginBlocker(suite.Ctx, beginBlockRequest)
-	})
-}
-
 func (suite *UpgradeTestSuite) TestUpgrade() {
 	suite.Setup()
 	suite.ConfirmUpgradeSucceededs("v2", dummyUpgradeHeight)
