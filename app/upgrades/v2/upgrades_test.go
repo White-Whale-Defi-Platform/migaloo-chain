@@ -1,15 +1,13 @@
 package v2_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/apptesting"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
+	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/suite"
 	abci "github.com/tendermint/tendermint/abci/types"
-
 )
 
 type UpgradeTestSuite struct {
@@ -42,27 +40,6 @@ func dummyUpgrade(suite *UpgradeTestSuite) {
 }
 
 func (suite *UpgradeTestSuite) TestUpgrade() {
-	testCases := []struct {
-		name         string
-		pre_upgrade  func()
-		upgrade      func()
-		post_upgrade func()
-	}{
-		{
-			"Test that the upgrade succeeds",
-			func() {},
-			func() { dummyUpgrade(suite) },
-			func() {},
-		},
-	}
-
-	for _, tc := range testCases {
-		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
-			suite.SetupTest() // reset
-
-			tc.pre_upgrade()
-			tc.upgrade()
-			tc.post_upgrade()
-		})
-	}
+	suite.Setup()
+	suite.ConfirmUpgradeSucceededs("v2", dummyUpgradeHeight)
 }
