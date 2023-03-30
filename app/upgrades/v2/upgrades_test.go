@@ -4,10 +4,7 @@ import (
 	"testing"
 
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/apptesting"
-	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/suite"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 type UpgradeTestSuite struct {
