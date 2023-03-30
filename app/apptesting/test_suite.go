@@ -152,5 +152,3 @@ func (s *KeeperTestHelper) ConfirmUpgradeSucceededs(upgradeName string, upgradeH
 		s.App.BeginBlocker(s.Ctx, beginBlockRequest)
 	})
 }
-
-
