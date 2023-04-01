@@ -176,7 +176,7 @@ require (
 replace (
 	// use notional's wasmd fork with token factory
 	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.0-tf-rc.1
-	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.47.1
+	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.47.0
 	github.com/cosmos/iavl v0.21.0-beta.1 => github.com/cosmos/iavl v0.20.0
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
