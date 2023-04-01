@@ -15,8 +15,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/kv"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
@@ -24,6 +24,8 @@ import (
 	authzkeeper "github.com/cosmos/cosmos-sdk/x/authz/keeper"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	consensusparamtypes "github.com/cosmos/cosmos-sdk/x/consensus/types"
+	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
@@ -133,6 +135,8 @@ func TestAppImportExport(t *testing.T) {
 		app.AppCodec(),
 	)
 
+	t.Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
 	// export state and simParams before the simulation error is checked
 	err = simtestutil.CheckExportSimulation(app, config, simParams)
 	require.NoError(t, err)
@@ -192,6 +196,8 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[authzkeeper.StoreKey], newApp.keys[authzkeeper.StoreKey], [][]byte{}},
 		{app.keys[feegrant.StoreKey], newApp.keys[feegrant.StoreKey], [][]byte{}},
 		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{}},
+		{app.keys[consensusparamtypes.StoreKey], newApp.keys[consensusparamtypes.StoreKey], [][]byte{}},
+		{app.keys[crisistypes.StoreKey], newApp.keys[crisistypes.StoreKey], [][]byte{}},
 	}
 
 	// delete persistent tx counter value
