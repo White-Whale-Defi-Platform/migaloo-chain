@@ -5,14 +5,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	abci "github.com/tendermint/tendermint/abci/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 )
 
 // BaseAppParamManager defines an interrace that BaseApp is expected to fullfil
 // that allows upgrade handlers to modify BaseApp parameters.
 type BaseAppParamManager interface {
-	GetConsensusParams(ctx sdk.Context) *abci.ConsensusParams
-	StoreConsensusParams(ctx sdk.Context, cp *abci.ConsensusParams)
+	GetConsensusParams(ctx sdk.Context) *tmtypes.ConsensusParams
+	StoreConsensusParams(ctx sdk.Context, cp *tmtypes.ConsensusParams)
 }
 
 // Upgrade defines a struct containing necessary fields that a SoftwareUpgradeProposal
