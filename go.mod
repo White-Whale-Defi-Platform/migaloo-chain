@@ -176,8 +176,6 @@ require (
 replace (
 	// use notional's wasmd fork with token factory
 	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.0-tf-rc.1
-	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.47.0
-	github.com/cosmos/iavl v0.21.0-beta.1 => github.com/cosmos/iavl v0.20.0
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
@@ -185,7 +183,8 @@ replace (
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	// use notional's packet-forward-middleware fork with version 7 using cometbft
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0 => github.com/notional-labs/packet-forward-middleware/v7 v7.0.0
+	// use notional's alliance fork with cometbft
 	github.com/terra-money/alliance v0.1.0 => github.com/notional-labs/alliance v1.0.0
-
 )
