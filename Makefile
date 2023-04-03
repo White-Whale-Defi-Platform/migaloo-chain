@@ -3,6 +3,10 @@
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
 
+APP_DIR = ./app
+BINDIR ?= ~/go/bin
+RUNSIM  = $(BINDIR)/runsim
+
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
   # if VERSION is empty, then populate it with branch's name and raw commit hash
@@ -92,3 +96,31 @@ install: go.sum
 
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
+
+runsim: $(RUNSIM)
+$(RUNSIM):
+	@echo "Installing runsim..."
+	@go install github.com/cosmos/tools/cmd/runsim@v1.0.0
+
+test-sim-import-export: runsim
+	@echo "Running application import/export simulation. This may take several minutes..."
+	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(APP_DIR) 50 5 TestAppImportExport
+
+test-sim-custom-genesis-multi-seed: runsim
+	@echo "Running multi-seed custom genesis simulation..."
+	@echo "By default, ${HOME}/.migalood/config/genesis.json will be used."
+	@$(BINDIR)/runsim -Genesis=${HOME}/.migalood/config/genesis.json -SimAppPkg=$(APP_DIR) 400 5 TestFullAppSimulation
+
+test-sim-multi-seed-long: runsim
+	@echo "Running long multi-seed application simulation. This may take awhile!"
+	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(APP_DIR) 500 50 TestFullAppSimulation
+
+test-sim-multi-seed-short: runsim
+	@echo "Running short multi-seed application simulation. This may take awhile!"
+	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(APP_DIR) 50 10 TestFullAppSimulation
+  
+test-sim-custom-genesis-fast: 
+	@echo "Running custom genesis simulation..."
+	@echo "By default, ${HOME}/.migalood/config/genesis.json will be used."
+	@go test $(TEST_FLAGS) -mod=readonly $(SIMAPP) -run TestFullAppSimulation \
+		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h 
