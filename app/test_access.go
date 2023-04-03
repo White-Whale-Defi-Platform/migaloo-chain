@@ -37,7 +37,7 @@ func (s TestSupport) WasmKeeper() wasm.Keeper {
 }
 
 func (s TestSupport) AppCodec() codec.Codec {
-	return s.app.appCodec
+	return s.app.AppCodec()
 }
 
 func (s TestSupport) ScopedWasmIBCKeeper() capabilitykeeper.ScopedKeeper {

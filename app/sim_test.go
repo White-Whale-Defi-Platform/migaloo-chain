@@ -135,8 +135,6 @@ func TestAppImportExport(t *testing.T) {
 		app.AppCodec(),
 	)
 
-	t.Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-
 	// export state and simParams before the simulation error is checked
 	err = simtestutil.CheckExportSimulation(app, config, simParams)
 	require.NoError(t, err)
@@ -237,7 +235,7 @@ func TestFullAppSimulation(t *testing.T) {
 		t,
 		os.Stdout,
 		app.BaseApp,
-		AppStateFn(app.appCodec, app.SimulationManager(), app.DefaultGenesis()),
+		AppStateFn(app.AppCodec(), app.SimulationManager(), app.DefaultGenesis()),
 		simtypes.RandomAccounts, // Replace with own random account function if using keys other than secp256k1
 		simtestutil.SimulationOperations(app, app.AppCodec(), config),
 		app.ModuleAccountAddrs(),
