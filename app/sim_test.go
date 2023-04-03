@@ -56,9 +56,9 @@ type StoreKeysPrefixes struct {
 }
 
 // SetupSimulation wraps simapp.SetupSimulation in order to create any export directory if they do not exist yet
-func SetupSimulation(dirPrefix, dbName string) (simtypes.Config, dbm.DB, string, log.Logger, bool, error) {
+func SetupSimulation(dirPrefix, dbName string, verbose bool, skip bool) (simtypes.Config, dbm.DB, string, log.Logger, bool, error) {
 	config := simcli.NewConfigFromFlags()
-	db, dir, logger, skip, err := simtestutil.SetupSimulation(config, dirPrefix, dbName, true, true)
+	db, dir, logger, skip, err := simtestutil.SetupSimulation(config, dirPrefix, dbName, verbose, skip)
 	if err != nil {
 		return simtypes.Config{}, nil, "", nil, false, err
 	}
@@ -107,7 +107,7 @@ func fauxMerkleModeOpt(bapp *baseapp.BaseApp) {
 }
 
 func TestAppImportExport(t *testing.T) {
-	config, db, dir, logger, skip, err := SetupSimulation("leveldb-app-sim", "Simulation")
+	config, db, dir, logger, skip, err := SetupSimulation("leveldb-app-sim", "Simulation", simcli.FlagVerboseValue, simcli.FlagEnabledValue)
 	if skip {
 		t.Skip("skipping application import/export simulation")
 	}
@@ -151,7 +151,7 @@ func TestAppImportExport(t *testing.T) {
 
 	t.Log("importing genesis...")
 
-	_, newDB, newDir, _, _, err := SetupSimulation("leveldb-app-sim-2", "Simulation-2")
+	_, newDB, newDir, _, _, err := SetupSimulation("leveldb-app-sim-2", "Simulation-2", simcli.FlagVerboseValue, simcli.FlagEnabledValue)
 	require.NoError(t, err, "simulation setup failed")
 
 	defer func() {
@@ -215,7 +215,7 @@ func TestAppImportExport(t *testing.T) {
 }
 
 func TestFullAppSimulation(t *testing.T) {
-	config, db, dir, logger, skip, err := SetupSimulation("leveldb-app-sim", "Simulation")
+	config, db, dir, logger, skip, err := SetupSimulation("leveldb-app-sim", "Simulation", simcli.FlagVerboseValue, simcli.FlagEnabledValue)
 	if skip {
 		t.Skip("skipping application simulation")
 	}
