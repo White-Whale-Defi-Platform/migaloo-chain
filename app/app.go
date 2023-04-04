@@ -803,7 +803,6 @@ func NewMigalooApp(
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
-		routertypes.ModuleName,
 		alliancemoduletypes.ModuleName,
 	)
 
