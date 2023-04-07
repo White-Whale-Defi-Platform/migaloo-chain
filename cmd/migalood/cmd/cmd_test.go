@@ -6,11 +6,11 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"cosmossdk.io/simapp"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/cmd/migalood/cmd"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 )
 
