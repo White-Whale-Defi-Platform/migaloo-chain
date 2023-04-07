@@ -1,4 +1,4 @@
-module github.com/White-Whale-Defi-Platform/migaloo-chain
+module github.com/White-Whale-Defi-Platform/migaloo-chain/v3
 
 go 1.20
 
@@ -19,14 +19,10 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0
 	github.com/stretchr/testify v1.8.2
-	github.com/tendermint/tm-db v0.6.7
 	github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911
 )
 
-require (
-	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/gogo/protobuf v1.3.2 // indirect
-)
+require github.com/gogo/protobuf v1.3.2 // indirect
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
@@ -187,4 +183,7 @@ replace (
 
 	// use notional's packet-forward-middleware fork with version 7 using cometbft
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0 => github.com/notional-labs/packet-forward-middleware/v7 v7.0.0
+
+	// use a patched alliance
+	github.com/terra-money/alliance => github.com/faddat/alliance v0.0.1-beta3.0.20230407115440-caf3f6aa780a
 )

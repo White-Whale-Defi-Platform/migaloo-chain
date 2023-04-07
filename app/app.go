@@ -51,6 +51,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
+
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	feegrantmodule "github.com/cosmos/cosmos-sdk/x/feegrant/module"
@@ -140,14 +142,14 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
+	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
 	// Upgrade Handler
-	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades"
-	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
+	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
+	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
 )
 
 const (
@@ -217,8 +219,8 @@ var (
 			alliancemoduleclient.CreateAllianceProposalHandler,
 			alliancemoduleclient.UpdateAllianceProposalHandler,
 			alliancemoduleclient.DeleteAllianceProposalHandler,
-		},
-		)),
+		}),
+
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
 		slashing.AppModuleBasic{},

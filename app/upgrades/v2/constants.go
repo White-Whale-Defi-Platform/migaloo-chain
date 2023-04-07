@@ -1,7 +1,7 @@
 package v2
 
 import (
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	store "github.com/cosmos/cosmos-sdk/store/types"
 	alliancetypes "github.com/terra-money/alliance/x/alliance/types"
 )

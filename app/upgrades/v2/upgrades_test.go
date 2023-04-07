@@ -3,7 +3,7 @@ package v2_test
 import (
 	"testing"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/apptesting"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/apptesting"
 	"github.com/stretchr/testify/suite"
 )
 
