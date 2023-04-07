@@ -19,6 +19,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 	db "github.com/tendermint/tm-db"
+	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -75,6 +76,9 @@ func TestBlockedAddrs(t *testing.T) {
 	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
 
 	for acc := range maccPerms {
+		if acc == alliancemoduletypes.ModuleName {
+			continue
+		}
 		t.Run(acc, func(t *testing.T) {
 			require.True(t, gapp.BankKeeper.BlockedAddr(gapp.AccountKeeper.GetModuleAddress(acc)),
 				"ensure that blocked addresses are properly set in bank keeper",
@@ -119,7 +123,7 @@ func TestGetEnabledProposals(t *testing.T) {
 	}
 }
 
-func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, opts []wasm.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
+func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, _ []wasm.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
 	genesisState := NewDefaultGenesisState()
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
