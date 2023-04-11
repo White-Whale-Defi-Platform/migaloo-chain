@@ -598,6 +598,7 @@ func NewMigalooApp(
 	// Stargate Queries
 	// recommended by @larry0x.  using the same values as Juno
 	// ref: https://github.com/CosmosContracts/juno/blob/9885a8cd4ffc8d19546bd42b2da139ec5d224c25/app/keepers/keepers.go#L375-L399
+	// these are the exact settings from Juno except that we're using govv1 instead of govv1beta1 (which Juno would reference as govtypes)
 	accepted := wasmkeeper.AcceptedStargateQueries{
 		// ibc
 		"/ibc.core.client.v1.Query/ClientState":    &ibcclienttypes.QueryClientStateResponse{},
