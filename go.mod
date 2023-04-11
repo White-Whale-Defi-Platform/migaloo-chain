@@ -17,12 +17,14 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
-	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0
 	github.com/stretchr/testify v1.8.2
 	github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911
 )
 
-require github.com/gogo/protobuf v1.3.2 // indirect
+require (
+	github.com/gogo/protobuf v1.3.2 // indirect
+	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230321175727-de5b28b4b6ca // indirect
+)
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
@@ -180,9 +182,6 @@ replace (
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
-
-	// use notional's packet-forward-middleware fork with version 7 using cometbft
-	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0 => github.com/notional-labs/packet-forward-middleware/v7 v7.0.0
 
 	// use a patched alliance
 	github.com/terra-money/alliance => github.com/faddat/alliance v0.0.1-beta3.0.20230407115440-caf3f6aa780a
