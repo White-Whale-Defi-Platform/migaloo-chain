@@ -130,7 +130,7 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 
 func setup() (*gaiaapp.GaiaApp, gaiaapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := gaiaapp.MakeTestEncodingConfig()
+	encCdc := gaiaapp.MakeEncodingConfig()
 	var invCheckPeriod uint = 5
 	gaiaApp := gaiaapp.NewGaiaApp(
 		log.NewNopLogger(),
