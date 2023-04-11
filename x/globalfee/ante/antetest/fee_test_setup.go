@@ -16,7 +16,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/suite"
 
-	helpers "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/helpers"
 	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	feeante "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee/ante"
 
