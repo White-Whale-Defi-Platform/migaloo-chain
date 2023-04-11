@@ -17,14 +17,12 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
+	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230321175727-de5b28b4b6ca
 	github.com/stretchr/testify v1.8.2
 	github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911
 )
 
-require (
-	github.com/gogo/protobuf v1.3.2 // indirect
-	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230321175727-de5b28b4b6ca // indirect
-)
+require github.com/gogo/protobuf v1.3.2 // indirect
 
 require (
 	cloud.google.com/go v0.110.0 // indirect
