@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cometbft/cometbft/crypto"
 
 	dbm "github.com/cometbft/cometbft-db"
@@ -25,7 +26,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
 
-	gaiaapp "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation
@@ -34,7 +35,7 @@ const (
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used
-// in GaiaApp testing.
+// in MigalooApp testing.
 var DefaultConsensusParams = &tmproto.ConsensusParams{
 	Block: &tmproto.BlockParams{
 		MaxBytes: 200000,
@@ -69,7 +70,7 @@ type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(o string) interface{} { return nil }
 
-func Setup(t *testing.T) *gaiaapp.GaiaApp {
+func Setup(t *testing.T) *app.MigalooApp {
 	t.Helper()
 
 	privVal := NewPV()
@@ -94,11 +95,11 @@ func Setup(t *testing.T) *gaiaapp.GaiaApp {
 	return app
 }
 
-// SetupWithGenesisValSet initializes a new GaiaApp with a validator set and genesis accounts
+// SetupWithGenesisValSet initializes a new MigalooApp with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
-// of one consensus engine unit in the default token of the GaiaApp from first genesis
-// account. A Nop logger is set in GaiaApp.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *gaiaapp.GaiaApp {
+// of one consensus engine unit in the default token of the MigalooApp from first genesis
+// account. A Nop logger is set in MigalooApp.
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.MigalooApp {
 	t.Helper()
 
 	gaiaApp, genesisState := setup()
@@ -128,29 +129,25 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	return gaiaApp
 }
 
-func setup() (*gaiaapp.GaiaApp, gaiaapp.GenesisState) {
+func setup() (*app.MigalooApp, app.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := gaiaapp.MakeEncodingConfig()
-	var invCheckPeriod uint = 5
-	gaiaApp := gaiaapp.NewGaiaApp(
+	var emptyWasmOpts []wasm.Option
+	gaiaApp := app.NewMigalooApp(
 		log.NewNopLogger(),
 		db,
 		nil,
 		true,
-		map[int64]bool{},
-		gaiaapp.DefaultNodeHome,
-		invCheckPeriod,
-		encCdc,
 		EmptyAppOptions{},
+		emptyWasmOpts,
 	)
-	return gaiaApp, gaiaapp.NewDefaultGenesisState()
+	return gaiaApp, app.NewDefaultGenesisState()
 }
 
 func genesisStateWithValSet(t *testing.T,
-	app *gaiaapp.GaiaApp, genesisState gaiaapp.GenesisState,
+	app *app.MigalooApp, genesisState app.GenesisState,
 	valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount,
 	balances ...banktypes.Balance,
-) gaiaapp.GenesisState {
+) app.GenesisState {
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.AppCodec().MustMarshalJSON(authGenesis)
@@ -204,7 +201,7 @@ func genesisStateWithValSet(t *testing.T,
 	})
 
 	// update total supply
-	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{})
+	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{}, []banktypes.SendEnabled{})
 	genesisState[banktypes.ModuleName] = app.AppCodec().MustMarshalJSON(bankGenesis)
 
 	return genesisState

@@ -71,7 +71,7 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 		bam.SetSnapshot(snapshotStore, snapshottypes.NewSnapshotOptions(50000, 2)),
 	}
 	db := dbm.NewMemDB()
-	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts, baseAppOpts...)
+	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, EmptyBaseAppOptions{}, opts, baseAppOpts...)
 	if withGenesis {
 		return app, NewDefaultGenesisState()
 	}
@@ -81,7 +81,7 @@ func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Opt
 // Setup initializes a new MigalooApp with DefaultNodeHome for integration tests
 func Setup(isCheckTx bool, opts ...wasm.Option) *MigalooApp {
 	db := dbm.NewMemDB()
-	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts)
+	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, EmptyBaseAppOptions{}, opts)
 
 	if !isCheckTx {
 		genesisState := GenesisStateWithValSet(app)

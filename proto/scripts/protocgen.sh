@@ -3,7 +3,7 @@
 set -eo pipefail
 
 protoc_gen_gocosmos() {
-  if ! grep "github.com/gogo/protobuf => github.com/regen-network/protobuf" go.mod &>/dev/null ; then
+  if ! grep "github.com/cosmos/gogoproto => github.com/regen-network/protobuf" go.mod &>/dev/null ; then
     echo -e "\tPlease run this command from somewhere inside the gaia folder."
     return 1
   fi
