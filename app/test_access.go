@@ -24,8 +24,9 @@ type TestSupport struct {
 	app *MigalooApp
 }
 
-func NewTestSupport(t testing.TB, app *MigalooApp) *TestSupport {
-	return &TestSupport{t: t, app: app}
+func NewTestSupport(tb testing.TB, app *MigalooApp) *TestSupport {
+	tb.Helper()
+	return &TestSupport{t: tb, app: app}
 }
 
 func (s TestSupport) IBCKeeper() *ibckeeper.Keeper {
