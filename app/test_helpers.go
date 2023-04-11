@@ -60,7 +60,7 @@ var DefaultConsensusParams = &tmproto.ConsensusParams{
 	},
 }
 
-func setup(t testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*MigalooApp, GenesisState) {
+func setup(t testing.TB, withGenesis bool, opts ...wasm.Option) (*MigalooApp, GenesisState) {
 	nodeHome := t.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := dbm.NewDB("metadata", dbm.MemDBBackend, snapshotDir)
@@ -130,12 +130,12 @@ func SetupMigalooAppWithValSet(t *testing.T) *MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit (10^6) in the default token of the MigalooApp from first genesis
 // account. A Nop logger is set in MigalooApp.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
-	app, genesisState := setup(t, true, 5, opts...)
+func SetupWithGenesisValSet(tb testing.TB, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
+	app, genesisState := setup(tb, true, opts...)
 	genesisState, err := simtestutil.GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
-	require.NoError(t, err)
+	require.NoError(tb, err)
 
 	// init chain will set the validator set and initialize the genesis accounts
 	app.InitChain(
