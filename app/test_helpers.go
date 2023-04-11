@@ -130,12 +130,12 @@ func SetupMigalooAppWithValSet(t *testing.T) *MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit (10^6) in the default token of the MigalooApp from first genesis
 // account. A Nop logger is set in MigalooApp.
-func SetupWithGenesisValSet(tb testing.TB, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
-	app, genesisState := setup(tb, true, opts...)
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
+	app, genesisState := setup(t, true, opts...)
 	genesisState, err := simtestutil.GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
-	require.NoError(tb, err)
+	require.NoError(t, err)
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
-	require.NoError(tb, err)
+	require.NoError(t, err)
 
 	// init chain will set the validator set and initialize the genesis accounts
 	app.InitChain(
@@ -241,7 +241,7 @@ func GenesisStateWithValSet(app *MigalooApp) GenesisState {
 
 // SetupWithEmptyStore setup a wasmd app instance with empty DB
 func SetupWithEmptyStore(t testing.TB) *MigalooApp {
-	app, _ := setup(t, false, 0)
+	app, _ := setup(t, false)
 	return app
 }
 

@@ -68,7 +68,7 @@ func (pv PV) GetPubKey() (crypto.PubKey, error) {
 
 type EmptyAppOptions struct{}
 
-func (EmptyAppOptions) Get(o string) interface{} { return nil }
+func (EmptyAppOptions) Get(_ string) interface{} { return nil }
 
 func Setup(t *testing.T) *app.MigalooApp {
 	t.Helper()
