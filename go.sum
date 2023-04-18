@@ -1136,6 +1136,8 @@ github.com/tendermint/go-amino v0.16.0 h1:GyhmgQKvqF82e2oZeuMSp9JTN0N09emoSZlb2l
 github.com/tendermint/go-amino v0.16.0/go.mod h1:TQU0M1i/ImAo+tYpZi73AU3V/dKeCoMC9Sphe2ZwGME=
 github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911 h1:am8VkBg1e1QnnPjOKpRwgf4DPZWWTTew3H/12PZw0NA=
 github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911/go.mod h1:c/EU0/88AK4ScTinraOuxEDJ8XFc5h+ZLdt+Kj+iZSQ=
+github.com/terra-money/alliance v0.1.1-0.20230417075101-08f20573e834 h1:7+fjX0wCGVI4sFEa1p1GcJmd+IPjxFLPb25iFP2S0JY=
+github.com/terra-money/alliance v0.1.1-0.20230417075101-08f20573e834/go.mod h1:k/GN3/CHW/5QNYD9hPU7V0z1ljjHeQUUln0qGGtTits=
 github.com/tidwall/btree v1.6.0 h1:LDZfKfQIBHGHWSwckhXI0RPSXzlo+KYdjK7FWSqOzzg=
 github.com/tidwall/btree v1.6.0/go.mod h1:twD9XRA5jj9VUQGELzDO4HPQTNJsoWWfYEL+EUQ2cKY=
 github.com/tidwall/gjson v1.12.1/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=

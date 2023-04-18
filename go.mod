@@ -20,7 +20,7 @@ require (
 	github.com/strangelove-ventures/async-icq/v7 v7.0.0-20230410200408-3315fe3057aa
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230412224111-136e94e98861
 	github.com/stretchr/testify v1.8.2
-	github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911
+	github.com/terra-money/alliance v0.1.1-0.20230417075101-08f20573e834
 )
 
 require github.com/gogo/protobuf v1.3.2 // indirect
