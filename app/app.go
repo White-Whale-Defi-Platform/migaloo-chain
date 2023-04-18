@@ -614,7 +614,7 @@ func NewMigalooApp(
 		"/ibc.core.connection.v1.Query/Connection": &ibcconnectiontypes.QueryConnectionResponse{},
 
 		// governance
-		"/cosmos.gov.v1beta1.Query/Vote": &govv1.QueryVoteResponse{},
+		"/cosmos.gov.v1beta1.Query/Vote": &govv1beta1.QueryVoteResponse{},
 
 		// staking
 		"/cosmos.staking.v1beta1.Query/Delegation":          &stakingtypes.QueryDelegationResponse{},
