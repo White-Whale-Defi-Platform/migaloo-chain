@@ -124,6 +124,7 @@ func TestGetEnabledProposals(t *testing.T) {
 }
 
 func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, _ []wasm.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
+	t.Helper()
 	genesisState := NewDefaultGenesisState()
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
