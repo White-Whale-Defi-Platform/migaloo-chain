@@ -18,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
 	github.com/strangelove-ventures/async-icq/v7 v7.0.0-20230410200408-3315fe3057aa
-	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0
+	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230412224111-136e94e98861
 	github.com/stretchr/testify v1.8.2
 	github.com/terra-money/alliance v0.1.1-0.20230407062204-22bd3868e911
 )
@@ -179,9 +179,4 @@ replace (
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 
-	// use notional's packet-forward-middleware fork with version 7 using cometbft
-	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0 => github.com/notional-labs/packet-forward-middleware/v7 v7.0.0
-
-	// use a patched alliance
-	github.com/terra-money/alliance => github.com/faddat/alliance v0.0.1-beta3.0.20230407115440-caf3f6aa780a
 )
