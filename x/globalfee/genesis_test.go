@@ -106,6 +106,7 @@ func TestInitExportGenesis(t *testing.T) {
 }
 
 func setupTestStore(t *testing.T) (sdk.Context, appparams.EncodingConfig, paramstypes.Subspace) {
+	t.Helper()
 	db := dbm.NewMemDB()
 	ms := store.NewCommitMultiStore(db)
 	encCfg := appparams.MakeEncodingConfig()
