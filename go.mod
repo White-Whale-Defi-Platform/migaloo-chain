@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/math v1.0.0
 	cosmossdk.io/simapp v0.0.0-20230224204036-a6adb0821462
 	github.com/CosmWasm/wasmd v0.40.0
-	github.com/cometbft/cometbft v0.37.0
+	github.com/cometbft/cometbft v0.37.1
 	github.com/cometbft/cometbft-db v0.7.0
 	github.com/cosmos/cosmos-sdk v0.47.1
 	github.com/cosmos/ibc-go/v7 v7.0.0
