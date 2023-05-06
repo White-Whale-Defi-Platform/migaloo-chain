@@ -6,9 +6,9 @@ require (
 	cosmossdk.io/math v1.0.0
 	cosmossdk.io/simapp v0.0.0-20230224204036-a6adb0821462
 	github.com/CosmWasm/wasmd v0.40.0
-	github.com/cometbft/cometbft v0.37.0
+	github.com/cometbft/cometbft v0.37.1
 	github.com/cometbft/cometbft-db v0.7.0
-	github.com/cosmos/cosmos-sdk v0.47.1
+	github.com/cosmos/cosmos-sdk v0.47.2
 	github.com/cosmos/ibc-go/v7 v7.0.0
 	github.com/cosmos/interchain-accounts v0.5.1
 	github.com/gorilla/mux v1.8.0
@@ -101,7 +101,7 @@ require (
 	github.com/gtank/merlin v0.1.1 // indirect
 	github.com/gtank/ristretto255 v0.1.2 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-getter v1.7.0 // indirect
+	github.com/hashicorp/go-getter v1.7.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
