@@ -40,7 +40,7 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
-	github.com/CosmWasm/wasmvm v1.2.1 // indirect
+	github.com/CosmWasm/wasmvm v1.2.3 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.44.203 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -175,6 +175,7 @@ require (
 replace (
 	// use notional's wasmd fork with token factory
 	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.0-tf.rc2
+	github.com/CosmWasm/wasmvm => github.com/CosmWasm/wasmvm v1.2.3
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
