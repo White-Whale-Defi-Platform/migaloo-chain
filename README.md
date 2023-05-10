@@ -27,7 +27,7 @@ Because of this, branching is like:
 
 1. [Website](https://migaloo.zone)
 2. [LitePaper]() - Coming Soon
-3. [Docs]() - Coming Soon
+3. [Docs]( https://docs.migaloo.zone/) - Coming Soon
 4. [Roadmap](./docs/ROADMAP.md)
 5. [Discord](https://discord.com/channels/908044702794801233/1069611972053712947)
 6. [Twitter](https://twitter.com/WhiteWhaleDefi)
