@@ -124,3 +124,16 @@ test-sim-custom-genesis-fast:
 	@echo "By default, ${HOME}/.migalood/config/genesis.json will be used."
 	@go test $(TEST_FLAGS) -mod=readonly $(SIMAPP) -run TestFullAppSimulation \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h 
+
+###############################################################################
+###                             Interchain test                             ###
+###############################################################################
+
+# Executes start chain tests via interchaintest
+ictest-start-cosmos:
+	cd tests/interchaintest && go test -race -v -run TestStartMigaloo .
+
+# Executes all tests via interchaintest after compling a local image as migaloo:local
+ictest-all: ictest-start-cosmos
+
+.PHONY: ictest-start-cosmos ictest-all
