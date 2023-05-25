@@ -97,6 +97,9 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
 
+docker-build-debug:
+	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
+
 runsim: $(RUNSIM)
 $(RUNSIM):
 	@echo "Installing runsim..."
