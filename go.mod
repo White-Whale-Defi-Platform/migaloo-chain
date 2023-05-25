@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/math v1.0.0-rc.0
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.46.12
-	github.com/cosmos/ibc-go/v6 v6.1.0
+	github.com/cosmos/ibc-go/v6 v6.1.1
 	github.com/cosmos/interchain-accounts v0.4.3
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.14.0
@@ -16,7 +16,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.2
 	github.com/stretchr/testify v1.8.2
-	github.com/tendermint/tendermint v0.34.27
+	github.com/tendermint/tendermint v0.34.28
 	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 	github.com/terra-money/alliance v0.1.0
 )
@@ -31,7 +31,7 @@ require (
 	filippo.io/edwards25519 v1.0.0-rc.1 // indirect
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
-	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
+	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
 	github.com/CosmWasm/wasmvm v1.2.3 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
@@ -113,7 +113,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/manifoldco/promptui v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mimoo/StrobeGo v0.0.0-20210601165009-122bf33a46e0 // indirect
 	github.com/minio/highwayhash v1.0.2 // indirect
@@ -174,14 +174,14 @@ replace (
 
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
-	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
+	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.0
 
 	// latest grpc doesn't work with with our modified proto compiler, so we need to enforce
 	// the following version across all dependencies.
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
 	// use comet v0.34.27
-	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
+	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
 
 	// tmdb enforcement
 	github.com/tendermint/tm-db => github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
