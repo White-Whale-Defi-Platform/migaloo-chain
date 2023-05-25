@@ -3,10 +3,10 @@ module github.com/White-Whale-Defi-Platform/migaloo-chain
 go 1.20
 
 require (
-	cosmossdk.io/math v1.0.0-rc.0
+	cosmossdk.io/math v1.0.1
 	github.com/CosmWasm/wasmd v0.30.0
-	github.com/cosmos/cosmos-sdk v0.46.12
-	github.com/cosmos/ibc-go/v6 v6.1.0
+	github.com/cosmos/cosmos-sdk v0.46.13
+	github.com/cosmos/ibc-go/v6 v6.1.1
 	github.com/cosmos/interchain-accounts v0.4.3
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.14.0
