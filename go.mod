@@ -24,6 +24,7 @@ require (
 )
 
 require (
+	github.com/coinbase/rosetta-sdk-go/types v1.0.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/linxGnu/grocksdb v1.7.16 // indirect
 )
@@ -55,7 +56,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
-	github.com/coinbase/rosetta-sdk-go v0.7.9 // indirect
 	github.com/confio/ics23/go v0.9.0 // indirect
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.2 // indirect
@@ -181,4 +181,5 @@ replace (
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
 
+	github.com/terra-money/alliance v0.2.0 => github.com/notional-labs/alliance v1.0.1-0.20230525040444-6563ecc53ade
 )
