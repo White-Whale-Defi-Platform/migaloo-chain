@@ -159,8 +159,11 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
 	// Upgrade Handler
+	migalooappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee"
+	globalfeetype "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee/types"
 )
 
 const (
@@ -942,6 +945,19 @@ func NewMigalooApp(
 	// register upgrade
 	app.setupUpgradeHandlers(cfg)
 
+	var bypassMinFeeMsgTypes []string
+	bypassMinFeeMsgTypesOptions := appOpts.Get(migalooappparams.BypassMinFeeMsgTypesKey)
+	if bypassMinFeeMsgTypesOptions == nil {
+		bypassMinFeeMsgTypes = GetDefaultBypassFeeMessages()
+	} else {
+		bypassMinFeeMsgTypes = cast.ToStringSlice(bypassMinFeeMsgTypesOptions)
+	}
+
+	if err := app.ValidateBypassFeeMsgTypes(bypassMinFeeMsgTypes); err != nil {
+		app.Logger().Error("invalid 'bypass-min-fee-msg-types' config option", "error", err)
+		panic(fmt.Sprintf("invalid 'bypass-min-fee-msg-types' config option: %s", err))
+	}
+
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
@@ -951,9 +967,12 @@ func NewMigalooApp(
 				SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
-			IBCKeeper:         app.IBCKeeper,
-			WasmConfig:        &wasmConfig,
-			TXCounterStoreKey: keys[wasm.StoreKey],
+			IBCKeeper:            app.IBCKeeper,
+			WasmConfig:           &wasmConfig,
+			TXCounterStoreKey:    keys[wasm.StoreKey],
+			BypassMinFeeMsgTypes: bypassMinFeeMsgTypes,
+			GlobalFeeSubspace:    app.GetSubspace(globalfee.ModuleName),
+			StakingSubspace:      app.GetSubspace(stakingtypes.ModuleName),
 		},
 	)
 	if err != nil {
@@ -1169,6 +1188,15 @@ func (app *MigalooApp) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
 }
 
+func (app *MigalooApp) ValidateBypassFeeMsgTypes(bypassMinFeeMsgTypes []string) error {
+	for _, msgType := range bypassMinFeeMsgTypes {
+		if _, err := app.interfaceRegistry.Resolve(msgType); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GetMaccPerms returns a copy of the module account permissions
 func GetMaccPerms() map[string][]string {
 	dupMaccPerms := make(map[string][]string)
@@ -1193,7 +1221,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
-	paramsKeeper.Subspace(stakingtypes.ModuleName)
+	paramsKeeper.Subspace(stakingtypes.ModuleName).WithKeyTable(stakingtypes.ParamKeyTable())
 	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
@@ -1208,6 +1236,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(wasm.ModuleName)
 	paramsKeeper.Subspace(routertypes.ModuleName)
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
+	paramsKeeper.Subspace(globalfee.ModuleName).WithKeyTable(globalfeetype.ParamKeyTable())
 
 	return paramsKeeper
 }

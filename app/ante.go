@@ -5,11 +5,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	ibcante "github.com/cosmos/ibc-go/v7/modules/core/ante"
 	"github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
+	migaloofeeante "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee/ante"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
@@ -17,10 +20,15 @@ import (
 type HandlerOptions struct {
 	ante.HandlerOptions
 
-	IBCKeeper         *keeper.Keeper
-	WasmConfig        *wasmTypes.WasmConfig
-	TXCounterStoreKey storetypes.StoreKey
+	IBCKeeper            *keeper.Keeper
+	WasmConfig           *wasmTypes.WasmConfig
+	TXCounterStoreKey    storetypes.StoreKey
+	BypassMinFeeMsgTypes []string
+	GlobalFeeSubspace    paramtypes.Subspace
+	StakingSubspace      paramtypes.Subspace
 }
+
+var maxTotalBypassMinFeeMsgGasUsage uint64 = 1_000_000
 
 func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	if options.AccountKeeper == nil {
@@ -54,6 +62,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewValidateMemoDecorator(options.AccountKeeper),
 		ante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 		ante.NewDeductFeeDecorator(options.AccountKeeper, options.BankKeeper, options.FeegrantKeeper, options.TxFeeChecker),
+		migaloofeeante.NewFeeDecorator(options.BypassMinFeeMsgTypes, options.GlobalFeeSubspace, options.StakingSubspace, maxTotalBypassMinFeeMsgGasUsage),
 		// SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewSetPubKeyDecorator(options.AccountKeeper),
 		ante.NewValidateSigCountDecorator(options.AccountKeeper),
