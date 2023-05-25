@@ -159,7 +159,7 @@ import (
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
 	// Upgrade Handler
-	migalooappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee"
@@ -946,7 +946,7 @@ func NewMigalooApp(
 	app.setupUpgradeHandlers(cfg)
 
 	var bypassMinFeeMsgTypes []string
-	bypassMinFeeMsgTypesOptions := appOpts.Get(migalooappparams.BypassMinFeeMsgTypesKey)
+	bypassMinFeeMsgTypesOptions := appOpts.Get(appparams.BypassMinFeeMsgTypesKey)
 	if bypassMinFeeMsgTypesOptions == nil {
 		bypassMinFeeMsgTypes = GetDefaultBypassFeeMessages()
 	} else {

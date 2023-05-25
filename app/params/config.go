@@ -8,7 +8,7 @@ import (
 var (
 	Bech32Prefix = "migaloo"
 
-	BypassMinFeeMsgTypesKey = "bypass-min-fee-msg-types"
+	BypassMinFeeMsgTypesKey = "bypass-min-fee-msg-types" // #nosec G101
 
 	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
 	Bech32PrefixAccAddr = Bech32Prefix
