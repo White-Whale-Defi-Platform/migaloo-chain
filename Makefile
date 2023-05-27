@@ -124,3 +124,5 @@ test-sim-custom-genesis-fast:
 	@echo "By default, ${HOME}/.migalood/config/genesis.json will be used."
 	@go test $(TEST_FLAGS) -mod=readonly $(SIMAPP) -run TestFullAppSimulation \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h 
+
+
