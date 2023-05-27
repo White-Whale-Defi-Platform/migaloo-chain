@@ -24,8 +24,10 @@ type TestSupport struct {
 	app *MigalooApp
 }
 
-func NewTestSupport(t testing.TB, app *MigalooApp) *TestSupport {
-	return &TestSupport{t: t, app: app}
+// NewTestSupport creates a new TestSupport instance, which provides access to the app for testing.
+func NewTestSupport(tb testing.TB, app *MigalooApp) *TestSupport {
+	tb.Helper()
+	return &TestSupport{t: tb, app: app}
 }
 
 func (s TestSupport) IBCKeeper() *ibckeeper.Keeper {
