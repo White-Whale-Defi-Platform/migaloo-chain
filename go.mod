@@ -9,7 +9,7 @@ require (
 	github.com/cometbft/cometbft v0.37.1
 	github.com/cometbft/cometbft-db v0.8.0
 	github.com/cosmos/cosmos-sdk v0.47.2
-	github.com/cosmos/ibc-go/v7 v7.0.0
+	github.com/cosmos/ibc-go/v7 v7.0.1
 	github.com/cosmos/interchain-accounts v0.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.15.1
@@ -24,6 +24,7 @@ require (
 )
 
 require (
+	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/coinbase/rosetta-sdk-go/types v1.0.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/linxGnu/grocksdb v1.7.16 // indirect
@@ -50,7 +51,6 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.1-0.20220910012023-760eaf8b6816 // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -176,7 +176,7 @@ require (
 
 replace (
 	// use notional's wasmd fork with token factory
-	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.0-tf.rc4
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.1-0.20230531092110-4adef477aa70
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.8.1
