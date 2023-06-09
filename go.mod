@@ -196,3 +196,5 @@ replace (
 	// Downgraded to avoid bugs in following commits which caused simulations to fail.
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )
+
+replace github.com/terra-money/alliance => github.com/notional-labs/alliance v1.0.1-0.20230609085717-80656abc77a0
