@@ -53,7 +53,7 @@ func TestAddGenesisAccountCmd(t *testing.T) {
 		{
 			name:        "multiple denoms",
 			addr:        addr1.String(),
-			denom:       "1000uwhale, 2000uwhale",
+			denom:       "1000uwhale, 2000stake",
 			withKeyring: false,
 			expectErr:   false,
 		},
