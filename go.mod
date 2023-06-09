@@ -179,9 +179,10 @@ replace (
 	// the following version across all dependencies.
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 
-	// use comet v0.34.27
+	// tmdb enforcement
+	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
+
+	// use comet v0.34.28
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
 
-	// tmdb enforcement
-	github.com/tendermint/tm-db => github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 )
