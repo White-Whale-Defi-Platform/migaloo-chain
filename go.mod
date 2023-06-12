@@ -19,7 +19,7 @@ require (
 	github.com/strangelove-ventures/async-icq/v7 v7.0.0-20230410200408-3315fe3057aa
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230412224111-136e94e98861
 	github.com/stretchr/testify v1.8.4
-	github.com/terra-money/alliance v0.2.1-0.20230608095938-26bc51492a03
+	github.com/terra-money/alliance v0.2.2
 )
 
 require (
