@@ -79,14 +79,14 @@ func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Op
 	return app, GenesisState{}
 }
 
-func setupWithChainID(t testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*MigalooApp, GenesisState) {
-	t.Helper()
-	nodeHome := t.TempDir()
+func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*MigalooApp, GenesisState) {
+	tb.Helper()
+	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
 	snapshotDB, err := dbm.NewDB("metadata", dbm.MemDBBackend, snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
-	require.NoError(t, err)
+	require.NoError(tb, err)
 	baseAppOpts := []func(*bam.BaseApp){
 		bam.SetChainID(chainID),
 		bam.SetSnapshot(snapshotStore, snapshottypes.NewSnapshotOptions(50000, 2)),
