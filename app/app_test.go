@@ -6,9 +6,12 @@ import (
 	"testing"
 	"time"
 
-	db "github.com/cometbft/cometbft-db"
-	"github.com/cometbft/cometbft/libs/log"
-	tmtypes "github.com/cometbft/cometbft/types"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
+
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -16,14 +19,11 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/ibc-go/v7/testing/mock"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
 
+	db "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
 )
 
 var emptyWasmOpts []wasm.Option
