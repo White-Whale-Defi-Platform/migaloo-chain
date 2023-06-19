@@ -11,6 +11,9 @@ var (
 	MigalooICTestRepo = "ghcr.io/white-whale-defi-platform/migaloo-chain-ictest"
 	MigalooMainRepo   = "ghcr.io/white-whale-defi-platform/migaloo-chain"
 
+	IBCRelayerImage   = "ghcr.io/cosmos/relayer"
+	IBCRelayerVersion = "justin-localhost-ibc"
+
 	repo, version = GetDockerImageInfo()
 
 	MigalooImage = ibc.DockerImage{

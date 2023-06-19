@@ -9,6 +9,7 @@ import (
 	"github.com/strangelove-ventures/interchaintest/v7"
 	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
+	interchaintestrelayer "github.com/strangelove-ventures/interchaintest/v7/relayer"
 	"github.com/strangelove-ventures/interchaintest/v7/testreporter"
 	"github.com/strangelove-ventures/interchaintest/v7/testutil"
 	"github.com/stretchr/testify/require"
@@ -39,7 +40,7 @@ func TestMigalooGaiaIBCTransfer(t *testing.T) {
 		},
 		{
 			Name:          "gaia",
-			Version:       "v9.0.2",
+			Version:       "v9.1.0",
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
 		},
@@ -54,7 +55,11 @@ func TestMigalooGaiaIBCTransfer(t *testing.T) {
 	// Create relayer factory to utilize the go-relayer
 	client, network := interchaintest.DockerSetup(t)
 
-	r := interchaintest.NewBuiltinRelayerFactory(ibc.CosmosRly, zaptest.NewLogger(t)).Build(t, client, network)
+	r := interchaintest.NewBuiltinRelayerFactory(
+		ibc.CosmosRly,
+		zaptest.NewLogger(t),
+		interchaintestrelayer.CustomDockerImage(IBCRelayerImage, IBCRelayerVersion, "100:1000"),
+		interchaintestrelayer.StartupFlags("--processor", "events", "--block-history", "100")).Build(t, client, network)
 
 	// Create a new Interchain object which describes the chains, relayers, and IBC connections we want to use
 	ic := interchaintest.NewInterchain().
