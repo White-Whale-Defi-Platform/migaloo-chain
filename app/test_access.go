@@ -3,19 +3,18 @@ package app
 import (
 	"testing"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
-
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 )
 
 // Deprecated: use public app attributes directly

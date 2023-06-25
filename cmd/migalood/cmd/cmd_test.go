@@ -7,11 +7,13 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"cosmossdk.io/simapp"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/cmd/migalood/cmd"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/cmd/migalood/cmd"
 )
 
 func TestInitCmd(t *testing.T) {
