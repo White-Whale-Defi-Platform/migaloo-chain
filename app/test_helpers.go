@@ -80,6 +80,35 @@ func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Op
 	return app, GenesisState{}
 }
 
+func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*MigalooApp, GenesisState) {
+	tb.Helper()
+	nodeHome := tb.TempDir()
+	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
+	snapshotDB, err := dbm.NewDB("metadata", dbm.MemDBBackend, snapshotDir)
+	require.NoError(tb, err)
+	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
+	require.NoError(tb, err)
+	baseAppOpts := []func(*bam.BaseApp){
+		bam.SetChainID(chainID),
+		bam.SetSnapshot(snapshotStore, snapshottypes.NewSnapshotOptions(50000, 2)),
+	}
+	db := dbm.NewMemDB()
+	app := NewMigalooApp(
+		log.NewNopLogger(),
+		db, nil, true, map[int64]bool{},
+		nodeHome,
+		invCheckPeriod,
+		MakeEncodingConfig(),
+		wasm.EnableAllProposals,
+		EmptyBaseAppOptions{},
+		opts,
+		baseAppOpts...)
+	if withGenesis {
+		return app, NewDefaultGenesisState()
+	}
+	return app, GenesisState{}
+}
+
 // Setup initializes a new MigalooApp with DefaultNodeHome for integration tests
 func Setup(isCheckTx bool, opts ...wasm.Option) *MigalooApp {
 	db := dbm.NewMemDB()
@@ -135,7 +164,7 @@ func SetupMigalooAppWithValSet(t *testing.T) *MigalooApp {
 // account. A Nop logger is set in MigalooApp.
 func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
-	app, genesisState := setup(t, true, 5, opts...)
+	app, genesisState := setupWithChainID(t, true, 5, chainID, opts...)
 	genesisState, err := simtestutil.GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
 	require.NoError(t, err)
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
