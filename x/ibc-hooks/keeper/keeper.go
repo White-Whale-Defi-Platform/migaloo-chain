@@ -6,7 +6,7 @@ import (
 
 	"github.com/tendermint/tendermint/libs/log"
 
-	"github.com/osmosis-labs/osmosis/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

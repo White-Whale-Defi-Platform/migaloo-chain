@@ -1,4 +1,4 @@
-module github.com/osmosis-labs/osmosis/x/ibc-hooks
+module github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks
 
 go 1.20
 

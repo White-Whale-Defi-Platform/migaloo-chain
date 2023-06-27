@@ -11,8 +11,8 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/osmosis-labs/osmosis/x/ibc-hooks/client/cli"
-	"github.com/osmosis-labs/osmosis/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/client/cli"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/types"
 
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 
