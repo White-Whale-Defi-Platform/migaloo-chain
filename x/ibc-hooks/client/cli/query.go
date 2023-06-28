@@ -2,14 +2,15 @@ package cli
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/keeper"
 	"github.com/spf13/cobra"
-	"strings"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
 )
 
 func indexRunCmd(cmd *cobra.Command, args []string) error {

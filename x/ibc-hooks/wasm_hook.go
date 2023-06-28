@@ -5,20 +5,22 @@ import (
 	"fmt"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/keeper"
 
+	errorsmod "cosmossdk.io/errors"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
-	"github.com/osmosis-labs/osmosis/osmoutils"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/osmosis-types/osmoutils"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	transfertypes "github.com/cosmos/ibc-go/v4/modules/apps/transfer/types"
-	channeltypes "github.com/cosmos/ibc-go/v4/modules/core/04-channel/types"
-	ibcexported "github.com/cosmos/ibc-go/v4/modules/core/exported"
+	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
 )
 
 type ContractAck struct {
@@ -27,6 +29,7 @@ type ContractAck struct {
 }
 
 type WasmHooks struct {
+	WasmKeeper          *wasmkeeper.Keeper
 	ContractKeeper      *wasmkeeper.PermissionedKeeper
 	ibcHooksKeeper      *keeper.Keeper
 	bech32PrefixAccAddr string
@@ -129,7 +132,7 @@ func (h WasmHooks) execWasmMsg(ctx sdk.Context, execMsg *wasmtypes.MsgExecuteCon
 	if err := execMsg.ValidateBasic(); err != nil {
 		return nil, fmt.Errorf(types.ErrBadExecutionMsg, err.Error())
 	}
-	wasmMsgServer := wasmkeeper.NewMsgServerImpl(h.ContractKeeper)
+	wasmMsgServer := wasmkeeper.NewMsgServerImpl(h.WasmKeeper)
 	return wasmMsgServer.ExecuteContract(sdk.WrapSDKContext(ctx), execMsg)
 }
 
@@ -227,19 +230,45 @@ func ValidateAndParseMemo(memo string, receiver string) (isWasmRouted bool, cont
 }
 
 func (h WasmHooks) SendPacketOverride(i ICS4Middleware, ctx sdk.Context, chanCap *capabilitytypes.Capability, packet ibcexported.PacketI) error {
+	height := clienttypes.Height{
+		RevisionNumber: packet.GetTimeoutHeight().GetRevisionHeight(),
+		RevisionHeight: packet.GetTimeoutHeight().GetRevisionHeight(),
+	}
+
 	concretePacket, ok := packet.(channeltypes.Packet)
 	if !ok {
-		return i.channel.SendPacket(ctx, chanCap, packet) // continue
+		if _, err := i.channel.SendPacket(ctx, chanCap,
+			packet.GetSourcePort(),
+			packet.GetSourceChannel(),
+			height,
+			packet.GetTimeoutTimestamp(),
+			packet.GetData()); err != nil {
+			return err
+		}
 	}
 
 	isIcs20, data := isIcs20Packet(concretePacket)
 	if !isIcs20 {
-		return i.channel.SendPacket(ctx, chanCap, packet) // continue
+		if _, err := i.channel.SendPacket(ctx, chanCap,
+			packet.GetSourcePort(),
+			packet.GetSourceChannel(),
+			height,
+			packet.GetTimeoutTimestamp(),
+			packet.GetData()); err != nil {
+			return err
+		}
 	}
 
 	isCallbackRouted, metadata := jsonStringHasKey(data.GetMemo(), types.IBCCallbackKey)
 	if !isCallbackRouted {
-		return i.channel.SendPacket(ctx, chanCap, packet) // continue
+		if _, err := i.channel.SendPacket(ctx, chanCap,
+			packet.GetSourcePort(),
+			packet.GetSourceChannel(),
+			height,
+			packet.GetTimeoutTimestamp(),
+			packet.GetData()); err != nil {
+			return err
+		}
 	}
 
 	// We remove the callback metadata from the memo as it has already been processed.
@@ -252,7 +281,7 @@ func (h WasmHooks) SendPacketOverride(i ICS4Middleware, ctx sdk.Context, chanCap
 	delete(metadata, types.IBCCallbackKey)
 	bzMetadata, err := json.Marshal(metadata)
 	if err != nil {
-		return sdkerrors.Wrap(err, "Send packet with callback error")
+		return errorsmod.Wrap(err, "Send packet with callback error")
 	}
 	stringMetadata := string(bzMetadata)
 	if stringMetadata == "{}" {
@@ -262,7 +291,7 @@ func (h WasmHooks) SendPacketOverride(i ICS4Middleware, ctx sdk.Context, chanCap
 	}
 	dataBytes, err := json.Marshal(data)
 	if err != nil {
-		return sdkerrors.Wrap(err, "Send packet with callback error")
+		return errorsmod.Wrap(err, "Send packet with callback error")
 	}
 
 	packetWithoutCallbackMemo := channeltypes.Packet{
@@ -276,7 +305,13 @@ func (h WasmHooks) SendPacketOverride(i ICS4Middleware, ctx sdk.Context, chanCap
 		TimeoutHeight:      concretePacket.TimeoutHeight,
 	}
 
-	err = i.channel.SendPacket(ctx, chanCap, packetWithoutCallbackMemo)
+	_, err = i.channel.SendPacket(ctx, chanCap,
+		packetWithoutCallbackMemo.GetSourcePort(),
+		packetWithoutCallbackMemo.GetSourceChannel(),
+		height,
+		packetWithoutCallbackMemo.GetTimeoutTimestamp(),
+		packetWithoutCallbackMemo.GetData(),
+	)
 	if err != nil {
 		return err
 	}
