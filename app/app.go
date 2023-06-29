@@ -101,14 +101,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-<<<<<<< HEAD
-	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 
 	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks"
 	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
 	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
-=======
->>>>>>> release/v3.0.x
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	feegrantmodule "github.com/cosmos/cosmos-sdk/x/feegrant/module"
@@ -361,13 +357,8 @@ func NewMigalooApp(
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey, routertypes.StoreKey,
 		evidencetypes.StoreKey, icqtypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasm.StoreKey, icahosttypes.StoreKey,
-<<<<<<< HEAD
-		icacontrollertypes.StoreKey, intertxtypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
-		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey, ibchookstypes.StoreKey,
-=======
 		icacontrollertypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
-		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
->>>>>>> release/v3.0.x
+		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey, ibchookstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -695,9 +686,7 @@ func NewMigalooApp(
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
-<<<<<<< HEAD
 	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
-=======
 	transferStack = router.NewIBCMiddleware(
 		transferStack,
 		&app.RouterKeeper,
@@ -705,7 +694,6 @@ func NewMigalooApp(
 		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
 		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
->>>>>>> release/v3.0.x
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:

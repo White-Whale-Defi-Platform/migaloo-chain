@@ -12,9 +12,12 @@ require (
 	github.com/cosmos/ibc-go/v7 v7.2.0
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.16.0
+	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
+	github.com/strangelove-ventures/async-icq/v7 v7.0.0-20230413165143-a3b65ccdc897
+	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230523193151-73dea436e53f
 	github.com/stretchr/testify v1.8.4
 	github.com/terra-money/alliance v0.2.2
 )
@@ -23,9 +26,9 @@ require (
 	cosmossdk.io/log v1.1.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/s2a-go v0.1.3 // indirect
+	github.com/iancoleman/orderedmap v0.2.0 // indirect
 	github.com/linxGnu/grocksdb v1.7.16 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/rakyll/statik v0.1.7 // indirect
 	github.com/rs/zerolog v1.29.1 // indirect
 )
 
