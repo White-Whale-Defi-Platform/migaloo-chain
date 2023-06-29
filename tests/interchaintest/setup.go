@@ -38,6 +38,7 @@ var (
 		ModifyGenesis:       nil,
 		ConfigFileOverrides: nil,
 	}
+	genesisWalletAmount = int64(10_000_000)
 )
 
 // GetDockerImageInfo returns the appropriate repo and branch version string for integration with the CI pipeline.
