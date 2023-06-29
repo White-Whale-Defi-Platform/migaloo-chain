@@ -6,32 +6,15 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cast"
+	"github.com/spf13/cobra"
 
 	rosettaCmd "cosmossdk.io/tools/rosetta/cmd"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/snapshots"
-	"github.com/cosmos/cosmos-sdk/version"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
-	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
-
-	dbm "github.com/cometbft/cometbft-db"
-	tmcfg "github.com/cometbft/cometbft/config"
-	tmcli "github.com/cometbft/cometbft/libs/cli"
-	"github.com/cometbft/cometbft/libs/log"
-	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
-	"github.com/spf13/cobra"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-	"github.com/cosmos/cosmos-sdk/store"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/config"
 	"github.com/cosmos/cosmos-sdk/client/debug"
@@ -42,11 +25,27 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-
+	"github.com/cosmos/cosmos-sdk/snapshots"
+	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
+	"github.com/cosmos/cosmos-sdk/store"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/crisis"
+	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
+	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+
+	dbm "github.com/cometbft/cometbft-db"
+	tmcfg "github.com/cometbft/cometbft/config"
+	tmcli "github.com/cometbft/cometbft/libs/cli"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
+
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 )
 
 // NewRootCmd creates a new root command for wasmd. It is called once in the
@@ -296,6 +295,18 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		skipUpgradeHeights[int64(h)] = true
 	}
 
+	homeDir := cast.ToString(appOpts.Get(flags.FlagHome))
+
+	chainID := cast.ToString(appOpts.Get(flags.FlagChainID))
+	if chainID == "" {
+		// fallback to genesis chain-id
+		appGenesis, err := tmtypes.GenesisDocFromFile(filepath.Join(homeDir, "config", "genesis.json"))
+		if err != nil {
+			panic(err)
+		}
+
+		chainID = appGenesis.ChainID
+	}
 	return app.NewMigalooApp(
 		logger,
 		db,
@@ -318,6 +329,7 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		baseapp.SetTrace(cast.ToBool(appOpts.Get(server.FlagTrace))),
 		baseapp.SetIndexEvents(cast.ToStringSlice(appOpts.Get(server.FlagIndexEvents))),
 		baseapp.SetSnapshot(snapshotStore, snapshotOptions),
+		baseapp.SetChainID(chainID),
 	)
 }
 

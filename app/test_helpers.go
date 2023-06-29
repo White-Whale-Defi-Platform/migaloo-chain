@@ -11,12 +11,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
+	"github.com/stretchr/testify/require"
+
 	"cosmossdk.io/math"
-	dbm "github.com/cometbft/cometbft-db"
-	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cometbft/cometbft/libs/log"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	tmtypes "github.com/cometbft/cometbft/types"
+
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -27,7 +27,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/snapshots"
 	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -35,10 +34,12 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/ibc-go/v7/testing/mock"
-	"github.com/stretchr/testify/require"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
+	dbm "github.com/cometbft/cometbft-db"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/libs/log"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	tmtypes "github.com/cometbft/cometbft/types"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in
@@ -73,6 +74,35 @@ func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Op
 	}
 	db := dbm.NewMemDB()
 	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, nodeHome, invCheckPeriod, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, opts, baseAppOpts...)
+	if withGenesis {
+		return app, NewDefaultGenesisState()
+	}
+	return app, GenesisState{}
+}
+
+func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*MigalooApp, GenesisState) {
+	tb.Helper()
+	nodeHome := tb.TempDir()
+	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
+	snapshotDB, err := dbm.NewDB("metadata", dbm.MemDBBackend, snapshotDir)
+	require.NoError(tb, err)
+	snapshotStore, err := snapshots.NewStore(snapshotDB, snapshotDir)
+	require.NoError(tb, err)
+	baseAppOpts := []func(*bam.BaseApp){
+		bam.SetChainID(chainID),
+		bam.SetSnapshot(snapshotStore, snapshottypes.NewSnapshotOptions(50000, 2)),
+	}
+	db := dbm.NewMemDB()
+	app := NewMigalooApp(
+		log.NewNopLogger(),
+		db, nil, true, map[int64]bool{},
+		nodeHome,
+		invCheckPeriod,
+		MakeEncodingConfig(),
+		wasm.EnableAllProposals,
+		EmptyBaseAppOptions{},
+		opts,
+		baseAppOpts...)
 	if withGenesis {
 		return app, NewDefaultGenesisState()
 	}
@@ -134,7 +164,7 @@ func SetupMigalooAppWithValSet(t *testing.T) *MigalooApp {
 // account. A Nop logger is set in MigalooApp.
 func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
-	app, genesisState := setup(t, true, 5, opts...)
+	app, genesisState := setupWithChainID(t, true, 5, chainID, opts...)
 	genesisState, err := simtestutil.GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
 	require.NoError(t, err)
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")

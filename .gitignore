@@ -1,6 +1,4 @@
 bin
 .vscode
 .ash_history
-
-
-
+go.work.sum

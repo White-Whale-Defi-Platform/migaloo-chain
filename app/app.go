@@ -10,6 +10,57 @@ import (
 	"sort"
 	"strings"
 
+	// Token Factory for sdk 46
+	"github.com/CosmWasm/wasmd/x/tokenfactory"
+	bindings "github.com/CosmWasm/wasmd/x/tokenfactory/bindings"
+	tokenfactorykeeper "github.com/CosmWasm/wasmd/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/CosmWasm/wasmd/x/tokenfactory/types"
+	"github.com/CosmWasm/wasmd/x/wasm"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
+	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
+	icahost "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host"
+	icahostkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/keeper"
+	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
+	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
+	ibcfee "github.com/cosmos/ibc-go/v7/modules/apps/29-fee"
+	ibcfeekeeper "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/keeper"
+	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
+	transfer "github.com/cosmos/ibc-go/v7/modules/apps/transfer"
+	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
+	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
+	ibc "github.com/cosmos/ibc-go/v7/modules/core"
+	ibcclient "github.com/cosmos/ibc-go/v7/modules/core/02-client"
+	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
+	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	ibcconnectiontypes "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
+	ibcporttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
+	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
+	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
+	ibcmock "github.com/cosmos/ibc-go/v7/testing/mock"
+	"github.com/gorilla/mux"
+	"github.com/rakyll/statik/fs"
+	"github.com/spf13/cast"
+	icq "github.com/strangelove-ventures/async-icq/v7"
+	icqkeeper "github.com/strangelove-ventures/async-icq/v7/keeper"
+	icqtypes "github.com/strangelove-ventures/async-icq/v7/types"
+	"github.com/strangelove-ventures/packet-forward-middleware/v7/router"
+	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
+	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
+	bank "github.com/terra-money/alliance/custom/bank"
+	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
+	alliancemodule "github.com/terra-money/alliance/x/alliance"
+	alliancemoduleclient "github.com/terra-money/alliance/x/alliance/client"
+	alliancemodulekeeper "github.com/terra-money/alliance/x/alliance/keeper"
+	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
+
+	// unnamed import of statik for swagger UI support
+	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
@@ -20,6 +71,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -44,24 +96,26 @@ import (
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
-
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+<<<<<<< HEAD
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 
 	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks"
 	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
 	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
+=======
+>>>>>>> release/v3.0.x
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	feegrantmodule "github.com/cosmos/cosmos-sdk/x/feegrant/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/x/gov"
+	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
@@ -84,50 +138,6 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
-	icacontroller "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller"
-	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
-	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
-	icahost "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host"
-	icahostkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/keeper"
-	icahosttypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/host/types"
-	icatypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/types"
-	ibcfee "github.com/cosmos/ibc-go/v7/modules/apps/29-fee"
-	ibcfeekeeper "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/keeper"
-	ibcfeetypes "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
-	transfer "github.com/cosmos/ibc-go/v7/modules/apps/transfer"
-	ibctransferkeeper "github.com/cosmos/ibc-go/v7/modules/apps/transfer/keeper"
-	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	ibc "github.com/cosmos/ibc-go/v7/modules/core"
-	ibcclient "github.com/cosmos/ibc-go/v7/modules/core/02-client"
-	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
-	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	ibcconnectiontypes "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
-	ibcporttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
-	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
-	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
-	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	ibcmock "github.com/cosmos/ibc-go/v7/testing/mock"
-
-	"github.com/strangelove-ventures/packet-forward-middleware/v7/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
-	bank "github.com/terra-money/alliance/custom/bank"
-	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
-	alliancemodule "github.com/terra-money/alliance/x/alliance"
-	alliancemoduleclient "github.com/terra-money/alliance/x/alliance/client"
-	alliancemodulekeeper "github.com/terra-money/alliance/x/alliance/keeper"
-	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
-
-	// Token Factory for sdk 46
-	"github.com/CosmWasm/wasmd/x/tokenfactory"
-	bindings "github.com/CosmWasm/wasmd/x/tokenfactory/bindings"
-	tokenfactorykeeper "github.com/CosmWasm/wasmd/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/CosmWasm/wasmd/x/tokenfactory/types"
-
-	// Note: please do your research before using this in production app, this is a demo and not an officially
-	// supported IBC team implementation. It has no known issues, but do your own research before using it.
 
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -135,26 +145,8 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	tmos "github.com/cometbft/cometbft/libs/os"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
-	intertx "github.com/cosmos/interchain-accounts/x/inter-tx"
-	intertxkeeper "github.com/cosmos/interchain-accounts/x/inter-tx/keeper"
-	intertxtypes "github.com/cosmos/interchain-accounts/x/inter-tx/types"
-	"github.com/gorilla/mux"
-	"github.com/rakyll/statik/fs"
-	"github.com/spf13/cast"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-
-	icq "github.com/strangelove-ventures/async-icq/v7"
-	icqkeeper "github.com/strangelove-ventures/async-icq/v7/keeper"
-	icqtypes "github.com/strangelove-ventures/async-icq/v7/types"
-
-	// unnamed import of statik for swagger UI support
-	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
-
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
@@ -211,7 +203,7 @@ var (
 	ModuleBasics = module.NewBasicManager(
 		auth.AppModuleBasic{},
 		alliancemodule.AppModuleBasic{},
-		genutil.AppModuleBasic{},
+		genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
 		bank.AppModule{},
 		capability.AppModuleBasic{},
 		consensus.AppModuleBasic{},
@@ -247,7 +239,6 @@ var (
 		ibchooks.AppModuleBasic{},
 		router.AppModuleBasic{},
 		ica.AppModuleBasic{},
-		intertx.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 	)
 
@@ -310,7 +301,6 @@ type MigalooApp struct {
 	ICQKeeper             icqkeeper.Keeper
 	ICAControllerKeeper   icacontrollerkeeper.Keeper
 	ICAHostKeeper         icahostkeeper.Keeper
-	InterTxKeeper         intertxkeeper.Keeper
 	TransferKeeper        ibctransferkeeper.Keeper
 	TokenFactoryKeeper    tokenfactorykeeper.Keeper
 	FeeGrantKeeper        feegrantkeeper.Keeper
@@ -324,7 +314,6 @@ type MigalooApp struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedICQKeeper           capabilitykeeper.ScopedKeeper
-	ScopedInterTxKeeper       capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
 	ScopedIBCFeeKeeper        capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
@@ -372,8 +361,13 @@ func NewMigalooApp(
 		govtypes.StoreKey, paramstypes.StoreKey, ibcexported.StoreKey, upgradetypes.StoreKey, routertypes.StoreKey,
 		evidencetypes.StoreKey, icqtypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasm.StoreKey, icahosttypes.StoreKey,
+<<<<<<< HEAD
 		icacontrollertypes.StoreKey, intertxtypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
 		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey, ibchookstypes.StoreKey,
+=======
+		icacontrollertypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
+		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
+>>>>>>> release/v3.0.x
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -411,7 +405,6 @@ func NewMigalooApp(
 	scopedICQKeeper := app.CapabilityKeeper.ScopeToModule(icqtypes.ModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
-	scopedInterTxKeeper := app.CapabilityKeeper.ScopeToModule(intertxtypes.ModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasm.ModuleName)
 	app.CapabilityKeeper.Seal()
@@ -610,9 +603,6 @@ func NewMigalooApp(
 		app.MsgServiceRouter(),
 	)
 
-	// For wasmd we use the demo controller from https://github.com/cosmos/interchain-accounts but see notes below
-	app.InterTxKeeper = intertxkeeper.NewKeeper(appCodec, keys[intertxtypes.StoreKey], app.ICAControllerKeeper, scopedInterTxKeeper)
-
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
@@ -705,19 +695,21 @@ func NewMigalooApp(
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+<<<<<<< HEAD
 	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
+=======
+	transferStack = router.NewIBCMiddleware(
+		transferStack,
+		&app.RouterKeeper,
+		0,
+		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
+		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
+	)
+>>>>>>> release/v3.0.x
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
 	// icaAuthModuleKeeper.SendTx -> icaController.SendPacket -> fee.SendPacket -> channel.SendPacket
-
-	// Note: please do your research before using this in production app, this is a demo and not an officially
-	// supported IBC team implementation. Do your own research before using it.
-	var icaControllerStack ibcporttypes.IBCModule
-	// You will likely want to use your own reviewed and maintained ica auth module
-	icaControllerStack = intertx.NewIBCModule(app.InterTxKeeper)
-	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
-	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.IBCFeeKeeper)
 
 	// RecvPacket, message that originates from core IBC and goes down to app, the flow is:
 	// channel.RecvPacket -> fee.OnRecvPacket -> icaHost.OnRecvPacket
@@ -742,8 +734,6 @@ func NewMigalooApp(
 	ibcRouter := ibcporttypes.NewRouter().
 		AddRoute(ibctransfertypes.ModuleName, transferStack).
 		AddRoute(wasm.ModuleName, wasmStack).
-		AddRoute(intertxtypes.ModuleName, icaControllerStack).
-		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(icqtypes.ModuleName, icqStack)
 
@@ -814,7 +804,6 @@ func NewMigalooApp(
 		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
-		intertx.NewAppModule(appCodec, app.InterTxKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		router.NewAppModule(&app.RouterKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
@@ -849,7 +838,6 @@ func NewMigalooApp(
 		ibcexported.ModuleName,
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
-		intertxtypes.ModuleName,
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
@@ -880,7 +868,6 @@ func NewMigalooApp(
 		ibcexported.ModuleName,
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
-		intertxtypes.ModuleName,
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
@@ -918,7 +905,6 @@ func NewMigalooApp(
 		ibcexported.ModuleName,
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
-		intertxtypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
 		wasm.ModuleName,
@@ -994,7 +980,6 @@ func NewMigalooApp(
 	app.ScopedWasmKeeper = scopedWasmKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
-	app.ScopedInterTxKeeper = scopedInterTxKeeper
 	app.ScopedICQKeeper = scopedICQKeeper
 
 	// set the contract keeper for the Ics20WasmHooks

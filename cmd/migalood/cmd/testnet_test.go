@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+	"github.com/terra-money/alliance/app"
 
 	"cosmossdk.io/simapp"
 
@@ -18,7 +18,7 @@ import (
 	genutiltest "github.com/cosmos/cosmos-sdk/x/genutil/client/testutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 
-	"github.com/terra-money/alliance/app"
+	"github.com/cometbft/cometbft/libs/log"
 )
 
 func Test_TestnetCmd(t *testing.T) {
