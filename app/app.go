@@ -101,10 +101,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/evidence"
 	evidencekeeper "github.com/cosmos/cosmos-sdk/x/evidence/keeper"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-
-	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks"
-	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
-	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	feegrantkeeper "github.com/cosmos/cosmos-sdk/x/feegrant/keeper"
 	feegrantmodule "github.com/cosmos/cosmos-sdk/x/feegrant/module"
@@ -146,6 +142,9 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
+	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks"
+	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
+	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
 )
 
 const (

@@ -3,21 +3,21 @@ package ibc_hooks
 import (
 	"encoding/json"
 
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/client/cli"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
-
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
 	abci "github.com/cometbft/cometbft/abci/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/client/cli"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
 )
 
 var (
