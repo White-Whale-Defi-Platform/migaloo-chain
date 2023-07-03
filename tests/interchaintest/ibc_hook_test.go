@@ -115,7 +115,7 @@ func TestIBCHooks(t *testing.T) {
 	channel, err := ibc.GetTransferChannel(ctx, r, eRep, migaloo.Config().ChainID, migaloo2.Config().ChainID)
 	require.NoError(t, err)
 
-	_, contractAddr := helpers.SetupContract(t, ctx, migaloo2, migaloo2User.KeyName(), "bytecode/ibchooks_counter.wasm", `{"count":0}`)
+	_, contractAddr := helpers.SetupContract(t, ctx, migaloo2, migaloo2User.KeyName(), "bytecode/counter.wasm", `{"count":0}`)
 
 	// do an ibc transfer through the memo to the other chain.
 	transfer := ibc.WalletAmount{
