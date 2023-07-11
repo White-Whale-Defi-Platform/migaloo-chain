@@ -41,7 +41,7 @@ func TestIBCHooks(t *testing.T) {
 			NumFullNodes:  &numFullNodes,
 		},
 		{
-			Name:          "migaloo-counterparty",
+			Name:          "migaloo",
 			ChainConfig:   cfg2,
 			NumValidators: &numVals,
 			NumFullNodes:  &numFullNodes,
