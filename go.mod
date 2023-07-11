@@ -6,7 +6,7 @@ require (
 	cosmossdk.io/math v1.0.1
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.46.13
-	github.com/cosmos/ibc-go/v6 v6.1.1
+	github.com/cosmos/ibc-go/v6 v6.2.0
 	github.com/cosmos/interchain-accounts v0.4.3
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.14.0
@@ -14,9 +14,9 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
-	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.2
+	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.3
 	github.com/stretchr/testify v1.8.2
-	github.com/tendermint/tendermint v0.34.28
+	github.com/tendermint/tendermint v0.34.29
 	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 	github.com/terra-money/alliance v0.1.2
 )
@@ -51,7 +51,7 @@ require (
 	github.com/cosmos/btcutil v1.0.5 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-beta.3 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
-	github.com/cosmos/gogoproto v1.4.6 // indirect
+	github.com/cosmos/gogoproto v1.4.8 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.6 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
@@ -183,6 +183,6 @@ replace (
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
 	// use comet v0.34.28
-	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.28
+	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29
 
 )
