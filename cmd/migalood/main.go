@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/cmd/migalood/cmd"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v2/cmd/migalood/cmd"
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 )

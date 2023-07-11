@@ -1,4 +1,4 @@
-module github.com/White-Whale-Defi-Platform/migaloo-chain
+module github.com/White-Whale-Defi-Platform/migaloo-chain/v2
 
 go 1.20
 
@@ -186,3 +186,6 @@ replace (
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29
 
 )
+
+// subject to a bug in the group module and gov module migration
+retract [v2.0.0, v2.1.0]
