@@ -31,6 +31,6 @@ jobs:
       uses: alexellis/upload-assets@0.4.0
       env:
         GITHUB_TOKEN: ${{ github.token }}
-        with:
-          asset_paths: '["./bin/migalood"]'
+      with:
+          asset_paths: '["./bin/migalood, migalood_sha512.txt"]'
 
