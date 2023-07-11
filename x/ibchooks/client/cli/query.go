@@ -10,11 +10,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/keeper"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/types"
 )
 
-func indexRunCmd(cmd *cobra.Command, args []string) error {
+func indexRunCmd(cmd *cobra.Command, _ []string) error {
 	usageTemplate := `Usage:{{if .HasAvailableSubCommands}}
   {{.CommandPath}} [command]{{end}}
   

@@ -9,7 +9,7 @@ import (
 
 	"github.com/cometbft/cometbft/libs/log"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/types"
 )
 
 type (

@@ -142,9 +142,9 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
-	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks"
-	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/keeper"
-	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibc-hooks/types"
+	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks"
+	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/keeper"
+	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/types"
 )
 
 const (

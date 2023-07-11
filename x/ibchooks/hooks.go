@@ -1,4 +1,4 @@
-package ibc_hooks
+package ibchooks
 
 import (
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
