@@ -188,4 +188,4 @@ replace (
 )
 
 // subject to a bug in the group module and gov module migration
-retract [v2.0.0, v2.1.0]
+retract [v2.0.0, v2.2.2]
