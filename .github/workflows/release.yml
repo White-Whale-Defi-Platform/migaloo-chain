@@ -16,12 +16,12 @@ jobs:
     - name: build
       run: make build
     - name: sha512sum
-      run: sha512sum build/migalood > migalood_sha512.txt
+      run: sha512sum bin/migalood > migalood_sha512.txt
     - name: 'Upload Binary'
       uses: actions/upload-artifact@v3
       with:
         name: migalood
-        path: build/migalood
+        path: bin/migalood
     - name: 'Upload SHA512'
       uses: actions/upload-artifact@v3
       with:
