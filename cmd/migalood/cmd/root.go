@@ -23,8 +23,8 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/params"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

@@ -131,14 +131,14 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/app/params"
+	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
 	// Upgrade Handler
-	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades"
-	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/app/upgrades/v2"
+	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades"
+	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades/v2"
 )
 
 const (
