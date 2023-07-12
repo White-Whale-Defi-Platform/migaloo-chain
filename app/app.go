@@ -526,18 +526,6 @@ func NewMigalooApp(
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper))
 
-	// RouterKeeper must be created before TransferKeeper
-	app.RouterKeeper = *routerkeeper.NewKeeper(
-		appCodec,
-		app.keys[routertypes.StoreKey],
-		app.GetSubspace(routertypes.ModuleName),
-		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.DistrKeeper,
-		app.BankKeeper,
-		app.IBCKeeper.ChannelKeeper,
-	)
-
 	// Configure the hooks keeper
 	hooksKeeper := ibchookskeeper.NewKeeper(
 		app.keys[ibchookstypes.StoreKey],
@@ -571,6 +559,18 @@ func NewMigalooApp(
 		app.AccountKeeper,
 		app.BankKeeper,
 		scopedTransferKeeper,
+	)
+
+	// RouterKeeper must be created before TransferKeeper
+	app.RouterKeeper = *routerkeeper.NewKeeper(
+		appCodec,
+		app.keys[routertypes.StoreKey],
+		app.GetSubspace(routertypes.ModuleName),
+		app.TransferKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+		app.HooksICS4Wrapper,
 	)
 
 	// ICA Host keeper
@@ -685,7 +685,6 @@ func NewMigalooApp(
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
-	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 	transferStack = router.NewIBCMiddleware(
 		transferStack,
 		&app.RouterKeeper,
@@ -693,6 +692,7 @@ func NewMigalooApp(
 		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
 		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
+	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
