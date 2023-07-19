@@ -475,6 +475,7 @@ func NewMigalooApp(
 		app.BaseApp,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+	app.setupUpgradeStoreLoaders()
 
 	app.AllianceKeeper = alliancemodulekeeper.NewKeeper(
 		appCodec,
@@ -726,9 +727,6 @@ func NewMigalooApp(
 
 	// TODO: add groups module, seems stable and provides another management option
 
-	// upgrade handlers
-	cfg := module.NewConfigurator(appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -895,7 +893,7 @@ func NewMigalooApp(
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 	// register upgrade
-	app.setupUpgradeHandlers(cfg)
+	app.setupUpgradeHandlers()
 
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
@@ -1099,24 +1097,32 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
-// Setup Upgrade Handler
-func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
+func (app *MigalooApp) setupUpgradeHandlers() {
 	for _, upgrade := range Upgrades {
-		upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-		if err != nil {
-			panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
-		}
-		if upgradeInfo.Name == upgrade.UpgradeName {
-			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
-		}
-
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
 			upgrade.CreateUpgradeHandler(
 				app.mm,
-				cfg,
+				app.configurator,
 			),
 		)
+	}
+}
+
+func (app *MigalooApp) setupUpgradeStoreLoaders() {
+	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	if err != nil {
+		panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
+	}
+
+	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		return
+	}
+
+	for _, upgrade := range Upgrades {
+		if upgradeInfo.Name == upgrade.UpgradeName {
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+		}
 	}
 }
 
