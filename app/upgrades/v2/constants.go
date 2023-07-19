@@ -7,7 +7,7 @@ import (
 )
 
 // UpgradeName defines the on-chain upgrade name for the Migaloo v2 upgrade.
-const UpgradeName = "v2"
+const UpgradeName = "v2.2.5"
 
 var Upgrade = upgrades.Upgrade{
 	UpgradeName:          UpgradeName,
