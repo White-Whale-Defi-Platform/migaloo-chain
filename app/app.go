@@ -1106,8 +1106,9 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 		if err != nil {
 			panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
 		}
-
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+		if upgradeInfo.Name == upgrade.UpgradeName {
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+		}
 
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
