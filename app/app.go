@@ -256,7 +256,7 @@ var (
 		tokenfactorytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		alliancemoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		alliancemoduletypes.RewardsPoolName: nil,
-		buildertypes.ModuleName: nil, // initialize the x/builder module account
+		buildertypes.ModuleName:             nil, // initialize the x/builder module account
 	}
 )
 
@@ -794,7 +794,7 @@ func NewMigalooApp(
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		router.NewAppModule(&app.RouterKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
-		// POB 
+		// POB
 		builder.NewAppModule(app.appCodec, app.BuilderKeeper),
 	)
 
@@ -942,7 +942,7 @@ func NewMigalooApp(
 		0,
 		factory,
 	)
-	
+
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
@@ -955,22 +955,22 @@ func NewMigalooApp(
 			IBCKeeper:         app.IBCKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasm.StoreKey],
-			BuilderKeeper: app.BuilderKeeper,
-			Mempool: mempool,
-			TxEncoder: txEncoder,
+			BuilderKeeper:     app.BuilderKeeper,
+			Mempool:           mempool,
+			TxEncoder:         txEncoder,
 		},
 	)
 	if err != nil {
 		panic(fmt.Errorf("failed to create AnteHandler: %s", err))
 	}
-	
+
 	app.SetAnteHandler(anteHandler)
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 	// set the app's mempool
 	app.SetMempool(mempool)
-	
+
 	// POB proposal handlers
 	proposalHandler := pobabci.NewProposalHandler(
 		mempool,
@@ -1028,7 +1028,6 @@ func NewMigalooApp(
 	return app
 }
 
-
 // CheckTx will check the transaction with the provided checkTxHandler. We override the default
 // handler so that we can verify bid transactions before they are inserted into the mempool.
 // With the POB CheckTx, we can verify the bid transaction and all of the bundled transactions
@@ -1040,15 +1039,14 @@ func (app *MigalooApp) CheckTx(req abci.RequestCheckTx) abci.ResponseCheckTx {
 // ChainID gets chainID from private fields of BaseApp
 // Should be removed once SDK 0.50.x will be adopted
 func (app *MigalooApp) ChainID() string { // TODO: remove this method once chain updates to v0.50.x
-field := reflect.ValueOf(app.BaseApp).Elem().FieldByName("chainID")
-return field.String()
+	field := reflect.ValueOf(app.BaseApp).Elem().FieldByName("chainID")
+	return field.String()
 }
 
 // SetCheckTx sets the checkTxHandler for the app.
 func (app *MigalooApp) SetCheckTx(handler pobabci.CheckTx) {
 	app.checkTxHandler = handler
 }
-	
 
 // Name returns the name of the App
 func (app *MigalooApp) Name() string { return app.BaseApp.Name() }
