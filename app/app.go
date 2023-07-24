@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strings"
 
@@ -142,6 +143,11 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
+	pobabci "github.com/skip-mev/pob/abci"
+	buildermempool "github.com/skip-mev/pob/mempool"
+	"github.com/skip-mev/pob/x/builder"
+	builderkeeper "github.com/skip-mev/pob/x/builder/keeper"
+	buildertypes "github.com/skip-mev/pob/x/builder/types"
 )
 
 const (
@@ -231,6 +237,7 @@ var (
 		router.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
+		builder.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -249,6 +256,7 @@ var (
 		tokenfactorytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		alliancemoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		alliancemoduletypes.RewardsPoolName: nil,
+		buildertypes.ModuleName: nil, // initialize the x/builder module account
 	}
 )
 
@@ -307,6 +315,9 @@ type MigalooApp struct {
 	ScopedIBCFeeKeeper        capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
 
+	// POB
+	BuilderKeeper builderkeeper.Keeper
+
 	// the module manager
 	mm *module.Manager
 
@@ -315,6 +326,9 @@ type MigalooApp struct {
 
 	// module configurator
 	configurator module.Configurator
+
+	// over-ridden BaseApp ABCI CheckTx
+	checkTxHandler pobabci.CheckTx
 }
 
 // NewMigalooApp returns a reference to an initialized MigalooApp.
@@ -347,7 +361,7 @@ func NewMigalooApp(
 		evidencetypes.StoreKey, icqtypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasm.StoreKey, icahosttypes.StoreKey,
 		icacontrollertypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
-		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
+		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey, buildertypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -724,6 +738,17 @@ func NewMigalooApp(
 		),
 	)
 
+	// POB keeper integration
+	app.BuilderKeeper = builderkeeper.NewKeeper(
+		app.appCodec,
+		app.keys[buildertypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.DistrKeeper,
+		app.StakingKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
 	// TODO: add groups module, seems stable and provides another management option
 
 	// upgrade handlers
@@ -769,6 +794,8 @@ func NewMigalooApp(
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		router.NewAppModule(&app.RouterKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
+		// POB 
+		builder.NewAppModule(app.appCodec, app.BuilderKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -802,6 +829,8 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		// POB
+		buildertypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -831,6 +860,8 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		// POB
+		buildertypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -868,6 +899,8 @@ func NewMigalooApp(
 		// wasm after ibc transfer
 		wasm.ModuleName,
 		alliancemoduletypes.ModuleName,
+		// POB
+		buildertypes.ModuleName,
 	)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -896,7 +929,20 @@ func NewMigalooApp(
 	app.MountMemoryStores(memKeys)
 	// register upgrade
 	app.setupUpgradeHandlers(cfg)
+	// POB mempool setup
+	txDecoder := encodingConfig.TxConfig.TxDecoder()
+	txEncoder := encodingConfig.TxConfig.TxEncoder()
+	factory := buildermempool.NewDefaultAuctionFactory(txDecoder)
 
+	// initialize application mempool. This is where txs will be stored + ordered according to
+	// stateful ordering rules
+	mempool := buildermempool.NewAuctionMempool(
+		txDecoder,
+		txEncoder,
+		0,
+		factory,
+	)
+	
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
@@ -909,16 +955,43 @@ func NewMigalooApp(
 			IBCKeeper:         app.IBCKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasm.StoreKey],
+			BuilderKeeper: app.BuilderKeeper,
+			Mempool: mempool,
+			TxEncoder: txEncoder,
 		},
 	)
 	if err != nil {
 		panic(fmt.Errorf("failed to create AnteHandler: %s", err))
 	}
-
+	
 	app.SetAnteHandler(anteHandler)
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
+	// set the app's mempool
+	app.SetMempool(mempool)
+	
+	// POB proposal handlers
+	proposalHandler := pobabci.NewProposalHandler(
+		mempool,
+		app.Logger(),
+		anteHandler,
+		txEncoder,
+		txDecoder,
+	)
+	// set proposal-handlers in the app
+	app.SetPrepareProposal(proposalHandler.PrepareProposalHandler())
+	app.SetProcessProposal(proposalHandler.ProcessProposalHandler())
+
+	// CheckTx
+	checkTxHandler := pobabci.NewCheckTxHandler(
+		app.BaseApp,
+		txDecoder,
+		mempool,
+		anteHandler,
+		app.ChainID(),
+	)
+	app.SetCheckTx(checkTxHandler.CheckTx())
 
 	// must be before Loading version
 	// requires the snapshot store to be created and registered as a BaseAppOption
@@ -954,6 +1027,28 @@ func NewMigalooApp(
 
 	return app
 }
+
+
+// CheckTx will check the transaction with the provided checkTxHandler. We override the default
+// handler so that we can verify bid transactions before they are inserted into the mempool.
+// With the POB CheckTx, we can verify the bid transaction and all of the bundled transactions
+// before inserting the bid transaction into the mempool.
+func (app *MigalooApp) CheckTx(req abci.RequestCheckTx) abci.ResponseCheckTx {
+	return app.checkTxHandler(req)
+}
+
+// ChainID gets chainID from private fields of BaseApp
+// Should be removed once SDK 0.50.x will be adopted
+func (app *MigalooApp) ChainID() string { // TODO: remove this method once chain updates to v0.50.x
+field := reflect.ValueOf(app.BaseApp).Elem().FieldByName("chainID")
+return field.String()
+}
+
+// SetCheckTx sets the checkTxHandler for the app.
+func (app *MigalooApp) SetCheckTx(handler pobabci.CheckTx) {
+	app.checkTxHandler = handler
+}
+	
 
 // Name returns the name of the App
 func (app *MigalooApp) Name() string { return app.BaseApp.Name() }
@@ -1162,6 +1257,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(wasm.ModuleName)
 	paramsKeeper.Subspace(routertypes.ModuleName)
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
+	paramsKeeper.Subspace(buildertypes.ModuleName)
 
 	return paramsKeeper
 }
