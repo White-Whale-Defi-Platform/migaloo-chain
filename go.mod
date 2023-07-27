@@ -9,6 +9,8 @@ require (
 	github.com/cometbft/cometbft v0.37.2
 	github.com/cometbft/cometbft-db v0.8.0
 	github.com/cosmos/cosmos-sdk v0.47.4
+	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.0.0-20230726182236-3a9d46a7c2a4
+	github.com/cosmos/ibc-apps/modules/async-icq/v7 v7.0.0-20230726182236-3a9d46a7c2a4
 	github.com/cosmos/ibc-go/v7 v7.2.0
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.16.0
@@ -16,8 +18,6 @@ require (
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
-	github.com/strangelove-ventures/async-icq/v7 v7.0.0-20230410200408-3315fe3057aa
-	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230412224111-136e94e98861
 	github.com/stretchr/testify v1.8.4
 	github.com/terra-money/alliance v0.2.2
 )
@@ -48,7 +48,7 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d // indirect
-	github.com/CosmWasm/wasmvm v1.2.3 // indirect
+	github.com/CosmWasm/wasmvm v1.3.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.44.203 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -183,12 +183,8 @@ replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	// use notional's wasmd fork with token factory
-	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.0-tf
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.40.1-0.20230727180128-8da0c6bcb9c2
 
-	// downgraded to avoid some annoying warning messages
-	// should be fixed after sdk 0.47.3 and gogoproto 1.4.10
-	// https://github.com/cosmos/gogoproto/issues/66
-	github.com/cosmos/gogoproto => github.com/cosmos/gogoproto v1.4.8
 	// dgrijalva/jwt-go is deprecated and doesn't receive security updates.
 	// TODO: remove it: https://github.com/cosmos/cosmos-sdk/issues/13134
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.4.2

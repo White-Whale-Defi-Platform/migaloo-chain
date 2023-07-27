@@ -18,6 +18,12 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router"
+	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/keeper"
+	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/types"
+	icq "github.com/cosmos/ibc-apps/modules/async-icq/v7"
+	icqkeeper "github.com/cosmos/ibc-apps/modules/async-icq/v7/keeper"
+	icqtypes "github.com/cosmos/ibc-apps/modules/async-icq/v7/types"
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
@@ -45,12 +51,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
-	icq "github.com/strangelove-ventures/async-icq/v7"
-	icqkeeper "github.com/strangelove-ventures/async-icq/v7/keeper"
-	icqtypes "github.com/strangelove-ventures/async-icq/v7/types"
-	"github.com/strangelove-ventures/packet-forward-middleware/v7/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
 	bank "github.com/terra-money/alliance/custom/bank"
 	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
 	alliancemodule "github.com/terra-money/alliance/x/alliance"
@@ -654,7 +654,7 @@ func NewMigalooApp(
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedICQKeeper,
-		app.BaseApp, // may be replaced
+		baseapp.NewGRPCQueryRouter(),
 	)
 
 	// Create Transfer Stack
