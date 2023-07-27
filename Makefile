@@ -92,10 +92,10 @@ endif
 all: install
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/migalood
+	go install -mod=readonly ./cmd/migalood
 
 build:
-	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
+	go build  -o bin/migalood ./cmd/migalood
 
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
