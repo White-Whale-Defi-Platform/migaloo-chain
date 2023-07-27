@@ -45,6 +45,11 @@ import (
 	ibcmock "github.com/cosmos/ibc-go/v7/testing/mock"
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
+	pobabci "github.com/skip-mev/pob/abci"
+	buildermempool "github.com/skip-mev/pob/mempool"
+	"github.com/skip-mev/pob/x/builder"
+	builderkeeper "github.com/skip-mev/pob/x/builder/keeper"
+	buildertypes "github.com/skip-mev/pob/x/builder/types"
 	"github.com/spf13/cast"
 	icq "github.com/strangelove-ventures/async-icq/v7"
 	icqkeeper "github.com/strangelove-ventures/async-icq/v7/keeper"
@@ -143,11 +148,6 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
-	pobabci "github.com/skip-mev/pob/abci"
-	buildermempool "github.com/skip-mev/pob/mempool"
-	"github.com/skip-mev/pob/x/builder"
-	builderkeeper "github.com/skip-mev/pob/x/builder/keeper"
-	buildertypes "github.com/skip-mev/pob/x/builder/types"
 )
 
 const (
