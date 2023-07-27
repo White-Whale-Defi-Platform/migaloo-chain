@@ -484,6 +484,7 @@ func NewMigalooApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.DistrKeeper,
+		authtypes.FeeCollectorName,
 	)
 
 	// register the staking hooks
