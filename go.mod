@@ -3,7 +3,7 @@ module github.com/White-Whale-Defi-Platform/migaloo-chain/v3
 go 1.20
 
 require (
-	cosmossdk.io/math v1.0.1
+	cosmossdk.io/math v1.1.0
 	cosmossdk.io/simapp v0.0.0-20230602123434-616841b9704d
 	github.com/CosmWasm/wasmd v0.40.0
 	github.com/cometbft/cometbft v0.37.2
