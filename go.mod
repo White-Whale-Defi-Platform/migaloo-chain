@@ -3,7 +3,7 @@ module github.com/White-Whale-Defi-Platform/migaloo-chain/v2
 go 1.20
 
 require (
-	cosmossdk.io/math v1.0.1
+	cosmossdk.io/math v1.1.2
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.46.13
 	github.com/cosmos/ibc-go/v6 v6.2.0
@@ -15,7 +15,7 @@ require (
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
 	github.com/strangelove-ventures/packet-forward-middleware/v6 v6.0.3
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.4
 	github.com/tendermint/tendermint v0.34.29
 	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 	github.com/terra-money/alliance v0.1.2
