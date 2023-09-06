@@ -1,6 +1,6 @@
 module github.com/White-Whale-Defi-Platform/migaloo-chain/v2
 
-go 1.20
+go 1.21
 
 require (
 	cosmossdk.io/math v1.1.2
@@ -169,7 +169,7 @@ require (
 
 replace (
 	// use notional's wasmd fork with token factory
-	github.com/CosmWasm/wasmd => github.com/terra-money/wasmd v0.30.0-sdk469.5
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.1-0.20230320091624-f5072b9b04a6
 
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
