@@ -1,4 +1,4 @@
-package v2_2_5 //nolint:revive // skip linter for this package name
+package v3 //nolint:revive // skip linter for this package name
 
 import (
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"

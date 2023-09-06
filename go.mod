@@ -1,4 +1,4 @@
-module github.com/White-Whale-Defi-Platform/migaloo-chain/v2
+module github.com/White-Whale-Defi-Platform/migaloo-chain/v3
 
 go 1.21
 
@@ -19,6 +19,7 @@ require (
 	github.com/tendermint/tendermint v0.34.29
 	github.com/tendermint/tm-db v0.6.8-0.20221109095132-774cdfe7e6b0
 	github.com/terra-money/alliance v0.1.2
+	github.com/terra-money/core/v2 v2.4.1
 )
 
 require (
@@ -64,7 +65,7 @@ require (
 	github.com/dgraph-io/badger/v3 v3.2103.2 // indirect
 	github.com/dgraph-io/ristretto v0.1.0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
-	github.com/docker/distribution v2.8.1+incompatible // indirect
+	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1-0.20200219035652-afde56e7acac // indirect
 	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
@@ -186,6 +187,3 @@ replace (
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.29
 
 )
-
-// subject to a bug in the group module and gov module migration
-retract [v2.0.0, v2.2.2]
