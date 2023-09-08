@@ -52,7 +52,7 @@ jobs:
     needs: build-and-push-image
     steps:
       - name: Set up Go 1.20
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v4
         with:
           go-version: '1.20'
 

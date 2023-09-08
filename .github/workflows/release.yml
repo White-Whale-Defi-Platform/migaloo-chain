@@ -1,0 +1,37 @@
+on:
+  release:
+    types: [created]
+
+permissions:
+    contents: write
+    packages: write
+
+jobs:
+  releases-matrix:
+    name: Release Go Binary
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3   
+    - uses: actions/setup-go@v4
+    - name: build
+      run: make build
+    - name: sha512sum
+      run: sha512sum build/migalood > migalood_sha512.txt
+    - name: 'Upload Binary'
+      uses: actions/upload-artifact@v3
+      with:
+        name: migalood
+        path: build/migalood
+    - name: 'Upload SHA512'
+      uses: actions/upload-artifact@v3
+      with:
+        name: sha512
+        path: migalood_sha512.txt
+    - name: Upload release binaries
+      uses: alexellis/upload-assets@0.4.0
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+          asset_paths: '["./bin/migalood", "./migalood_sha512.txt"]'
+
+
