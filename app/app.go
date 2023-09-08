@@ -18,6 +18,9 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7"
+	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/keeper"
+	ibchookstypes "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/types"
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
@@ -142,9 +145,6 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
-	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks"
-	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/keeper"
-	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/types"
 )
 
 const (
@@ -533,7 +533,7 @@ func NewMigalooApp(
 	app.IBCHooksKeeper = &hooksKeeper
 
 	migalooPrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
-	wasmHooks := ibchooks.NewWasmHooks(app.IBCHooksKeeper, app.ContractKeeper, &app.WasmKeeper, migalooPrefix) // The contract keeper needs to be set later // The contract keeper needs to be set later
+	wasmHooks := ibchooks.NewWasmHooks(app.IBCHooksKeeper, &app.WasmKeeper, migalooPrefix) // The contract keeper needs to be set later // The contract keeper needs to be set later
 	app.Ics20WasmHooks = &wasmHooks
 	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
 		app.IBCKeeper.ChannelKeeper,
@@ -970,8 +970,7 @@ func NewMigalooApp(
 	app.ScopedICQKeeper = scopedICQKeeper
 
 	// set the contract keeper for the Ics20WasmHooks
-	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
-	app.Ics20WasmHooks.ContractKeeper = app.ContractKeeper
+	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
