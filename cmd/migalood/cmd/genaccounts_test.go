@@ -5,24 +5,23 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/crypto/hd"
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cometbft/cometbft/libs/log"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
+	"github.com/terra-money/alliance/app"
+	alliancecmd "github.com/terra-money/alliance/cmd/allianced/cmd"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltest "github.com/cosmos/cosmos-sdk/x/genutil/client/testutil"
 
-	"github.com/terra-money/alliance/app"
-	alliancecmd "github.com/terra-money/alliance/cmd/allianced/cmd"
+	"github.com/cometbft/cometbft/libs/log"
 )
 
 var testMbm = module.NewBasicManager(genutil.AppModuleBasic{})
@@ -39,28 +38,28 @@ func TestAddGenesisAccountCmd(t *testing.T) {
 		{
 			name:        "invalid address",
 			addr:        "",
-			denom:       "1000atom",
+			denom:       "1000uwhale",
 			withKeyring: false,
 			expectErr:   true,
 		},
 		{
 			name:        "valid address",
 			addr:        addr1.String(),
-			denom:       "1000atom",
+			denom:       "1000uwhale",
 			withKeyring: false,
 			expectErr:   false,
 		},
 		{
 			name:        "multiple denoms",
 			addr:        addr1.String(),
-			denom:       "1000atom, 2000stake",
+			denom:       "1000uwhale, 2000stake",
 			withKeyring: false,
 			expectErr:   false,
 		},
 		{
 			name:        "with keyring",
 			addr:        "ser",
-			denom:       "1000atom",
+			denom:       "1000uwhale",
 			withKeyring: true,
 			expectErr:   false,
 		},

@@ -2,24 +2,25 @@ package keeper
 
 import (
 	"fmt"
+
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"github.com/cometbft/cometbft/libs/log"
 
-	"github.com/osmosis-labs/osmosis/x/ibc-hooks/types"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/types"
 )
 
 type (
 	Keeper struct {
-		storeKey sdk.StoreKey
+		storeKey storetypes.StoreKey
 	}
 )
 
 // NewKeeper returns a new instance of the x/ibchooks keeper
 func NewKeeper(
-	storeKey sdk.StoreKey,
+	storeKey storetypes.StoreKey,
 ) Keeper {
 	return Keeper{
 		storeKey: storeKey,
@@ -56,6 +57,6 @@ func (k Keeper) DeletePacketCallback(ctx sdk.Context, channel string, packetSequ
 func DeriveIntermediateSender(channel, originalSender, bech32Prefix string) (string, error) {
 	senderStr := fmt.Sprintf("%s/%s", channel, originalSender)
 	senderHash32 := address.Hash(types.SenderPrefix, []byte(senderStr))
-	sender := sdk.AccAddress(senderHash32[:])
+	sender := sdk.AccAddress(senderHash32)
 	return sdk.Bech32ifyAddressBytes(bech32Prefix, sender)
 }

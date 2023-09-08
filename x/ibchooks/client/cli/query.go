@@ -2,17 +2,19 @@ package cli
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/osmosis-labs/osmosis/x/ibc-hooks/keeper"
-	"github.com/spf13/cobra"
-	"strings"
 
-	"github.com/osmosis-labs/osmosis/x/ibc-hooks/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/keeper"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/ibchooks/types"
 )
 
-func indexRunCmd(cmd *cobra.Command, args []string) error {
+func indexRunCmd(cmd *cobra.Command, _ []string) error {
 	usageTemplate := `Usage:{{if .HasAvailableSubCommands}}
   {{.CommandPath}} [command]{{end}}
   
