@@ -541,10 +541,6 @@ func NewMigalooApp(
 		app.Ics20WasmHooks,
 	)
 
-	// Hooks Middleware
-	hooksTransferStack := ibchooks.NewIBCMiddleware(&transferIBCModule, &app.HooksICS4Wrapper)
-	app.TransferStack = &hooksTransferStack
-
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
@@ -636,6 +632,10 @@ func NewMigalooApp(
 	var transferStack porttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+
+	// Hooks Middleware
+	hooksTransferStack := ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
+	app.TransferStack = &hooksTransferStack
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
