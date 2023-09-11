@@ -4,6 +4,9 @@ import (
 	"os"
 	"strings"
 
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
+	"github.com/strangelove-ventures/interchaintest/v7/chain/cosmos"
 	"github.com/strangelove-ventures/interchaintest/v7/ibc"
 )
 
@@ -37,8 +40,23 @@ var (
 		NoHostMount:         false,
 		ModifyGenesis:       nil,
 		ConfigFileOverrides: nil,
+		EncodingConfig:      migalooEncoding(),
 	}
+	genesisWalletAmount = int64(10_000_000)
 )
+
+// migalooEncoding registers the Migaloo specific module codecs so that the associated types and msgs
+// will be supported when writing to the blocksdb sqlite database.
+func migalooEncoding() *testutil.TestEncodingConfig {
+	cfg := cosmos.DefaultEncoding()
+
+	// register custom types
+	wasmtypes.RegisterInterfaces(cfg.InterfaceRegistry)
+
+	//github.com/cosmos/cosmos-sdk/types/module/testutil
+
+	return &cfg
+}
 
 // GetDockerImageInfo returns the appropriate repo and branch version string for integration with the CI pipeline.
 // The remote runner sets the BRANCH_CI env var. If present, interchaintest will use the docker image pushed up to the repo.

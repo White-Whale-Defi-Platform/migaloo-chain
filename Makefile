@@ -139,7 +139,10 @@ ictest-start-cosmos:
 ictest-ibc:
 	cd tests/interchaintest && go test -race -v -run TestMigalooGaiaIBCTransfer .
 
+ictest-ibc-hooks:
+	cd tests/interchaintest && go test -race -v -run TestIBCHooks .
+
 # Executes all tests via interchaintest after compling a local image as migaloo:local
 ictest-all: ictest-start-cosmos ictest-ibc
 
-.PHONY: ictest-start-cosmos ictest-all
+.PHONY: ictest-start-cosmos ictest-all ictest-ibc-hooks ictest-ibc
