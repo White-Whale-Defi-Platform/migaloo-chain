@@ -9,6 +9,9 @@ import (
 	"sort"
 	"strings"
 
+	ibchooks "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/x/ibchooks"
+	ibchookskeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/x/ibchooks/keeper"
+	ibchookstypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/x/ibchooks/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -281,6 +284,7 @@ type MigalooApp struct {
 	EvidenceKeeper      evidencekeeper.Keeper
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCFeeKeeper        ibcfeekeeper.Keeper
+	IBCHooksKeeper      *ibchookskeeper.Keeper
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 	ICAHostKeeper       icahostkeeper.Keeper
 	InterTxKeeper       intertxkeeper.Keeper
@@ -289,6 +293,7 @@ type MigalooApp struct {
 	FeeGrantKeeper      feegrantkeeper.Keeper
 	AuthzKeeper         authzkeeper.Keeper
 	WasmKeeper          wasm.Keeper
+	ContractKeeper      *wasmkeeper.PermissionedKeeper
 	RouterKeeper        routerkeeper.Keeper
 
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
@@ -298,6 +303,10 @@ type MigalooApp struct {
 	ScopedTransferKeeper      capabilitykeeper.ScopedKeeper
 	ScopedIBCFeeKeeper        capabilitykeeper.ScopedKeeper
 	ScopedWasmKeeper          capabilitykeeper.ScopedKeeper
+
+	// Middleware wrapper
+	Ics20WasmHooks   *ibchooks.WasmHooks
+	HooksICS4Wrapper ibchooks.ICS4Middleware
 
 	// the module manager
 	mm *module.Manager
@@ -338,7 +347,7 @@ func NewMigalooApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasm.StoreKey, icahosttypes.StoreKey,
 		icacontrollertypes.StoreKey, intertxtypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
-		alliancemoduletypes.StoreKey,
+		alliancemoduletypes.StoreKey, ibchookstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -503,6 +512,21 @@ func NewMigalooApp(
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper))
 
+	// Configure the hooks keeper
+	hooksKeeper := ibchookskeeper.NewKeeper(
+		app.keys[ibchookstypes.StoreKey],
+	)
+	app.IBCHooksKeeper = &hooksKeeper
+
+	migalooPrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
+	wasmHooks := ibchooks.NewWasmHooks(app.IBCHooksKeeper, app.ContractKeeper, wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper), migalooPrefix) // The contract keeper
+
+	app.Ics20WasmHooks = &wasmHooks
+	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
+		app.IBCKeeper.ChannelKeeper,
+		app.Ics20WasmHooks,
+	)
+
 	// RouterKeeper must be created before TransferKeeper
 	app.RouterKeeper = *routerkeeper.NewKeeper(
 		appCodec,
@@ -512,9 +536,8 @@ func NewMigalooApp(
 		app.IBCKeeper.ChannelKeeper,
 		app.DistrKeeper,
 		app.BankKeeper,
-		app.IBCKeeper.ChannelKeeper,
+		app.HooksICS4Wrapper,
 	)
-
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
@@ -606,6 +629,14 @@ func NewMigalooApp(
 	var transferStack porttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+	transferStack = router.NewIBCMiddleware(
+		transferStack,
+		&app.RouterKeeper,
+		0,
+		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
+		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
+	)
+	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
@@ -705,6 +736,7 @@ func NewMigalooApp(
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		router.NewAppModule(&app.RouterKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants), // always be last to make sure that it checks for all invariants and not only part of them
+		ibchooks.NewAppModule(app.AccountKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -738,6 +770,7 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		ibchookstypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -767,6 +800,7 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		ibchookstypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -805,6 +839,7 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		routertypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		ibchookstypes.ModuleName,
 	)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -890,6 +925,10 @@ func NewMigalooApp(
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedInterTxKeeper = scopedInterTxKeeper
+
+	// set the contract keeper for the Ics20WasmHooks
+	app.ContractKeeper = wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
+	app.Ics20WasmHooks.ContractKeeper = app.ContractKeeper
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
