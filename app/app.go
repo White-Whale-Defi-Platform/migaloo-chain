@@ -1083,6 +1083,7 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 	for _, upgrade := range Upgrades {
 		upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+		upgrade := upgrade
 		if err != nil {
 			panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
 		}
