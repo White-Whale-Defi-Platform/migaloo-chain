@@ -28,15 +28,13 @@ type ContractAck struct {
 }
 
 type WasmHooks struct {
-	WasmKeeper          wasmtypes.ContractOpsKeeper
 	ContractKeeper      *wasmkeeper.PermissionedKeeper
 	ibcHooksKeeper      *keeper.Keeper
 	bech32PrefixAccAddr string
 }
 
-func NewWasmHooks(ibcHooksKeeper *keeper.Keeper, contractKeeper *wasmkeeper.PermissionedKeeper, wasmKeeper wasmtypes.ContractOpsKeeper, bech32PrefixAccAddr string) WasmHooks {
+func NewWasmHooks(ibcHooksKeeper *keeper.Keeper, contractKeeper *wasmkeeper.PermissionedKeeper, bech32PrefixAccAddr string) WasmHooks {
 	return WasmHooks{
-		WasmKeeper:          wasmKeeper,
 		ContractKeeper:      contractKeeper,
 		ibcHooksKeeper:      ibcHooksKeeper,
 		bech32PrefixAccAddr: bech32PrefixAccAddr,
@@ -132,7 +130,7 @@ func (h WasmHooks) execWasmMsg(ctx sdk.Context, execMsg *wasmtypes.MsgExecuteCon
 	if err := execMsg.ValidateBasic(); err != nil {
 		return nil, fmt.Errorf(types.ErrBadExecutionMsg, err.Error())
 	}
-	wasmMsgServer := wasmkeeper.NewMsgServerImpl(h.WasmKeeper)
+	wasmMsgServer := wasmkeeper.NewMsgServerImpl(h.ContractKeeper)
 	return wasmMsgServer.ExecuteContract(sdk.WrapSDKContext(ctx), execMsg)
 }
 

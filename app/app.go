@@ -519,7 +519,7 @@ func NewMigalooApp(
 	app.IBCHooksKeeper = &hooksKeeper
 
 	migalooPrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
-	wasmHooks := ibchooks.NewWasmHooks(app.IBCHooksKeeper, app.ContractKeeper, wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper), migalooPrefix) // The contract keeper
+	wasmHooks := ibchooks.NewWasmHooks(app.IBCHooksKeeper, nil, migalooPrefix) // The contract keeper needs to be set later
 
 	app.Ics20WasmHooks = &wasmHooks
 	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
