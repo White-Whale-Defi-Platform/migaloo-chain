@@ -146,6 +146,7 @@ import (
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
 	v2_2_5 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2_2_5"
+	v3 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3"
 )
 
 const (
@@ -164,7 +165,7 @@ var (
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
 
-	Upgrades = []upgrades.Upgrade{v2.Upgrade, v2_2_5.Upgrade}
+	Upgrades = []upgrades.Upgrade{v2.Upgrade, v2_2_5.Upgrade, v3.Upgrade}
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
