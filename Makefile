@@ -92,3 +92,21 @@ install: go.sum
 
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
+
+docker-build-debug:
+	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
+###############################################################################
+###                             Interchain test                             ###
+###############################################################################
+
+# Executes start chain tests via interchaintest
+ictest-start-cosmos:
+	cd tests/interchaintest && go test -race -v -run TestStartMigaloo .
+
+ictest-ibc:
+	cd tests/interchaintest && go test -race -v -run TestMigalooGaiaIBCTransfer .
+
+# Executes all tests via interchaintest after compling a local image as migaloo:local
+ictest-all: ictest-start-cosmos ictest-ibc
+
+.PHONY: ictest-start-cosmos ictest-ibc ictest-all
