@@ -480,8 +480,8 @@ github.com/multiformats/go-varint v0.0.6 h1:gk85QWKxh3TazbLxED/NlDVv8+q+ReFJk7Y2
 github.com/multiformats/go-varint v0.0.6/go.mod h1:3Ls8CIEsrijN6+B7PbrXRPxHRPuXSrVKRY101jdMZYE=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e/go.mod h1:zD1mROLANZcx1PVRCS0qkT7pwLkGfwJo4zjcN/Tysno=
-github.com/notional-labs/interchaintest/v5 v5.0.0-20230915033529-179203c903bb h1:gBu5uODQkeWTVl49uHsSIxItVX7zbnqvKjzws/eOq74=
-github.com/notional-labs/interchaintest/v5 v5.0.0-20230915033529-179203c903bb/go.mod h1:JCEkazqkTCsW1q1MuUcqxEa3cnPq/5ILaW23KK8ABpc=
+github.com/notional-labs/interchaintest/v5 v5.0.0-20230915102917-769835b8dbac h1:WpxJfIYKaBjEGevZEiY03WFJjhSu+epizerGTYFT6oM=
+github.com/notional-labs/interchaintest/v5 v5.0.0-20230915102917-769835b8dbac/go.mod h1:JCEkazqkTCsW1q1MuUcqxEa3cnPq/5ILaW23KK8ABpc=
 github.com/nxadm/tail v1.4.4/go.mod h1:kenIhsEOeOJmVchQTgglprH7qJGnHDVpk1VPCcaMI8A=
 github.com/nxadm/tail v1.4.8 h1:nPr65rt6Y5JFSKQO7qToXr7pePgD6Gwiw05lkbyAQTE=
 github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+AU=

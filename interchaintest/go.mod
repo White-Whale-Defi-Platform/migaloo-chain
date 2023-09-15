@@ -1,9 +1,10 @@
-module github.com/White-Whale-Defi-Platform/migaloo-chain/tests/interchaintest
+module github.com/White-Whale-Defi-Platform/migaloo-chain/interchaintest
 
 go 1.20
 
 require (
 	github.com/cosmos/ibc-go/v5 v5.3.1
+	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845
 	github.com/strangelove-ventures/interchaintest/v5 v5.0.0-20230811013402-d7955286ba12
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.24.0
@@ -97,7 +98,6 @@ require (
 	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.1.0 // indirect
-	github.com/icza/dyno v0.0.0-20220812133438-f0b6f8a18845 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/ipfs/go-cid v0.2.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -205,10 +205,10 @@ replace (
 	github.com/ChainSafe/go-schnorrkel => github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
 	github.com/ChainSafe/go-schnorrkel/1 => github.com/ChainSafe/go-schnorrkel v1.0.0
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
-	github.com/strangelove-ventures/interchaintest/v5 => github.com/notional-labs/interchaintest/v5 v5.0.0-20230915033529-179203c903bb
+	github.com/strangelove-ventures/interchaintest/v5 => github.com/notional-labs/interchaintest/v5 v5.0.0-20230915102917-769835b8dbac
 	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.34.27
 	// github.com/tidwall/btree => github.com/tidwall/btree v1.5.0
 	github.com/vedhavyas/go-subkey => github.com/strangelove-ventures/go-subkey v1.0.7
 )
 
-replace github.com/White-Whale-Defi-Platform/migaloo-chain/ => ../../
+replace github.com/White-Whale-Defi-Platform/migaloo-chain/ => ../
