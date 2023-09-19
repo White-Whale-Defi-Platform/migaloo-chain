@@ -137,15 +137,13 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
-	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
-	v2_2_5 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2_2_5"
 	v3 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3"
 )
 
@@ -165,7 +163,7 @@ var (
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
 
-	Upgrades = []upgrades.Upgrade{v2.Upgrade, v2_2_5.Upgrade, v3.Upgrade}
+	Upgrades = []upgrades.Upgrade{v3.Upgrade}
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
@@ -333,7 +331,7 @@ func NewMigalooApp(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig wasmappparams.EncodingConfig,
+	encodingConfig appparams.EncodingConfig,
 	enabledProposals []wasm.ProposalType,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
@@ -1104,17 +1102,6 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 		}
 	}
 }
-
-// TODO: ensure that we include this or its equivalent in the actual upgrade, referencing our v3 upgrade
-// Add stores for new modules
-//	if upgradeInfo.Name == terraappconfig.Upgrade2_3_0 && !app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-//		storeUpgrades := storetypes.StoreUpgrades{
-//			Added: []string{
-//				ibchookstypes.StoreKey,
-//			},
-//		}
-//		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &storeUpgrades))
-//	}
 
 // GetMaccPerms returns a copy of the module account permissions
 func GetMaccPerms() map[string][]string {
