@@ -562,6 +562,8 @@ func NewMigalooApp(
 		scopedTransferKeeper,
 	)
 
+	app.RouterKeeper.SetTransferKeeper(app.TransferKeeper)
+
 	// ICA Host keeper
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
 		appCodec, keys[icahosttypes.StoreKey], app.GetSubspace(icahosttypes.SubModuleName),
