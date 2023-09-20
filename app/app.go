@@ -623,6 +623,9 @@ func NewMigalooApp(
 		wasmOpts...,
 	)
 
+	contractKeeper := wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
+	app.Ics20WasmHooks.ContractKeeper = contractKeeper
+
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
