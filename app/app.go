@@ -100,6 +100,12 @@ import (
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
 	bank "github.com/terra-money/alliance/custom/bank"
 	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
+
+	// use TFL's ibc-hooks from Osmosis' ibc-hooks
+	ibchooks "github.com/terra-money/core/v2/x/ibc-hooks"
+	ibchookskeeper "github.com/terra-money/core/v2/x/ibc-hooks/keeper"
+	ibchookstypes "github.com/terra-money/core/v2/x/ibc-hooks/types"
+
 	alliancemodule "github.com/terra-money/alliance/x/alliance"
 	alliancemoduleclient "github.com/terra-money/alliance/x/alliance/client"
 	alliancemodulekeeper "github.com/terra-money/alliance/x/alliance/keeper"
@@ -131,15 +137,14 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmappparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/params"
+	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
 	// Upgrade Handler
-	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades"
-	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades/v2"
-	v2_2_5 "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades/v2_2_5"
+	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
+	v3 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3"
 )
 
 const (
@@ -158,7 +163,7 @@ var (
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
 
-	Upgrades = []upgrades.Upgrade{v2.Upgrade, v2_2_5.Upgrade}
+	Upgrades = []upgrades.Upgrade{v3.Upgrade}
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
@@ -227,6 +232,7 @@ var (
 		ica.AppModuleBasic{},
 		intertx.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
+		ibchooks.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -292,6 +298,12 @@ type MigalooApp struct {
 	WasmKeeper          wasm.Keeper
 	RouterKeeper        routerkeeper.Keeper
 
+	// IBC hooks
+	IBCHooksKeeper   *ibchookskeeper.Keeper
+	TransferStack    *ibchooks.IBCMiddleware
+	Ics20WasmHooks   *ibchooks.WasmHooks
+	HooksICS4Wrapper ibchooks.ICS4Middleware
+
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
@@ -319,7 +331,7 @@ func NewMigalooApp(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig wasmappparams.EncodingConfig,
+	encodingConfig appparams.EncodingConfig,
 	enabledProposals []wasm.ProposalType,
 	appOpts servertypes.AppOptions,
 	wasmOpts []wasm.Option,
@@ -339,7 +351,7 @@ func NewMigalooApp(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasm.StoreKey, icahosttypes.StoreKey,
 		icacontrollertypes.StoreKey, intertxtypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
-		alliancemoduletypes.StoreKey,
+		alliancemoduletypes.StoreKey, ibchookstypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -516,6 +528,19 @@ func NewMigalooApp(
 		app.IBCKeeper.ChannelKeeper,
 	)
 
+	// Configure the hooks keeper
+	hooksKeeper := ibchookskeeper.NewKeeper(
+		keys[ibchookstypes.StoreKey],
+	)
+	app.IBCHooksKeeper = &hooksKeeper
+	migalooPrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
+	wasmHooks := ibchooks.NewWasmHooks(&hooksKeeper, nil, migalooPrefix) // The contract keeper needs to be set later
+	app.Ics20WasmHooks = &wasmHooks
+	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
+		app.IBCKeeper.ChannelKeeper,
+		app.Ics20WasmHooks,
+	)
+
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
@@ -536,6 +561,8 @@ func NewMigalooApp(
 		app.BankKeeper,
 		scopedTransferKeeper,
 	)
+
+	app.RouterKeeper.SetTransferKeeper(app.TransferKeeper)
 
 	// ICA Host keeper
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -598,6 +625,9 @@ func NewMigalooApp(
 		wasmOpts...,
 	)
 
+	contractKeeper := wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper)
+	app.Ics20WasmHooks.ContractKeeper = contractKeeper
+
 	// The gov proposal types can be individually enabled
 	if len(enabledProposals) != 0 {
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
@@ -607,6 +637,16 @@ func NewMigalooApp(
 	var transferStack porttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+	transferStack = router.NewIBCMiddleware(
+		transferStack,
+		&app.RouterKeeper,
+		0,
+		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
+		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
+	)
+	// Hooks Middleware
+	hooksTransferStack := ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
+	app.TransferStack = &hooksTransferStack
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
@@ -705,6 +745,7 @@ func NewMigalooApp(
 		intertx.NewAppModule(appCodec, app.InterTxKeeper),
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		router.NewAppModule(&app.RouterKeeper),
+		ibchooks.NewAppModule(app.AccountKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants), // always be last to make sure that it checks for all invariants and not only part of them
 	)
 
@@ -736,6 +777,7 @@ func NewMigalooApp(
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		intertxtypes.ModuleName,
+		ibchookstypes.ModuleName,
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
@@ -765,6 +807,7 @@ func NewMigalooApp(
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
 		intertxtypes.ModuleName,
+		ibchookstypes.ModuleName,
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
@@ -803,6 +846,7 @@ func NewMigalooApp(
 		intertxtypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
+		ibchookstypes.ModuleName,
 		wasm.ModuleName,
 		routertypes.ModuleName,
 		alliancemoduletypes.ModuleName,
