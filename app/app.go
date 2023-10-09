@@ -1052,21 +1052,18 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 		return
 	}
 
-	currentHeight := app.CommitMultiStore().LastCommitID().Version
-
 	for _, upgrade := range Upgrades {
 		if upgradeInfo.Name == upgrade.UpgradeName {
 			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
 		}
-		if upgradeInfo.Height == currentHeight+1 {
-			app.UpgradeKeeper.SetUpgradeHandler(
-				upgrade.UpgradeName,
-				upgrade.CreateUpgradeHandler(
-					app.mm,
-					cfg,
-				),
-			)
-		}
+		app.UpgradeKeeper.SetUpgradeHandler(
+			upgrade.UpgradeName,
+			upgrade.CreateUpgradeHandler(
+				app.mm,
+				cfg,
+			),
+		)
+
 	}
 }
 
