@@ -139,6 +139,7 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades/v2"
+	v2_2_5 "github.com/White-Whale-Defi-Platform/migaloo-chain/v2/app/upgrades/v2_2_5"
 )
 
 const (
@@ -157,7 +158,7 @@ var (
 	// https://github.com/CosmWasm/wasmd/blob/02a54d33ff2c064f3539ae12d75d027d9c665f05/x/wasm/internal/types/proposal.go#L28-L34
 	EnableSpecificProposals = ""
 
-	Upgrades = []upgrades.Upgrade{v2.Upgrade}
+	Upgrades = []upgrades.Upgrade{v2.Upgrade, v2_2_5.Upgrade}
 )
 
 // GetEnabledProposals parses the ProposalsEnabled / EnableSpecificProposals values to
@@ -1042,14 +1043,19 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
+	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	if err != nil {
+		panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
+	}
+
+	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		return
+	}
+
 	for _, upgrade := range Upgrades {
-		upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-		if err != nil {
-			panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
+		if upgradeInfo.Name == upgrade.UpgradeName {
+			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
 		}
-
-		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
-
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
 			upgrade.CreateUpgradeHandler(
@@ -1057,6 +1063,7 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 				cfg,
 			),
 		)
+
 	}
 }
 
