@@ -173,4 +173,6 @@ replace (
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	// use tendermint v0.34.25
 	github.com/tendermint/tendermint => github.com/skip-mev/mev-tendermint v0.34.25-mev.15
+	// update ledger-go and hid packages
+	github.com/cosmos/ledger-cosmos-go => github.com/cosmos/ledger-cosmos-go v0.12.4
 )
