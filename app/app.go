@@ -94,12 +94,14 @@ import (
 	ibcclient "github.com/cosmos/ibc-go/v6/modules/core/02-client"
 	ibcclientclient "github.com/cosmos/ibc-go/v6/modules/core/02-client/client"
 	ibcclienttypes "github.com/cosmos/ibc-go/v6/modules/core/02-client/types"
+	ibcchanneltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
 	porttypes "github.com/cosmos/ibc-go/v6/modules/core/05-port/types"
 	ibchost "github.com/cosmos/ibc-go/v6/modules/core/24-host"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
 	bank "github.com/terra-money/alliance/custom/bank"
 	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee"
 
 	// use TFL's ibc-hooks from Osmosis' ibc-hooks
 	ibchooks "github.com/terra-money/core/v2/x/ibc-hooks"
@@ -235,6 +237,7 @@ var (
 		intertx.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
+		globalfee.AppModule{},
 	)
 
 	// module account permissions
@@ -748,6 +751,7 @@ func NewMigalooApp(
 		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
 		router.NewAppModule(&app.RouterKeeper),
 		ibchooks.NewAppModule(app.AccountKeeper),
+		globalfee.NewAppModule(app.GetSubspace(globalfee.ModuleName)),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants), // always be last to make sure that it checks for all invariants and not only part of them
 	)
 
@@ -783,6 +787,7 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		globalfee.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -813,6 +818,7 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		globalfee.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -852,6 +858,7 @@ func NewMigalooApp(
 		wasm.ModuleName,
 		routertypes.ModuleName,
 		alliancemoduletypes.ModuleName,
+		globalfee.ModuleName,
 	)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -892,6 +899,20 @@ func NewMigalooApp(
 	app.MountKVStores(keys)
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
+
+	var bypassMinFeeMsgTypes []string
+	bypassMinFeeMsgTypesOptions := appOpts.Get(appparams.BypassMinFeeMsgTypesKey)
+	if bypassMinFeeMsgTypesOptions == nil {
+		bypassMinFeeMsgTypes = GetDefaultBypassFeeMessages()
+	} else {
+		bypassMinFeeMsgTypes = cast.ToStringSlice(bypassMinFeeMsgTypesOptions)
+	}
+
+	if err := app.ValidateBypassFeeMsgTypes(bypassMinFeeMsgTypes); err != nil {
+		app.Logger().Error("invalid 'bypass-min-fee-msg-types' config option", "error", err)
+		panic(fmt.Sprintf("invalid 'bypass-min-fee-msg-types' config option: %s", err))
+	}
+
 	// register upgrade
 	app.setupUpgradeHandlers(cfg)
 
@@ -951,6 +972,25 @@ func NewMigalooApp(
 	}
 
 	return app
+}
+
+func GetDefaultBypassFeeMessages() []string {
+	return []string{
+		sdk.MsgTypeURL(&ibcchanneltypes.MsgRecvPacket{}),
+		sdk.MsgTypeURL(&ibcchanneltypes.MsgAcknowledgement{}),
+		sdk.MsgTypeURL(&ibcclienttypes.MsgUpdateClient{}),
+	}
+}
+
+// ValidateBypassFeeMsgTypes checks that a proto message type exists for all MsgTypes in bypassMinFeeMsgTypes
+// An error is returned for the first msgType that cannot be resolved
+func (app *MigalooApp) ValidateBypassFeeMsgTypes(bypassMinFeeMsgTypes []string) error {
+	for _, msgType := range bypassMinFeeMsgTypes {
+		if _, err := app.interfaceRegistry.Resolve(msgType); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Name returns the name of the App
@@ -1150,6 +1190,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(wasm.ModuleName)
 	paramsKeeper.Subspace(routertypes.ModuleName)
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
+	paramsKeeper.Subspace(globalfee.ModuleName)
 
 	return paramsKeeper
 }
