@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -101,7 +102,6 @@ import (
 	ibcmock "github.com/cosmos/ibc-go/v6/testing/mock"
 	bank "github.com/terra-money/alliance/custom/bank"
 	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee"
 
 	// use TFL's ibc-hooks from Osmosis' ibc-hooks
 	ibchooks "github.com/terra-money/core/v2/x/ibc-hooks"
@@ -140,6 +140,8 @@ import (
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+
+	migalooante "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/ante"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
@@ -916,8 +918,8 @@ func NewMigalooApp(
 	// register upgrade
 	app.setupUpgradeHandlers(cfg)
 
-	anteHandler, err := NewAnteHandler(
-		HandlerOptions{
+	anteHandler, err := migalooante.NewAnteHandler(
+		migalooante.HandlerOptions{
 			HandlerOptions: ante.HandlerOptions{
 				AccountKeeper:   app.AccountKeeper,
 				BankKeeper:      app.BankKeeper,
@@ -925,9 +927,14 @@ func NewMigalooApp(
 				SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
-			IBCKeeper:         app.IBCKeeper,
-			WasmConfig:        &wasmConfig,
-			TXCounterStoreKey: keys[wasm.StoreKey],
+			Codec:                appCodec,
+			GovKeeper:            &app.GovKeeper,
+			IBCKeeper:            app.IBCKeeper,
+			WasmConfig:           &wasmConfig,
+			BypassMinFeeMsgTypes: bypassMinFeeMsgTypes,
+			GlobalFeeSubspace:    app.GetSubspace(globalfee.ModuleName),
+			StakingSubspace:      app.GetSubspace(stakingtypes.ModuleName),
+			TXCounterStoreKey:    keys[wasm.StoreKey],
 		},
 	)
 	if err != nil {

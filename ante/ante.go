@@ -2,14 +2,18 @@ package ante
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
+	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
-	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	ibcante "github.com/cosmos/ibc-go/v6/modules/core/ante"
 	ibckeeper "github.com/cosmos/ibc-go/v6/modules/core/keeper"
+
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
 	migaloofeeante "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee/ante"
 )
@@ -18,14 +22,14 @@ import (
 // channel keeper.
 type HandlerOptions struct {
 	ante.HandlerOptions
-	Codec                  codec.BinaryCodec
-	GovKeeper              *govkeeper.Keeper
-	IBCkeeper              *ibckeeper.Keeper
-	ExtensionOptionChecker authante.ExtensionOptionChecker
-	BypassMinFeeMsgTypes   []string
-	GlobalFeeSubspace      paramtypes.Subspace
-	StakingSubspace        paramtypes.Subspace
-	TxFeeChecker           authante.TxFeeChecker
+	Codec                codec.BinaryCodec
+	GovKeeper            *govkeeper.Keeper
+	IBCKeeper            *ibckeeper.Keeper
+	WasmConfig           *wasmTypes.WasmConfig
+	BypassMinFeeMsgTypes []string
+	GlobalFeeSubspace    paramtypes.Subspace
+	StakingSubspace      paramtypes.Subspace
+	TXCounterStoreKey    storetypes.StoreKey
 }
 
 func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
@@ -38,7 +42,7 @@ func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
 	if opts.SignModeHandler == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "sign mode handler is required for AnteHandler")
 	}
-	if opts.IBCkeeper == nil {
+	if opts.IBCKeeper == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "IBC keeper is required for AnteHandler")
 	}
 	if opts.GlobalFeeSubspace.Name() == "" {
@@ -63,7 +67,9 @@ func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
 	var maxBypassMinFeeMsgGasUsage uint64 = 200_000
 
 	anteDecorators := []sdk.AnteDecorator{
-		ante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		ante.NewSetUpContextDecorator(),                                               // outermost AnteDecorator. SetUpContext must be called first
+		wasmkeeper.NewLimitSimulationGasDecorator(opts.WasmConfig.SimulationGasLimit), // after setup context to enforce limits early
+		wasmkeeper.NewCountTXDecorator(opts.TXCounterStoreKey),
 		ante.NewExtensionOptionsDecorator(opts.ExtensionOptionChecker),
 		ante.NewValidateBasicDecorator(),
 		ante.NewTxTimeoutHeightDecorator(),
@@ -78,7 +84,7 @@ func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewSigGasConsumeDecorator(opts.AccountKeeper, sigGasConsumer),
 		ante.NewSigVerificationDecorator(opts.AccountKeeper, opts.SignModeHandler),
 		ante.NewIncrementSequenceDecorator(opts.AccountKeeper),
-		ibcante.NewRedundantRelayDecorator(opts.IBCkeeper),
+		ibcante.NewRedundantRelayDecorator(opts.IBCKeeper),
 	}
 
 	return sdk.ChainAnteDecorators(anteDecorators...), nil
