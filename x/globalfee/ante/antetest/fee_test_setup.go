@@ -3,8 +3,6 @@ package antetest
 import (
 	"fmt"
 
-	tmrand "github.com/tendermint/tendermint/libs/rand"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -15,6 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/suite"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	migalooaapp "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee"
@@ -31,7 +31,7 @@ type IntegrationTestSuite struct {
 }
 
 func (s *IntegrationTestSuite) SetupTest() {
-	app := migalooaapp.Setup(false, s.T())
+	app := migalooaapp.SetupMigalooAppWithValSet(s.T())
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{
 		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
 		Height:  1,

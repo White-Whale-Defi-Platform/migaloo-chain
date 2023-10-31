@@ -33,7 +33,7 @@ type GovAnteHandlerTestSuite struct {
 }
 
 func (s *GovAnteHandlerTestSuite) SetupTest() {
-	app := migalooapp.Setup(false)
+	app := migalooapp.SetupMigalooAppWithValSet(s.T())
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{
 		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
 		Height:  1,
@@ -73,7 +73,6 @@ func (s *GovAnteHandlerTestSuite) TestGlobalFeeMinimumGasFeeAnteHandler() {
 		content, ok := govv1beta1.ContentFromProposalType(tc.title, tc.description, tc.proposalType)
 		s.Require().True(ok)
 		s.Require().NotNil(content)
-
 		msg, err := govv1beta1.NewMsgSubmitProposal(
 			content,
 			tc.initialDeposit,
