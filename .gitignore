@@ -4,3 +4,5 @@ bin
 */.DS_Store
 
 
+scripts/tests/ibc-hooks/counter/target
+data

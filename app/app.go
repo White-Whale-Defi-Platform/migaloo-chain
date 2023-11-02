@@ -302,7 +302,7 @@ type MigalooApp struct {
 
 	// IBC hooks
 	IBCHooksKeeper   *ibchookskeeper.Keeper
-	TransferStack    *ibchooks.IBCMiddleware
+	TransferStack    porttypes.Middleware
 	Ics20WasmHooks   *ibchooks.WasmHooks
 	HooksICS4Wrapper ibchooks.ICS4Middleware
 
@@ -518,18 +518,6 @@ func NewMigalooApp(
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper))
 
-	// RouterKeeper must be created before TransferKeeper
-	app.RouterKeeper = *routerkeeper.NewKeeper(
-		appCodec,
-		app.keys[routertypes.StoreKey],
-		app.GetSubspace(routertypes.ModuleName),
-		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.DistrKeeper,
-		app.BankKeeper,
-		app.IBCKeeper.ChannelKeeper,
-	)
-
 	// Configure the hooks keeper
 	hooksKeeper := ibchookskeeper.NewKeeper(
 		keys[ibchookstypes.StoreKey],
@@ -543,38 +531,47 @@ func NewMigalooApp(
 		app.Ics20WasmHooks,
 	)
 
-	// IBC Fee Module keeper
-	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
-		appCodec, keys[ibcfeetypes.StoreKey],
-		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
-		app.IBCKeeper.ChannelKeeper,
-		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
-	)
-
 	// Create Transfer Keepers
 	app.TransferKeeper = ibctransferkeeper.NewKeeper(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.IBCFeeKeeper, // ISC4 Wrapper: fee IBC middleware
+		app.HooksICS4Wrapper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
 		scopedTransferKeeper,
 	)
+	transferIBCModule := transfer.NewIBCModule(app.TransferKeeper)
 
-	app.RouterKeeper.SetTransferKeeper(app.TransferKeeper)
+	// Hooks Middleware
+	hooksTransferStack := ibchooks.NewIBCMiddleware(&transferIBCModule, &app.HooksICS4Wrapper)
 
-	// ICA Host keeper
-	app.ICAHostKeeper = icahostkeeper.NewKeeper(
-		appCodec, keys[icahosttypes.StoreKey], app.GetSubspace(icahosttypes.SubModuleName),
-		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
-		app.IBCKeeper.ChannelKeeper, &app.IBCKeeper.PortKeeper,
-		app.AccountKeeper, scopedICAHostKeeper, app.MsgServiceRouter(),
+	app.RouterKeeper = *routerkeeper.NewKeeper(
+		appCodec,
+		app.keys[routertypes.StoreKey],
+		app.GetSubspace(routertypes.ModuleName),
+		app.TransferKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+		app.IBCKeeper.ChannelKeeper,
 	)
-	icaModule := ica.NewAppModule(nil, &app.ICAHostKeeper)
+	pmfTransferStack := router.NewIBCMiddleware(hooksTransferStack,
+		&app.RouterKeeper,
+		5,
+		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
+		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
+	)
+	app.TransferStack = &pmfTransferStack
 
+	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
+		appCodec, keys[ibcfeetypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
+	)
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		appCodec,
 		keys[icacontrollertypes.StoreKey],
@@ -585,9 +582,34 @@ func NewMigalooApp(
 		scopedICAControllerKeeper,
 		app.MsgServiceRouter(),
 	)
+	app.ICAHostKeeper = icahostkeeper.NewKeeper(
+		appCodec,
+		keys[icahosttypes.StoreKey],
+		app.GetSubspace(icahosttypes.SubModuleName),
+		app.IBCFeeKeeper, // use ics29 fee as ics4Wrapper in middleware stack
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		scopedICAHostKeeper,
+		app.MsgServiceRouter(),
+	)
+	icaModule := ica.NewAppModule(nil, &app.ICAHostKeeper)
 
 	// For wasmd we use the demo controller from https://github.com/cosmos/interchain-accounts but see notes below
-	app.InterTxKeeper = intertxkeeper.NewKeeper(appCodec, keys[intertxtypes.StoreKey], app.ICAControllerKeeper, scopedInterTxKeeper)
+	app.InterTxKeeper = intertxkeeper.NewKeeper(
+		appCodec,
+		keys[intertxtypes.StoreKey],
+		app.ICAControllerKeeper,
+		scopedInterTxKeeper,
+	)
+
+	var icaControllerStack porttypes.IBCModule
+	icaControllerStack = intertx.NewIBCModule(app.InterTxKeeper)
+	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
+	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.IBCFeeKeeper)
+
+	icaHostIBCModule := icahost.NewIBCModule(app.ICAHostKeeper)
+	icaHostStack := ibcfee.NewIBCMiddleware(icaHostIBCModule, app.IBCFeeKeeper)
 
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
@@ -635,39 +657,6 @@ func NewMigalooApp(
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, enabledProposals))
 	}
 
-	// Create Transfer Stack
-	var transferStack porttypes.IBCModule
-	transferStack = transfer.NewIBCModule(app.TransferKeeper)
-	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
-	transferStack = router.NewIBCMiddleware(
-		transferStack,
-		&app.RouterKeeper,
-		0,
-		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
-		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
-	)
-	// Hooks Middleware
-	hooksTransferStack := ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
-	app.TransferStack = &hooksTransferStack
-
-	// Create Interchain Accounts Stack
-	// SendPacket, since it is originating from the application to core IBC:
-	// icaAuthModuleKeeper.SendTx -> icaController.SendPacket -> fee.SendPacket -> channel.SendPacket
-
-	// Note: please do your research before using this in production app, this is a demo and not an officially
-	// supported IBC team implementation. Do your own research before using it.
-	var icaControllerStack porttypes.IBCModule
-	// You will likely want to use your own reviewed and maintained ica auth module
-	icaControllerStack = intertx.NewIBCModule(app.InterTxKeeper)
-	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
-	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.IBCFeeKeeper)
-
-	// RecvPacket, message that originates from core IBC and goes down to app, the flow is:
-	// channel.RecvPacket -> fee.OnRecvPacket -> icaHost.OnRecvPacket
-	var icaHostStack porttypes.IBCModule
-	icaHostStack = icahost.NewIBCModule(app.ICAHostKeeper)
-	icaHostStack = ibcfee.NewIBCMiddleware(icaHostStack, app.IBCFeeKeeper)
-
 	// Create fee enabled wasm ibc Stack
 	var wasmStack porttypes.IBCModule
 	wasmStack = wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper)
@@ -675,11 +664,11 @@ func NewMigalooApp(
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := porttypes.NewRouter().
-		AddRoute(ibctransfertypes.ModuleName, transferStack).
-		AddRoute(wasm.ModuleName, wasmStack).
 		AddRoute(intertxtypes.ModuleName, icaControllerStack).
 		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
-		AddRoute(icahosttypes.SubModuleName, icaHostStack)
+		AddRoute(icahosttypes.SubModuleName, icaHostStack).
+		AddRoute(ibctransfertypes.ModuleName, pmfTransferStack).
+		AddRoute(wasm.ModuleName, wasmStack)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	govConfig := govtypes.DefaultConfig()

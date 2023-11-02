@@ -1,0 +1,21 @@
+{
+  "type": "cosmos",
+  "value": {
+    "key": "testkey",
+    "chain-id": "test-1",
+    "rpc-addr": "http://localhost:16657",
+    "grpc-addr": "",
+    "account-prefix": "migaloo",
+    "keyring-backend": "test",
+    "default-denom": "uwhale",
+    "gas-adjustment": 1.5,
+    "gas-prices": "0.025uwhale",
+    "coin-type": 118,
+    "debug": true,
+    "timeout": "10s",
+    "output-format": "json",
+    "sign-mode": "direct",
+    "trusting-period": "330h",
+    "gas": 900000
+  }
+}

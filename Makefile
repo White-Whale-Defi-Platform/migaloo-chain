@@ -92,3 +92,27 @@ install: go.sum
 
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
+
+integration-test-all: init-test-framework \
+	test-relayer \
+	test-ibc-hooks
+
+init-test-framework: clean-testing-data install
+	@echo "Initializing both blockchains..."
+	./scripts/tests/init-test-framework.sh
+
+test-relayer:
+	@echo "Testing relayer..."
+	./scripts/tests/relayer/interchain-acc-config/rly-init.sh
+
+test-ibc-hooks: 
+	@echo "Testing ibc hooks..."
+	./scripts/tests/ibc-hooks/increment.sh
+
+clean-testing-data:
+	@echo "Killing migalood and removing previous data"
+	-@pkill migalood 2>/dev/null
+	-@pkill rly 2>/dev/null
+	-@rm -rf ./data
+
+.PHONY: all install build integration-test-all init-test-framework test-relayer test-ibc-hooks clean-testing-data 
