@@ -15,7 +15,10 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmTypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
+	feeburnAnte "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/ante"
+	feeburnkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
 	migaloofeeante "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/globalfee/ante"
+	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
 // HandlerOptions extend the SDK's AnteHandler options by requiring the IBC
@@ -30,6 +33,8 @@ type HandlerOptions struct {
 	GlobalFeeSubspace    paramtypes.Subspace
 	StakingSubspace      paramtypes.Subspace
 	TXCounterStoreKey    storetypes.StoreKey
+	FeeburnKeeper        *feeburnkeeper.Keeper
+	BankKeeper           bankkeeper.Keeper
 }
 
 func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
@@ -54,6 +59,9 @@ func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
 	if opts.GovKeeper == nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "gov keeper is required for AnteHandler")
 	}
+	if opts.FeeburnKeeper == nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "Fee burn keeper is required for ante builder")
+	}
 
 	sigGasConsumer := opts.SigGasConsumer
 	if sigGasConsumer == nil {
@@ -77,8 +85,8 @@ func NewAnteHandler(opts HandlerOptions) (sdk.AnteHandler, error) {
 		ante.NewConsumeGasForTxSizeDecorator(opts.AccountKeeper),
 		NewGovPreventSpamDecorator(opts.Codec, opts.GovKeeper),
 		migaloofeeante.NewFeeDecorator(opts.BypassMinFeeMsgTypes, opts.GlobalFeeSubspace, opts.StakingSubspace, maxBypassMinFeeMsgGasUsage),
-
-		ante.NewDeductFeeDecorator(opts.AccountKeeper, opts.BankKeeper, opts.FeegrantKeeper, opts.TxFeeChecker),
+		feeburnAnte.NewDeductFeeDecorator(opts.AccountKeeper, opts.BankKeeper, opts.FeegrantKeeper, opts.TxFeeChecker, *opts.FeeburnKeeper),
+		// ante.NewDeductFeeDecorator(opts.AccountKeeper, opts.BankKeeper, opts.FeegrantKeeper, opts.TxFeeChecker),
 		ante.NewSetPubKeyDecorator(opts.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
 		ante.NewValidateSigCountDecorator(opts.AccountKeeper),
 		ante.NewSigGasConsumeDecorator(opts.AccountKeeper, sigGasConsumer),
