@@ -92,3 +92,11 @@ install: go.sum
 
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
+
+containerProtoVer=0.13.0
+containerProtoImage=ghcr.io/cosmos/proto-builder:$(containerProtoVer)
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	@$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) \
+		sh ./scripts/protocgen.sh; 

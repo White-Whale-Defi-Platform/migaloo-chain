@@ -1,6 +1,6 @@
 module github.com/White-Whale-Defi-Platform/migaloo-chain/v3
 
-go 1.21
+go 1.20
 
 require (
 	cosmossdk.io/errors v1.0.0-beta.7

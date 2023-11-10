@@ -103,6 +103,10 @@ import (
 	bank "github.com/terra-money/alliance/custom/bank"
 	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
 
+	feeburnmodule "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn"
+	feeburnmodulekeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
+	feeburnmoduletypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+
 	// use TFL's ibc-hooks from Osmosis' ibc-hooks
 	ibchooks "github.com/terra-money/core/v2/x/ibc-hooks"
 	ibchookskeeper "github.com/terra-money/core/v2/x/ibc-hooks/keeper"
@@ -240,6 +244,7 @@ var (
 		ibcfee.AppModuleBasic{},
 		ibchooks.AppModuleBasic{},
 		globalfee.AppModule{},
+		feeburnmodule.AppModule{},
 	)
 
 	// module account permissions
@@ -302,6 +307,7 @@ type MigalooApp struct {
 	TokenFactoryKeeper  tokenfactorykeeper.Keeper
 	FeeGrantKeeper      feegrantkeeper.Keeper
 	AuthzKeeper         authzkeeper.Keeper
+	FeeburnKeeper       feeburnmodulekeeper.Keeper
 	WasmKeeper          wasm.Keeper
 	RouterKeeper        routerkeeper.Keeper
 
@@ -594,6 +600,13 @@ func NewMigalooApp(
 	// For wasmd we use the demo controller from https://github.com/cosmos/interchain-accounts but see notes below
 	app.InterTxKeeper = intertxkeeper.NewKeeper(appCodec, keys[intertxtypes.StoreKey], app.ICAControllerKeeper, scopedInterTxKeeper)
 
+	app.FeeburnKeeper = *feeburnmodulekeeper.NewKeeper(
+		appCodec,
+		keys[feeburnmoduletypes.StoreKey],
+		keys[feeburnmoduletypes.MemStoreKey],
+		authtypes.NewModuleAddress(govtypes.ModuleName),
+	)
+
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
@@ -754,6 +767,7 @@ func NewMigalooApp(
 		router.NewAppModule(&app.RouterKeeper),
 		ibchooks.NewAppModule(app.AccountKeeper),
 		globalfee.NewAppModule(app.GetSubspace(globalfee.ModuleName)),
+		feeburnmodule.NewAppModule(appCodec, app.FeeburnKeeper, app.AccountKeeper, app.BankKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants), // always be last to make sure that it checks for all invariants and not only part of them
 	)
 
@@ -778,6 +792,7 @@ func NewMigalooApp(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
+		feeburnmoduletypes.ModuleName,
 		// additional non simd modules
 		routertypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -809,6 +824,7 @@ func NewMigalooApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		feeburnmoduletypes.ModuleName,
 		// additional non simd modules
 		routertypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -847,6 +863,7 @@ func NewMigalooApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		feeburnmoduletypes.ModuleName,
 		// additional non simd modules
 		routertypes.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -893,6 +910,7 @@ func NewMigalooApp(
 		ibc.NewAppModule(app.IBCKeeper),
 		icaModule,
 		transfer.NewAppModule(app.TransferKeeper),
+		feeburnmodule.NewAppModule(appCodec, app.FeeburnKeeper, app.AccountKeeper, app.BankKeeper),
 		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 	)
 
@@ -935,6 +953,8 @@ func NewMigalooApp(
 			GlobalFeeSubspace:    app.GetSubspace(globalfee.ModuleName),
 			StakingSubspace:      app.GetSubspace(stakingtypes.ModuleName),
 			TXCounterStoreKey:    keys[wasm.StoreKey],
+			BankKeeper:           app.BankKeeper,
+			FeeburnKeeper:        &app.FeeburnKeeper,
 		},
 	)
 	if err != nil {
@@ -1197,6 +1217,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(wasm.ModuleName)
 	paramsKeeper.Subspace(routertypes.ModuleName)
+	paramsKeeper.Subspace(feeburnmoduletypes.ModuleName)
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
 	paramsKeeper.Subspace(globalfee.ModuleName)
 

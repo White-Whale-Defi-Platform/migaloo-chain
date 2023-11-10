@@ -27,5 +27,5 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 
 // RegisterLegacyAminoCodec registers concrete types on LegacyAmino codec
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgUpdateParams{}, "chihuahua/feeburn/MsgUpdateParams", nil)
+	cdc.RegisterConcrete(&MsgUpdateParams{}, "migaloo/feeburn/MsgUpdateParams", nil)
 }
