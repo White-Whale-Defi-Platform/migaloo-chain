@@ -22,7 +22,7 @@ done
 cd ..
 
 # move proto files to the right places
-cp -r github.com/White-Whale-Defi-Platform/migaloo-chain/x/* ./
+cp -r github.com/White-Whale-Defi-Platform/migaloo-chain/x ./
 rm -rf github.com
 
 go mod tidy
