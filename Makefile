@@ -93,8 +93,8 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
 
-containerProtoVer=0.13.0
-containerProtoImage=ghcr.io/cosmos/proto-builder:$(containerProtoVer)
+containerProtoVer=v0.9
+containerProtoImage=ghcr.io/notional-labs/fa-proto-gen:$(containerProtoVer)
 
 proto-gen:
 	@echo "Generating Protobuf files"
