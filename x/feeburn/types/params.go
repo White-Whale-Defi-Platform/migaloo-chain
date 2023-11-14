@@ -5,6 +5,8 @@ import (
 	"strconv"
 
 	"gopkg.in/yaml.v2"
+
+	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
 var (
@@ -27,6 +29,11 @@ func DefaultParams() Params {
 	return NewParams(
 		DefaultTxFeeBurnPercent,
 	)
+}
+
+// ParamSetPairs get the params.ParamSet
+func (p *Params) ParamSetPairs() paramtypes.ParamSetPairs {
+	return paramtypes.ParamSetPairs{}
 }
 
 // Validate validates the set of params
