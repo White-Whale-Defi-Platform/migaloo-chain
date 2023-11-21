@@ -11,7 +11,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	xauthsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	"github.com/cosmos/cosmos-sdk/x/params/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/suite"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -46,17 +45,11 @@ func (s *IntegrationTestSuite) SetupTest() {
 	s.clientCtx = client.Context{}.WithTxConfig(encodingConfig.TxConfig)
 }
 
-func (s *IntegrationTestSuite) SetupTestBurnFeeStore(minGasPrice []sdk.DecCoin, feeBurnParams *feeburnmoduletypes.Params) types.Subspace {
+func (s *IntegrationTestSuite) SetupTestBurnFeeStore(feeBurnParams *feeburnmoduletypes.Params) types.Subspace {
 	subspace := s.app.GetSubspace(feeburn.ModuleName)
 	subspace.SetParamSet(s.ctx, feeBurnParams)
 
 	return subspace
-}
-
-// SetupTestStakingSubspace sets uatom as bond denom for the fee tests.
-func (s *IntegrationTestSuite) SetupTestStakingSubspace(params stakingtypes.Params) types.Subspace {
-	s.app.GetSubspace(stakingtypes.ModuleName).SetParamSet(s.ctx, &params)
-	return s.app.GetSubspace(stakingtypes.ModuleName)
 }
 
 func (s *IntegrationTestSuite) CreateTestTx(privs []cryptotypes.PrivKey, accNums []uint64, accSeqs []uint64, chainID string) (xauthsigning.Tx, error) {
