@@ -1,6 +1,7 @@
 bin
 .vscode
 .ash_history
+go.work.sum
+go.work
 */.DS_Store
-
 
