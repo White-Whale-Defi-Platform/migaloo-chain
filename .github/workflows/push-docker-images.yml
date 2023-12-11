@@ -61,6 +61,6 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ghcr.io/White-Whale-Defi-Platform/migaloo-chain:${{ env.MAJOR_VERSION }}
-            ghcr.io/White-Whale-Defi-Platform/migaloo-chain:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}
-            ghcr.io/White-Whale-Defi-Platform/migaloo-chain:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}
+            ghcr.io/white-whale-defi-platform/migaloo-chain:${{ env.MAJOR_VERSION }}
+            ghcr.io/white-whale-defi-platform/migaloo-chain:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}
+            ghcr.io/white-whale-defi-platform/migaloo-chain:${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}
