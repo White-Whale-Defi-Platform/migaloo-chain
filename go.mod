@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	cosmossdk.io/math v1.1.2
-	github.com/CosmWasm/wasmd v0.30.0
-	github.com/cosmos/cosmos-sdk v0.46.15
+	github.com/CosmWasm/wasmd v0.33.0
+	github.com/cosmos/cosmos-sdk v0.46.16
 	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v6 v6.1.1-0.20230928173630-232c0f1cea39
 	github.com/cosmos/ibc-go/v6 v6.2.0
 	github.com/cosmos/interchain-accounts v0.4.3
@@ -33,7 +33,7 @@ require (
 	github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 // indirect
 	github.com/99designs/keyring v1.2.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v1.0.0 // indirect
-	github.com/CosmWasm/wasmvm v1.2.3 // indirect
+	github.com/CosmWasm/wasmvm v1.3.0 // indirect
 	github.com/Workiva/go-datastructures v1.0.53 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
@@ -55,7 +55,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.8 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
 	github.com/cosmos/iavl v0.19.6 // indirect
-	github.com/cosmos/ledger-cosmos-go v0.12.2 // indirect
+	github.com/cosmos/ledger-cosmos-go v0.12.4 // indirect
 	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -145,8 +145,8 @@ require (
 	github.com/tendermint/go-amino v0.16.0 // indirect
 	github.com/tidwall/btree v1.5.0 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
-	github.com/zondax/hid v0.9.1 // indirect
-	github.com/zondax/ledger-go v0.14.1 // indirect
+	github.com/zondax/hid v0.9.2 // indirect
+	github.com/zondax/ledger-go v0.14.3 // indirect
 	go.etcd.io/bbolt v1.3.6 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
@@ -171,7 +171,7 @@ require (
 
 replace (
 	// use notional's wasmd fork with token factory
-	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.30.1-0.20230320091624-f5072b9b04a6
+	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.33.0-sdk-v0.46.x-tf
 
 	// Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
