@@ -38,7 +38,7 @@ if [ -z "$BINARY" ]; then
     BINARY=build/migalood
 fi
 
-CHAIN_ID="localmigaloo"
+CHAIN_ID="migaloo-1"
 KEYRING="test"
 KEY="test0"
 KEY1="test1"

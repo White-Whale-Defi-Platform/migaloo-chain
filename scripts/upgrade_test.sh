@@ -8,7 +8,7 @@ UPGRADE_WAIT=${UPGRADE_WAIT:-20}
 HOME=mytestnet
 ROOT=$(pwd)
 DENOM=uwhale
-CHAIN_ID=localmigaloo
+CHAIN_ID=migaloo-1
 SOFTWARE_UPGRADE_NAME="v3.1.0"
 ADDITIONAL_PRE_SCRIPTS=${ADDITIONAL_PRE_SCRIPTS:-""}
 ADDITIONAL_AFTER_SCRIPTS=${ADDITIONAL_AFTER_SCRIPTS:-""}
@@ -123,7 +123,7 @@ run_upgrade () {
         if [ $BLOCK_HEIGHT = "$UPGRADE_HEIGHT" ]; then
             # assuming running only 1 migalood
             echo "BLOCK HEIGHT = $UPGRADE_HEIGHT REACHED, KILLING OLD ONE"
-            pkill migalood
+#            pkill migalood
             break
         else
             ./_build/old/migalood q gov proposal 1 --output=json | jq ".status"
@@ -145,10 +145,16 @@ sleep 5
 
 # run new node
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    CONTINUE="true" screen -L -dmS node1 bash scripts/run-node.sh _build/new/migalood $DENOM
+    ./_build/new/migalood start --home $HOME
 else
-    CONTINUE="true" screen -L -Logfile $HOME/log-screen.txt -dmS node1 bash scripts/run-node.sh _build/new/migalood $DENOM
+    ./_build/new/migalood start --home $HOME
 fi
+
+while true; do
+    BLOCK_HEIGHT=$(./_build/new/migalood status | jq '.SyncInfo.latest_block_height' -r)
+    echo "BLOCK_HEIGHT = $BLOCK_HEIGHT"
+    sleep 5
+done
 
 sleep 20
 
