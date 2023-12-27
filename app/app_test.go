@@ -6,6 +6,9 @@ import (
 	"testing"
 	"time"
 
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/libs/log"
+	tmtypes "github.com/cometbft/cometbft/types"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -13,15 +16,11 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/cosmos/ibc-go/v6/testing/mock"
-	"github.com/stretchr/testify/assert"
+	"github.com/cosmos/ibc-go/v7/testing/mock"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/tendermint/libs/log"
-	tmtypes "github.com/tendermint/tendermint/types"
-	db "github.com/tendermint/tm-db"
 	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
 
-	abci "github.com/tendermint/tendermint/abci/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 )
@@ -30,7 +29,7 @@ var emptyWasmOpts []wasm.Option
 
 func TestWasmdExport(t *testing.T) {
 	db := db.NewMemDB()
-	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
+	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, emptyWasmOpts)
 	// generate validator private/public key
 	privVal := mock.NewPV()
 	pubKey, err := privVal.GetPubKey()
@@ -65,15 +64,15 @@ func TestWasmdExport(t *testing.T) {
 	gapp.Commit()
 
 	// Making a new app object with the db, so that initchain hasn't been called
-	newGapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
-	_, err = newGapp.ExportAppStateAndValidators(false, []string{})
+	newGapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, emptyWasmOpts)
+	_, err = newGapp.ExportAppStateAndValidators(false, []string{}, []string{})
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")
 }
 
 // ensure that blocked addresses are properly set in bank keeper
 func TestBlockedAddrs(t *testing.T) {
 	db := db.NewMemDB()
-	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), wasm.EnableAllProposals, EmptyBaseAppOptions{}, emptyWasmOpts)
+	gapp := NewMigalooApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, make(map[int64]bool), DefaultNodeHome, 0, MakeEncodingConfig(), EmptyBaseAppOptions{}, emptyWasmOpts)
 
 	for acc := range maccPerms {
 		if acc == alliancemoduletypes.ModuleName {
@@ -90,37 +89,6 @@ func TestBlockedAddrs(t *testing.T) {
 func TestGetMaccPerms(t *testing.T) {
 	dup := GetMaccPerms()
 	require.Equal(t, maccPerms, dup, "duplicated module account permissions differed from actual module account permissions")
-}
-
-func TestGetEnabledProposals(t *testing.T) {
-	cases := map[string]struct {
-		proposalsEnabled string
-		specificEnabled  string
-		expected         []wasm.ProposalType
-	}{
-		"all disabled": {
-			proposalsEnabled: "false",
-			expected:         wasm.DisableAllProposals,
-		},
-		"all enabled": {
-			proposalsEnabled: "true",
-			expected:         wasm.EnableAllProposals,
-		},
-		"some enabled": {
-			proposalsEnabled: "okay",
-			specificEnabled:  "StoreCode,InstantiateContract",
-			expected:         []wasm.ProposalType{wasm.ProposalTypeStoreCode, wasm.ProposalTypeInstantiateContract},
-		},
-	}
-
-	for name, tc := range cases {
-		t.Run(name, func(t *testing.T) {
-			ProposalsEnabled = tc.proposalsEnabled
-			EnableSpecificProposals = tc.specificEnabled
-			proposals := GetEnabledProposals()
-			assert.Equal(t, tc.expected, proposals)
-		})
-	}
 }
 
 func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, _ []wasm.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
@@ -174,7 +142,8 @@ func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []au
 	})
 
 	// update total supply
-	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{})
+	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply,
+		[]banktypes.Metadata{}, []banktypes.SendEnabled{})
 	genesisState[banktypes.ModuleName] = app.appCodec.MustMarshalJSON(bankGenesis)
 
 	return genesisState
