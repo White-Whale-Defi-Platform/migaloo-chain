@@ -671,6 +671,10 @@ func NewMigalooApp(
 	icaHostStack = icahost.NewIBCModule(app.ICAHostKeeper)
 	icaHostStack = ibcfee.NewIBCMiddleware(icaHostStack, app.IBCFeeKeeper)
 
+	// initialize ICQ module with mock module
+	// var icqStack porttypes.IBCModule
+	icqStack := icq.NewIBCModule(app.ICQKeeper)
+
 	// Create fee enabled wasm ibc Stack
 	var wasmStack porttypes.IBCModule
 	wasmStack = wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper)
@@ -680,8 +684,9 @@ func NewMigalooApp(
 	ibcRouter := porttypes.NewRouter().
 		AddRoute(ibctransfertypes.ModuleName, hooksTransferStack).
 		AddRoute(wasmtypes.ModuleName, wasmStack).
-		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
-		AddRoute(icahosttypes.SubModuleName, icaHostStack)
+		AddRoute(icahosttypes.SubModuleName, icaHostStack).
+		AddRoute(icqtypes.ModuleName, icqStack)
+
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	govConfig := govtypes.DefaultConfig()
@@ -1136,6 +1141,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
+	paramsKeeper.Subspace(icqtypes.ModuleName)
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(routertypes.ModuleName)
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
