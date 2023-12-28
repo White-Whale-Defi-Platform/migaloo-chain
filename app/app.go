@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v4.1.0"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	nodeservice "github.com/cosmos/cosmos-sdk/client/grpc/node"
@@ -62,6 +61,7 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
@@ -113,8 +113,8 @@ import (
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
 
-	bank "github.com/terra-money/alliance/custom/bank"
-	custombankkeeper "github.com/terra-money/alliance/custom/bank/keeper"
+	bank "github.com/terra-money/core/v2/custom/bank"
+	custombankkeeper "github.com/terra-money/core/v2/custom/bank/keeper"
 
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7"
 	ibchookskeeper "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7/keeper"
@@ -125,10 +125,10 @@ import (
 	alliancemodulekeeper "github.com/terra-money/alliance/x/alliance/keeper"
 	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
 
-	"github.com/CosmWasm/wasmd/x/tokenfactory"
-	bindings "github.com/CosmWasm/wasmd/x/tokenfactory/bindings"
-	tokenfactorykeeper "github.com/CosmWasm/wasmd/x/tokenfactory/keeper"
-	tokenfactorytypes "github.com/CosmWasm/wasmd/x/tokenfactory/types"
+	"github.com/terra-money/core/v2/x/tokenfactory"
+	bindings "github.com/terra-money/core/v2/x/tokenfactory/bindings"
+	tokenfactorykeeper "github.com/terra-money/core/v2/x/tokenfactory/keeper"
+	tokenfactorytypes "github.com/terra-money/core/v2/x/tokenfactory/types"
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. It has no known issues, but do your own research before using it.
@@ -452,6 +452,15 @@ func NewMigalooApp(
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
+	app.TokenFactoryKeeper = tokenfactorykeeper.NewKeeper(
+		keys[tokenfactorytypes.StoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.DistrKeeper,
+		appCodec,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
+
 	app.CrisisKeeper = *crisiskeeper.NewKeeper(
 		appCodec,
 		keys[crisistypes.StoreKey],
@@ -472,11 +481,12 @@ func NewMigalooApp(
 	app.AllianceKeeper = alliancemodulekeeper.NewKeeper(
 		appCodec,
 		keys[alliancemoduletypes.StoreKey],
-		app.GetSubspace(alliancemoduletypes.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
 		app.StakingKeeper,
 		app.DistrKeeper,
+		authtypes.FeeCollectorName,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 
 	// register the staking hooks
@@ -528,7 +538,7 @@ func NewMigalooApp(
 	app.IBCHooksKeeper = &hooksKeeper
 
 	migalooPrefix := sdk.GetConfig().GetBech32AccountAddrPrefix()
-	wasmHooks := ibchooks.NewWasmHooks(app.IBCHooksKeeper, &app.WasmKeeper, migalooPrefix) // The contract keeper needs to be set later
+	wasmHooks := ibchooks.NewWasmHooks(&hooksKeeper, nil, migalooPrefix) // The contract keeper needs to be set later
 	app.Ics20WasmHooks = &wasmHooks
 	app.HooksICS4Wrapper = ibchooks.NewICS4Middleware(
 		app.IBCKeeper.ChannelKeeper,
@@ -744,10 +754,10 @@ func NewMigalooApp(
 		transfer.NewAppModule(app.TransferKeeper),
 		icaModule,
 		icq.NewAppModule(app.ICQKeeper),
-		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
+		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry, app.GetSubspace(alliancemoduletypes.ModuleName)),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
-		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper),
+		tokenfactory.NewAppModule(app.TokenFactoryKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(tokenfactorytypes.ModuleName)),
 		router.NewAppModule(&app.RouterKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants, app.GetSubspace(crisistypes.ModuleName)), // always be last to make sure that it checks for all invariants and not only part of them
 		ibchooks.NewAppModule(app.AccountKeeper),
@@ -1185,7 +1195,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icqtypes.ModuleName)
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(routertypes.ModuleName)
-	paramsKeeper.Subspace(alliancemoduletypes.ModuleName)
+	paramsKeeper.Subspace(alliancemoduletypes.ModuleName).WithKeyTable(alliancemoduletypes.ParamKeyTable())
 
 	return paramsKeeper
 }
