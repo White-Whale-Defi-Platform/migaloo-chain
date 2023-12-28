@@ -61,7 +61,6 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
@@ -153,6 +152,7 @@ import (
 
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
 	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3_0_2"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v4_1_0"
 )
 
 const (
