@@ -529,7 +529,7 @@ func NewMigalooApp(
 
 	// Configure the hooks keeper
 	hooksKeeper := ibchookskeeper.NewKeeper(
-		keys[ibchookstypes.StoreKey],
+		app.keys[ibchookstypes.StoreKey],
 	)
 	app.IBCHooksKeeper = &hooksKeeper
 
