@@ -360,11 +360,5 @@ func (a appCreator) appExport(
 		emptyWasmOpts,
 	)
 
-	if height != -1 {
-		if err := migalooApp.LoadHeight(height); err != nil {
-			return servertypes.ExportedApp{}, err
-		}
-	}
-
 	return migalooApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
 }

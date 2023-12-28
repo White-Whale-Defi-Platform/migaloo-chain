@@ -310,6 +310,11 @@ type MigalooApp struct {
 	configurator module.Configurator
 }
 
+func (app *MigalooApp) Close() error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (app *MigalooApp) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
 }
@@ -445,14 +450,6 @@ func NewMigalooApp(
 		keys[slashingtypes.StoreKey],
 		app.StakingKeeper,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-	)
-
-	app.TokenFactoryKeeper = tokenfactorykeeper.NewKeeper(
-		keys[tokenfactorytypes.StoreKey],
-		app.GetSubspace(tokenfactorytypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.DistrKeeper,
 	)
 
 	app.CrisisKeeper = *crisiskeeper.NewKeeper(
@@ -1136,6 +1133,7 @@ func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
 			Added: []string{
 				consensusparamtypes.StoreKey,
 				crisistypes.StoreKey,
+				icqtypes.StoreKey,
 			},
 			Deleted: []string{
 				"intertx",
