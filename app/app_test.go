@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"os"
 	"testing"
 	"time"
@@ -21,11 +22,9 @@ import (
 	alliancemoduletypes "github.com/terra-money/alliance/x/alliance/types"
 
 	abci "github.com/cometbft/cometbft/abci/types"
-
-	"github.com/CosmWasm/wasmd/x/wasm"
 )
 
-var emptyWasmOpts []wasm.Option
+var emptyWasmOpts []wasmkeeper.Option
 
 func TestWasmdExport(t *testing.T) {
 	db := db.NewMemDB()
@@ -91,7 +90,7 @@ func TestGetMaccPerms(t *testing.T) {
 	require.Equal(t, maccPerms, dup, "duplicated module account permissions differed from actual module account permissions")
 }
 
-func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, _ []wasm.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
+func SetupGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, _ []wasmkeeper.Option, app *MigalooApp, balances ...banktypes.Balance) GenesisState {
 	genesisState := NewDefaultGenesisState()
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)

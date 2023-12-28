@@ -5,13 +5,13 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"math/rand"
 	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	"github.com/cosmos/ibc-go/v7/testing/mock"
 	"github.com/stretchr/testify/require"
 
@@ -61,7 +61,7 @@ var DefaultConsensusParams = &tmproto.ConsensusParams{
 	},
 }
 
-func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Option) (*MigalooApp, GenesisState) {
+func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
 	tb.Helper()
 	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
@@ -80,7 +80,7 @@ func setup(tb testing.TB, withGenesis bool, invCheckPeriod uint, opts ...wasm.Op
 	return app, GenesisState{}
 }
 
-func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasm.Option) (*MigalooApp, GenesisState) {
+func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chainID string, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
 	tb.Helper()
 	nodeHome := tb.TempDir()
 	snapshotDir := filepath.Join(nodeHome, "data", "snapshots")
@@ -109,7 +109,7 @@ func setupWithChainID(tb testing.TB, withGenesis bool, invCheckPeriod uint, chai
 }
 
 // Setup initializes a new MigalooApp with DefaultNodeHome for integration tests
-func Setup(isCheckTx bool, opts ...wasm.Option) *MigalooApp {
+func Setup(isCheckTx bool, opts ...wasmkeeper.Option) *MigalooApp {
 	db := dbm.NewMemDB()
 	app := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, MakeEncodingConfig(), EmptyBaseAppOptions{}, opts)
 
@@ -161,7 +161,7 @@ func SetupMigalooAppWithValSet(t *testing.T) *MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit (10^6) in the default token of the MigalooApp from first genesis
 // account. A Nop logger is set in MigalooApp.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasm.Option, balances ...banktypes.Balance) *MigalooApp {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasmkeeper.Option, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
 	app, genesisState := setupWithChainID(t, true, 5, chainID, opts...)
 	genesisState, err := simtestutil.GenesisStateWithValSet(app.AppCodec(), genesisState, valSet, genAccs, balances...)
