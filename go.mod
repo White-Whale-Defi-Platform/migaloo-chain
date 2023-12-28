@@ -22,6 +22,7 @@ require (
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230523193151-73dea436e53f
 	github.com/stretchr/testify v1.8.4
 	github.com/terra-money/alliance v0.3.2
+	github.com/terra-money/core/v2 v2.0.0-00010101000000-000000000000
 )
 
 require (
