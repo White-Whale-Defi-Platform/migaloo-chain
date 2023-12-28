@@ -1,11 +1,10 @@
 package v3
 
 import (
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -20,17 +19,17 @@ import (
 func CreateUpgradeHandler(
 	mm *module.Manager,
 	configurator module.Configurator,
-	cdc codec.Codec,
 	clientKeeper clientkeeper.Keeper,
 	paramsKeeper paramskeeper.Keeper,
 	consensusParamsKeeper consensuskeeper.Keeper,
 	icacontrollerKeeper icacontrollerkeeper.Keeper,
-	authKeeper authkeeper.AccountKeeper,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, _plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		fmt.Println("zozo")
 		// READ: https://github.com/cosmos/cosmos-sdk/blob/v0.47.4/UPGRADING.md#xconsensus
 		baseAppLegacySS := paramsKeeper.Subspace(baseapp.Paramspace).
 			WithKeyTable(paramstypes.ConsensusParamsKeyTable())
+		fmt.Println(baseAppLegacySS)
 		baseapp.MigrateParams(ctx, baseAppLegacySS, &consensusParamsKeeper)
 
 		// READ: https://github.com/cosmos/ibc-go/blob/v7.2.0/docs/migrations/v7-to-v7_1.md#chains
