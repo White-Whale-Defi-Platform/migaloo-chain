@@ -153,6 +153,8 @@ import (
 	// Upgrade Handler
 	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
+	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3_0_2"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v4.1.0"
 )
 
 const (
@@ -163,7 +165,7 @@ const (
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
 	NodeDir  = ".migalood"
-	Upgrades = []upgrades.Upgrade{v2.Upgrade}
+	Upgrades = []upgrades.Upgrade{v2.Upgrade, v3_0_2.Upgrade, v4.Upgrade}
 )
 
 // These constants are derived from the above variables.
@@ -1084,20 +1086,15 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
-	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
-	if err != nil {
-		panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
-	}
-
-	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
-		return
-	}
-
 	for _, upgrade := range Upgrades {
 		upgrade := upgrade
-		if upgradeInfo.Name == upgrade.UpgradeName {
-			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+		upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+		if err != nil {
+			panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
 		}
+
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+
 		app.UpgradeKeeper.SetUpgradeHandler(
 			upgrade.UpgradeName,
 			upgrade.CreateUpgradeHandler(
