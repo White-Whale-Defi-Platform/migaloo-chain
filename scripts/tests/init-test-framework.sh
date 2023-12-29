@@ -5,6 +5,14 @@ CHAIN_DIR=$(pwd)/data
 CHAINID_1=test-1
 CHAINID_2=test-2
 
+### Custom genesis files 
+DENOM=uwhale
+GENESIS_1=$CHAIN_DIR/$CHAINID_1/config/genesis.json
+TMP_GENESIS_1=$CHAIN_DIR/$CHAINID_1/config/genesis.json.tmp
+
+GENESIS_2=$CHAIN_DIR/$CHAINID_2/config/genesis.json
+TMP_GENESIS_2=$CHAIN_DIR/$CHAINID_2/config/genesis.json.tmp
+
 VAL_MNEMONIC_1="clock post desk civil pottery foster expand merit dash seminar song memory figure uniform spice circle try happy obvious trash crime hybrid hood cushion"
 VAL_MNEMONIC_2="angry twist harsh drastic left brass behave host shove marriage fall update business leg direct reward object ugly security warm tuna model broccoli choice"
 WALLET_MNEMONIC_1="banner spread envelope side kite person disagree path silver will brother under couch edit food venture squirrel civil budget number acquire point work mass"
@@ -71,18 +79,18 @@ WALLET4_ADDR=$($BINARY keys show wallet4 --home $CHAIN_DIR/$CHAINID_2 --keyring-
 RLY1_ADDR=$($BINARY keys show rly1 --home $CHAIN_DIR/$CHAINID_1 --keyring-backend test -a)
 RLY2_ADDR=$($BINARY keys show rly2 --home $CHAIN_DIR/$CHAINID_2 --keyring-backend test -a)
 
-$BINARY add-genesis-account $VAL1_ADDR 1000000000000uluna --home $CHAIN_DIR/$CHAINID_1
-$BINARY add-genesis-account $VAL2_ADDR 1000000000000uluna --home $CHAIN_DIR/$CHAINID_2
-$BINARY add-genesis-account $WALLET1_ADDR 1000000000000uluna --home $CHAIN_DIR/$CHAINID_1
-$BINARY add-genesis-account $WALLET2_ADDR 1000000000000uluna --home $CHAIN_DIR/$CHAINID_2
-$BINARY add-genesis-account $WALLET3_ADDR 1000000000000uluna --vesting-amount 10000000000uluna --vesting-start-time $(date +%s) --vesting-end-time $(($(date '+%s') + 100000023)) --home $CHAIN_DIR/$CHAINID_1
-$BINARY add-genesis-account $WALLET4_ADDR 1000000000000uluna --vesting-amount 10000000000uluna --vesting-start-time $(date +%s) --vesting-end-time $(($(date '+%s') + 100000023)) --home $CHAIN_DIR/$CHAINID_2
-$BINARY add-genesis-account $RLY1_ADDR 1000000000000uluna --home $CHAIN_DIR/$CHAINID_1
-$BINARY add-genesis-account $RLY2_ADDR 1000000000000uluna --home $CHAIN_DIR/$CHAINID_2
+$BINARY add-genesis-account $VAL1_ADDR "1000000000000${DENOM}" --home $CHAIN_DIR/$CHAINID_1
+$BINARY add-genesis-account $VAL2_ADDR "1000000000000${DENOM}" --home $CHAIN_DIR/$CHAINID_2
+$BINARY add-genesis-account $WALLET1_ADDR "1000000000000${DENOM}" --home $CHAIN_DIR/$CHAINID_1
+$BINARY add-genesis-account $WALLET2_ADDR "1000000000000${DENOM}" --home $CHAIN_DIR/$CHAINID_2
+$BINARY add-genesis-account $WALLET3_ADDR "1000000000000${DENOM}" --vesting-amount "10000000000${DENOM}" --vesting-start-time $(date +%s) --vesting-end-time $(($(date '+%s') + 100000023)) --home $CHAIN_DIR/$CHAINID_1
+$BINARY add-genesis-account $WALLET4_ADDR "1000000000000${DENOM}" --vesting-amount "10000000000${DENOM}" --vesting-start-time $(date +%s) --vesting-end-time $(($(date '+%s') + 100000023)) --home $CHAIN_DIR/$CHAINID_2
+$BINARY add-genesis-account $RLY1_ADDR "1000000000000${DENOM}" --home $CHAIN_DIR/$CHAINID_1
+$BINARY add-genesis-account $RLY2_ADDR "1000000000000${DENOM}" --home $CHAIN_DIR/$CHAINID_2
 
 echo "Creating and collecting gentx..."
-$BINARY gentx val1 7000000000uluna --home $CHAIN_DIR/$CHAINID_1 --chain-id $CHAINID_1 --keyring-backend test
-$BINARY gentx val2 7000000000uluna --home $CHAIN_DIR/$CHAINID_2 --chain-id $CHAINID_2 --keyring-backend test
+$BINARY gentx val1 7000000000uwhale --home $CHAIN_DIR/$CHAINID_1 --chain-id $CHAINID_1 --keyring-backend test
+$BINARY gentx val2 7000000000uwhale --home $CHAIN_DIR/$CHAINID_2 --chain-id $CHAINID_2 --keyring-backend test
 $BINARY collect-gentxs --home $CHAIN_DIR/$CHAINID_1 &> /dev/null
 $BINARY collect-gentxs --home $CHAIN_DIR/$CHAINID_2 &> /dev/null
 
@@ -119,6 +127,21 @@ sed -i -e 's/"voting_period": "172800s"/"voting_period": "10s"/g' $CHAIN_DIR/$CH
 sed -i -e 's/"reward_delay_time": "604800s"/"reward_delay_time": "0s"/g' $CHAIN_DIR/$CHAINID_1/config/genesis.json
 sed -i -e 's/"reward_delay_time": "604800s"/"reward_delay_time": "0s"/g' $CHAIN_DIR/$CHAINID_2/config/genesis.json
 
+
+# Update the genesis file 
+update_test_genesis () {
+    jq "$1" $GENESIS_1 > $TMP_GENESIS_1 && mv $TMP_GENESIS_1 $GENESIS_1
+    jq "$1" $GENESIS_2 > $TMP_GENESIS_2 && mv $TMP_GENESIS_2 $GENESIS_2
+}
+
+update_test_genesis ".app_state[\"staking\"][\"params\"][\"bond_denom\"]=\"$DENOM\""
+update_test_genesis ".app_state[\"mint\"][\"params\"][\"mint_denom\"]=\"$DENOM\""
+update_test_genesis ".app_state[\"crisis\"][\"constant_fee\"][\"denom\"]=\"$DENOM\""
+update_test_genesis ".app_state[\"gov\"][\"deposit_params\"][\"min_deposit\"][0][\"denom\"]=\"$DENOM\""
+update_test_genesis ".app_state[\"tokenfactory\"][\"params\"][\"denom_creation_fee\"][0][\"denom\"]=\"$DENOM\""
+
+
+# Starting the chain 
 echo "Starting $CHAINID_1 in $CHAIN_DIR..."
 echo "Creating log file at $CHAIN_DIR/$CHAINID_1.log"
 $BINARY start --log_level trace --log_format json --home $CHAIN_DIR/$CHAINID_1 --pruning=nothing --grpc.address="0.0.0.0:$GRPCPORT_1" --grpc-web.address="0.0.0.0:$GRPCWEB_1" > $CHAIN_DIR/$CHAINID_1.log 2>&1 &

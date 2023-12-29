@@ -150,9 +150,13 @@ ictest-all: ictest-start-cosmos ictest-ibc
 ###############################################################################
 ###                        Integration Tests                                ###
 ###############################################################################
+
+	
+# ./scripts/tests/relayer/interchain-acc-config/rly-init.sh
 init-test-framework: clean-testing-data install
 	@echo "Initializing both blockchains..."
 	./scripts/tests/init-test-framework.sh
+
 
 clean-testing-data:
 	@echo "Killing terrad and removing previous data"
@@ -161,7 +165,7 @@ clean-testing-data:
 	-@pkill migalood_new 2>/dev/null
 	-@pkill migalood_old 2>/dev/null
 	-@rm -rf ./data
-	-@rm -rf ./_build
+
 	
 
 .PHONY: ictest-start-cosmos ictest-all ictest-ibc-hooks ictest-ibc
