@@ -1,7 +1,6 @@
 package v3
 
 import (
-	"fmt"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -25,11 +24,9 @@ func CreateUpgradeHandler(
 	icacontrollerKeeper icacontrollerkeeper.Keeper,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, _plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
-		fmt.Println("zozo")
 		// READ: https://github.com/cosmos/cosmos-sdk/blob/v0.47.4/UPGRADING.md#xconsensus
 		baseAppLegacySS := paramsKeeper.Subspace(baseapp.Paramspace).
 			WithKeyTable(paramstypes.ConsensusParamsKeyTable())
-		fmt.Println(baseAppLegacySS)
 		baseapp.MigrateParams(ctx, baseAppLegacySS, &consensusParamsKeeper)
 
 		// READ: https://github.com/cosmos/ibc-go/blob/v7.2.0/docs/migrations/v7-to-v7_1.md#chains
