@@ -88,7 +88,7 @@ run_upgrade () {
     echo "start upgrading"
 
     STATUS_INFO=($(./_build/old/migalood status --home $HOME | jq -r '.NodeInfo.network,.SyncInfo.latest_block_height'))
-    UPGRADE_HEIGHT=$((STATUS_INFO[1] + 20))
+    UPGRADE_HEIGHT=$((STATUS_INFO[1] + 12))
 
     tar -cf ./_build/new/migalood.tar -C ./_build/new migalood
     SUM=$(shasum -a 256 ./_build/new/migalood.tar | cut -d ' ' -f1)
