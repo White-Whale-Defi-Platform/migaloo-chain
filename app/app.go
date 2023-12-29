@@ -1038,7 +1038,6 @@ func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino {
 // NOTE: This is solely to be used for testing purposes.
 func (app *MigalooApp) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
-	fmt.Println(moduleName, subspace)
 	return subspace
 }
 
