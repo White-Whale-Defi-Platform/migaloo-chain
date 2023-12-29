@@ -10,7 +10,7 @@
     "default-denom": "uwhale",
     "gas-adjustment": 1.5,
     "gas-prices": "0.025uwhale",
-    "coin-type": 330,
+    "coin-type": 118,
     "debug": true,
     "timeout": "10s",
     "output-format": "json",
