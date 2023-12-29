@@ -158,6 +158,10 @@ init-test-framework: clean-testing-data install
 	./scripts/tests/init-test-framework.sh
 	./scripts/tests/relayer/interchain-acc-config/rly-init.sh
 
+test-tokenfactory: 
+	@echo "Testing tokenfactory..."
+	./scripts/tests/tokenfactory/tokenfactory.sh
+
 
 clean-testing-data:
 	@echo "Killing terrad and removing previous data"
