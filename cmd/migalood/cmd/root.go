@@ -25,7 +25,6 @@ import (
 	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
 	"github.com/spf13/cobra"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
@@ -281,7 +280,7 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 	if err != nil {
 		panic(err)
 	}
-	var wasmOpts []wasm.Option
+	var wasmOpts []wasmkeeper.Option
 	if cast.ToBool(appOpts.Get("telemetry.enabled")) {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
@@ -347,7 +346,7 @@ func (a appCreator) appExport(
 	}
 
 	loadLatest := height == -1
-	var emptyWasmOpts []wasm.Option
+	var emptyWasmOpts []wasmkeeper.Option
 	migalooApp = app.NewMigalooApp(
 		logger,
 		db,
@@ -360,12 +359,6 @@ func (a appCreator) appExport(
 		appOpts,
 		emptyWasmOpts,
 	)
-
-	if height != -1 {
-		if err := migalooApp.LoadHeight(height); err != nil {
-			return servertypes.ExportedApp{}, err
-		}
-	}
 
 	return migalooApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs, modulesToExport)
 }

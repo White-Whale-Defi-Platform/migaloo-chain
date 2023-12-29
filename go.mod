@@ -22,7 +22,7 @@ require (
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230523193151-73dea436e53f
 	github.com/stretchr/testify v1.8.4
 	github.com/terra-money/alliance v0.3.2
-	github.com/terra-money/core/v2 v2.0.0-00010101000000-000000000000
+	github.com/terra-money/core/v2 v2.5.0
 )
 
 require (
@@ -192,8 +192,6 @@ require (
 replace (
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	// use notional's wasmd fork with token factory
-	github.com/CosmWasm/wasmd => github.com/notional-labs/wasmd v0.45.0-tf.rc0
 	// downgraded to avoid some annoying warning messages
 	// should be fixed after sdk 0.47.3 and gogoproto 1.4.10
 	// https://github.com/cosmos/gogoproto/issues/66

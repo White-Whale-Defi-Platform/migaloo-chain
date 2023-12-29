@@ -3,6 +3,10 @@
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 COMMIT := $(shell git log -1 --format='%H')
 
+APP_DIR = ./app
+BINDIR ?= ~/go/bin
+RUNSIM  = $(BINDIR)/runsim
+
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
   # if VERSION is empty, then populate it with branch's name and raw commit hash
@@ -13,7 +17,7 @@ endif
 
 LEDGER_ENABLED ?= true
 SDK_PACK := $(shell go list -m github.com/cosmos/cosmos-sdk | sed  's/ /\@/g')
-TM_VERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::') 
+TM_VERSION := $(shell go list -m github.com/cometbft/cometbft | sed 's:.* ::')
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf
 BUILDDIR ?= $(CURDIR)/build
@@ -64,7 +68,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=migaloo \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
-			-X github.com/tendermint/tendermint/version.TMCoreSemVer=$(TM_VERSION)
+			-X github.com/cometbft/cometbft/version.TMCoreSemVer=$(TM_VERSION)
 
 ifeq (cleveldb,$(findstring cleveldb,$(COSMOS_BUILD_OPTIONS)))
   ldflags += -X github.com/cosmos/cosmos-sdk/types.DBBackend=cleveldb
@@ -92,3 +96,53 @@ install: go.sum
 
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
+
+docker-build-debug:
+	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
+
+runsim: $(RUNSIM)
+$(RUNSIM):
+	@echo "Installing runsim..."
+	@go install github.com/cosmos/tools/cmd/runsim@v1.0.0
+
+test-sim-import-export: runsim
+	@echo "Running application import/export simulation. This may take several minutes..."
+	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(APP_DIR) 50 5 TestAppImportExport
+
+test-sim-custom-genesis-multi-seed: runsim
+	@echo "Running multi-seed custom genesis simulation..."
+	@echo "By default, ${HOME}/.migalood/config/genesis.json will be used."
+	@$(BINDIR)/runsim -Genesis=${HOME}/.migalood/config/genesis.json -SimAppPkg=$(APP_DIR) 400 5 TestFullAppSimulation
+
+test-sim-multi-seed-long: runsim
+	@echo "Running long multi-seed application simulation. This may take awhile!"
+	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(APP_DIR) 500 50 TestFullAppSimulation
+
+test-sim-multi-seed-short: runsim
+	@echo "Running short multi-seed application simulation. This may take awhile!"
+	@$(BINDIR)/runsim -Jobs=4 -SimAppPkg=$(APP_DIR) 50 10 TestFullAppSimulation
+
+test-sim-custom-genesis-fast:
+	@echo "Running custom genesis simulation..."
+	@echo "By default, ${HOME}/.migalood/config/genesis.json will be used."
+	@go test $(TEST_FLAGS) -mod=readonly $(SIMAPP) -run TestFullAppSimulation \
+		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
+
+###############################################################################
+###                             Interchain test                             ###
+###############################################################################
+
+# Executes start chain tests via interchaintest
+ictest-start-cosmos:
+	cd tests/interchaintest && go test -race -v -run TestStartMigaloo .
+
+ictest-ibc:
+	cd tests/interchaintest && go test -race -v -run TestMigalooGaiaIBCTransfer .
+
+ictest-ibc-hooks:
+	cd tests/interchaintest && go test -race -v -run TestIBCHooks .
+
+# Executes all tests via interchaintest after compling a local image as migaloo:local
+ictest-all: ictest-start-cosmos ictest-ibc
+
+.PHONY: ictest-start-cosmos ictest-all ictest-ibc-hooks ictest-ibc

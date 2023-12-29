@@ -3,12 +3,6 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
-
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -44,9 +38,15 @@ import (
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
+	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	icq "github.com/strangelove-ventures/async-icq/v7"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sort"
 
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -62,7 +62,6 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	govv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/cosmos/cosmos-sdk/x/mint"
 	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
@@ -102,7 +101,8 @@ import (
 	ibcclient "github.com/cosmos/ibc-go/v7/modules/core/02-client"
 	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
 	ibcclienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
+	ibcporttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
+
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
@@ -113,7 +113,7 @@ import (
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
 
-	bank "github.com/terra-money/core/v2/custom/bank"
+	terracustombank "github.com/terra-money/core/v2/custom/bank"
 	custombankkeeper "github.com/terra-money/core/v2/custom/bank/keeper"
 
 	ibchooks "github.com/cosmos/ibc-apps/modules/ibc-hooks/v7"
@@ -151,11 +151,9 @@ import (
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
-	// Upgrade Handler
-	upgrades "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades"
 	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2_2_5"
 	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3_0_2"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v4_1_0"
 )
 
 const (
@@ -165,8 +163,7 @@ const (
 
 // We pull these out so we can set them with LDFLAGS in the Makefile
 var (
-	NodeDir  = ".migalood"
-	Upgrades = []upgrades.Upgrade{v2.Upgrade, v2_2_5.Upgrade, v3_0_2.Upgrade}
+	NodeDir = ".migalood"
 )
 
 // These constants are derived from the above variables.
@@ -185,7 +182,7 @@ var (
 		auth.AppModuleBasic{},
 		alliancemodule.AppModuleBasic{},
 		genutil.NewAppModuleBasic(genutiltypes.DefaultMessageValidator),
-		bank.AppModule{},
+		terracustombank.AppModule{},
 		capability.AppModuleBasic{},
 		consensus.AppModuleBasic{},
 		staking.AppModuleBasic{},
@@ -314,6 +311,11 @@ type MigalooApp struct {
 	configurator module.Configurator
 }
 
+func (app *MigalooApp) Close() error {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (app *MigalooApp) RegisterNodeService(clientCtx client.Context) {
 	nodeservice.RegisterNodeService(clientCtx, app.GRPCQueryRouter())
 }
@@ -329,7 +331,7 @@ func NewMigalooApp(
 	invCheckPeriod uint,
 	encodingConfig appparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
-	wasmOpts []wasm.Option,
+	wasmOpts []wasmkeeper.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *MigalooApp {
 	appCodec, legacyAmino, txConfig := encodingConfig.Codec, encodingConfig.Amino, encodingConfig.TxConfig
@@ -643,7 +645,7 @@ func NewMigalooApp(
 	)
 
 	// Create Transfer Stack
-	var transferStack porttypes.IBCModule
+	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
 	transferStack = router.NewIBCMiddleware(
@@ -663,14 +665,14 @@ func NewMigalooApp(
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. Do your own research before using it.
-	var icaControllerStack porttypes.IBCModule
+	var icaControllerStack ibcporttypes.IBCModule
 	// You will likely want to use your own reviewed and maintained ica auth module
 	icaControllerStack = icacontroller.NewIBCMiddleware(icaControllerStack, app.ICAControllerKeeper)
 	icaControllerStack = ibcfee.NewIBCMiddleware(icaControllerStack, app.IBCFeeKeeper)
 
 	// RecvPacket, message that originates from core IBC and goes down to app, the flow is:
 	// channel.RecvPacket -> fee.OnRecvPacket -> icaHost.OnRecvPacket
-	var icaHostStack porttypes.IBCModule
+	var icaHostStack ibcporttypes.IBCModule
 	icaHostStack = icahost.NewIBCModule(app.ICAHostKeeper)
 	icaHostStack = ibcfee.NewIBCMiddleware(icaHostStack, app.IBCFeeKeeper)
 
@@ -679,13 +681,13 @@ func NewMigalooApp(
 	icqStack := icq.NewIBCModule(app.ICQKeeper)
 
 	// Create fee enabled wasm ibc Stack
-	var wasmStack porttypes.IBCModule
+	var wasmStack ibcporttypes.IBCModule
 	wasmStack = wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper)
 	wasmStack = ibcfee.NewIBCMiddleware(wasmStack, app.IBCFeeKeeper)
 
 	// Create static IBC router, add app routes, then set and seal it
-	ibcRouter := porttypes.NewRouter().
-		AddRoute(ibctransfertypes.ModuleName, hooksTransferStack).
+	ibcRouter := ibcporttypes.NewRouter().
+		AddRoute(ibctransfertypes.ModuleName, transferStack).
 		AddRoute(wasmtypes.ModuleName, wasmStack).
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(icqtypes.ModuleName, icqStack)
@@ -707,6 +709,7 @@ func NewMigalooApp(
 		govConfig,
 		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
+	govKeeper.SetLegacyRouter(govRouter)
 
 	app.GovKeeper = *govKeeper.SetHooks(
 		govtypes.NewMultiGovHooks(
@@ -734,13 +737,14 @@ func NewMigalooApp(
 		),
 		auth.NewAppModule(appCodec, app.AccountKeeper, authsims.RandomGenesisAccounts, app.GetSubspace(authtypes.ModuleName)),
 		vesting.NewAppModule(app.AccountKeeper, app.BankKeeper),
-		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper, app.GetSubspace(banktypes.ModuleName)),
+		terracustombank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper, app.GetSubspace(banktypes.ModuleName)),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper, false),
 		gov.NewAppModule(appCodec, &app.GovKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(govtypes.ModuleName)),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper, nil, app.GetSubspace(minttypes.ModuleName)),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(slashingtypes.ModuleName)),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper, app.GetSubspace(distrtypes.ModuleName)),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
+		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		upgrade.NewAppModule(&app.UpgradeKeeper),
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		evidence.NewAppModule(app.EvidenceKeeper),
@@ -783,15 +787,16 @@ func NewMigalooApp(
 		vestingtypes.ModuleName,
 		icqtypes.ModuleName,
 		// additional non simd modules
-		routertypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		ibcexported.ModuleName,
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
+		routertypes.ModuleName,
+		ibchookstypes.ModuleName,
 		wasmtypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
-		ibchookstypes.ModuleName,
+		consensusparamtypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
@@ -818,10 +823,11 @@ func NewMigalooApp(
 		ibcexported.ModuleName,
 		icatypes.ModuleName,
 		ibcfeetypes.ModuleName,
+		ibchookstypes.ModuleName,
 		wasmtypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		alliancemoduletypes.ModuleName,
-		ibchookstypes.ModuleName,
+		consensusparamtypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -857,9 +863,10 @@ func NewMigalooApp(
 		ibcfeetypes.ModuleName,
 		tokenfactorytypes.ModuleName,
 		// wasm after ibc transfer
+		ibchookstypes.ModuleName,
 		wasmtypes.ModuleName,
 		alliancemoduletypes.ModuleName,
-		ibchookstypes.ModuleName,
+		consensusparamtypes.ModuleName,
 	)
 
 	// Uncomment if you want to set a custom migration order here.
@@ -928,6 +935,9 @@ func NewMigalooApp(
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedICQKeeper = scopedICQKeeper
+
+	// set the contract keeper for the Ics20WasmHooks
+	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
@@ -1028,6 +1038,7 @@ func (app *MigalooApp) LegacyAmino() *codec.LegacyAmino {
 // NOTE: This is solely to be used for testing purposes.
 func (app *MigalooApp) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
+	fmt.Println(moduleName, subspace)
 	return subspace
 }
 
@@ -1085,27 +1096,66 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v2.UpgradeName,
+		v2.CreateUpgradeHandler(app.mm, app.configurator),
+	)
+
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v3_0_2.UpgradeName,
+		v3_0_2.CreateUpgradeHandler(app.mm, app.configurator),
+	)
+
+	// !! ATTENTION !!
+	// v4 upgrade handler
+	// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
+	// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md#xconsensus
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v4.UpgradeName,
+		v4.CreateUpgradeHandler(
+			app.mm,
+			app.configurator,
+			app.IBCKeeper.ClientKeeper,
+			app.ParamsKeeper,
+			app.ConsensusParamsKeeper,
+			app.ICAControllerKeeper,
+		),
+	)
+
+	// When a planned update height is reached, the old binary will panic
+	// writing on disk the height and name of the update that triggered it
+	// This will read that value, and execute the preparations for the upgrade.
 	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
 	if err != nil {
-		panic(fmt.Sprintf("failed to read upgrade info from disk %s", err))
+		panic(fmt.Errorf("failed to read upgrade info from disk: %w", err))
 	}
 
 	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
 		return
 	}
 
-	for _, upgrade := range Upgrades {
-		upgrade := upgrade
-		if upgradeInfo.Name == upgrade.UpgradeName {
-			app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, &upgrade.StoreUpgrades))
+	var storeUpgrades *storetypes.StoreUpgrades
+
+	switch upgradeInfo.Name {
+	case v4.UpgradeName:
+		// !! ATTENTION !!
+		// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
+		// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md
+		storeUpgrades = &storetypes.StoreUpgrades{
+			Added: []string{
+				consensusparamtypes.StoreKey,
+				crisistypes.StoreKey,
+				icqtypes.StoreKey,
+			},
+			Deleted: []string{
+				"intertx",
+			},
 		}
-		app.UpgradeKeeper.SetUpgradeHandler(
-			upgrade.UpgradeName,
-			upgrade.CreateUpgradeHandler(
-				app.mm,
-				cfg,
-			),
-		)
+	}
+
+	if storeUpgrades != nil {
+		// configure store loader that checks if version == upgradeHeight and applies store upgrades
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))
 	}
 }
 
@@ -1131,22 +1181,22 @@ func stringMapKeys(m map[string][]string) []string {
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
-	paramsKeeper.Subspace(authtypes.ModuleName)
-	paramsKeeper.Subspace(banktypes.ModuleName)
-	paramsKeeper.Subspace(stakingtypes.ModuleName)
-	paramsKeeper.Subspace(minttypes.ModuleName)
-	paramsKeeper.Subspace(distrtypes.ModuleName)
-	paramsKeeper.Subspace(slashingtypes.ModuleName)
-	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govv1.ParamKeyTable())
-	paramsKeeper.Subspace(crisistypes.ModuleName)
+	paramsKeeper.Subspace(authtypes.ModuleName).WithKeyTable(authtypes.ParamKeyTable())
+	paramsKeeper.Subspace(banktypes.ModuleName).WithKeyTable(banktypes.ParamKeyTable())
+	paramsKeeper.Subspace(stakingtypes.ModuleName).WithKeyTable(stakingtypes.ParamKeyTable())
+	paramsKeeper.Subspace(minttypes.ModuleName).WithKeyTable(minttypes.ParamKeyTable())
+	paramsKeeper.Subspace(distrtypes.ModuleName).WithKeyTable(distrtypes.ParamKeyTable())
+	paramsKeeper.Subspace(slashingtypes.ModuleName).WithKeyTable(slashingtypes.ParamKeyTable())
+	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypesv1.ParamKeyTable())
+	paramsKeeper.Subspace(crisistypes.ModuleName).WithKeyTable(crisistypes.ParamKeyTable())
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibcexported.ModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	paramsKeeper.Subspace(tokenfactorytypes.ModuleName)
+	paramsKeeper.Subspace(tokenfactorytypes.ModuleName).WithKeyTable(tokenfactorytypes.ParamKeyTable())
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icqtypes.ModuleName)
-	paramsKeeper.Subspace(wasmtypes.ModuleName)
-	paramsKeeper.Subspace(routertypes.ModuleName)
+	paramsKeeper.Subspace(wasmtypes.ModuleName).WithKeyTable(wasmtypes.ParamKeyTable())
+	paramsKeeper.Subspace(routertypes.ModuleName).WithKeyTable(routertypes.ParamKeyTable())
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName).WithKeyTable(alliancemoduletypes.ParamKeyTable())
 
 	return paramsKeeper
