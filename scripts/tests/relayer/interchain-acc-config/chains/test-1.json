@@ -9,7 +9,7 @@
     "keyring-backend": "test",
     "default-denom": "uwhale",
     "gas-adjustment": 1.5,
-    "gas-prices": "0.025uwhale",
+    "gas-prices": "100uwhale",
     "coin-type": 118,
     "debug": true,
     "timeout": "10s",

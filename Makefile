@@ -156,6 +156,7 @@ ictest-all: ictest-start-cosmos ictest-ibc
 init-test-framework: clean-testing-data install
 	@echo "Initializing both blockchains..."
 	./scripts/tests/init-test-framework.sh
+	./scripts/tests/relayer/interchain-acc-config/rly-init.sh
 
 
 clean-testing-data:
