@@ -1,0 +1,14 @@
+syntax = "proto3";
+package migaloo.feeburn.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types";
+
+// Params defines the parameters for the module.
+message Params {
+  string fee_burn_percent = 1 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+}

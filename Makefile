@@ -174,3 +174,52 @@ clean-testing-data:
 	
 
 .PHONY: ictest-start-cosmos ictest-all ictest-ibc-hooks ictest-ibc
+###############################################################################
+###                                  Proto                                  ###
+###############################################################################
+
+proto-all: proto-format proto-gen
+
+proto:
+	@echo
+	@echo "=========== Generate Message ============"
+	@echo
+	./scripts/protocgen.sh
+	@echo
+	@echo "=========== Generate Complete ============"
+	@echo
+
+test:
+	@go test -v ./x/...
+
+docs:
+	@echo
+	@echo "=========== Generate Message ============"
+	@echo
+	./scripts/generate-docs.sh
+
+	statik -src=client/docs/static -dest=client/docs -f -m
+	@if [ -n "$(git status --porcelain)" ]; then \
+        echo "\033[91mSwagger docs are out of sync!!!\033[0m";\
+        exit 1;\
+    else \
+        echo "\033[92mSwagger docs are in sync\033[0m";\
+    fi
+	@echo
+	@echo "=========== Generate Complete ============"
+	@echo
+
+protoVer=v0.2
+protoImageName=tendermintdev/sdk-proto-gen:$(protoVer)
+containerProtoGen=osmosis-proto-gen-$(protoVer)
+containerProtoFmt=osmosis-proto-fmt-$(protoVer)
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then docker start -a $(containerProtoGen); else docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(protoImageName) \
+		sh ./scripts/protocgen.sh; fi
+
+proto-format:
+	@echo "Formatting Protobuf files"
+	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoFmt}$$"; then docker start -a $(containerProtoFmt); else docker run --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
+		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
