@@ -6,6 +6,7 @@ COMMIT := $(shell git log -1 --format='%H')
 APP_DIR = ./app
 BINDIR ?= ~/go/bin
 RUNSIM  = $(BINDIR)/runsim
+BINARY ?= migalood
 
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
@@ -144,5 +145,32 @@ ictest-ibc-hooks:
 
 # Executes all tests via interchaintest after compling a local image as migaloo:local
 ictest-all: ictest-start-cosmos ictest-ibc
+
+
+###############################################################################
+###                        Integration Tests                                ###
+###############################################################################
+
+#./scripts/tests/relayer/interchain-acc-config/rly-init.sh
+	
+init-test-framework: clean-testing-data install
+	@echo "Initializing both blockchains..."
+	./scripts/tests/init-test-framework.sh
+	./scripts/tests/relayer/interchain-acc-config/rly-init.sh
+
+test-tokenfactory: 
+	@echo "Testing tokenfactory..."
+	./scripts/tests/tokenfactory/tokenfactory.sh
+
+
+clean-testing-data:
+	@echo "Killing terrad and removing previous data"
+	-@pkill $(BINARY) 2>/dev/null
+	-@pkill rly 2>/dev/null
+	-@pkill migalood_new 2>/dev/null
+	-@pkill migalood_old 2>/dev/null
+	-@rm -rf ./data
+
+	
 
 .PHONY: ictest-start-cosmos ictest-all ictest-ibc-hooks ictest-ibc
