@@ -92,6 +92,7 @@ while [ "$IBC_RECEIVED_RES_AMOUNT" != "1" ] || [ "${IBC_RECEIVED_RES_DENOM:0:4}"
     sleep 2
     IBC_RECEIVED_RES_AMOUNT=$($BINARY query bank balances $WALLET_2 --chain-id test-2 --node tcp://localhost:26657 -o json | jq -r '.balances[0].amount')
     IBC_RECEIVED_RES_DENOM=$($BINARY query bank balances $WALLET_2 --chain-id test-2 --node tcp://localhost:26657 -o json | jq -r '.balances[0].denom')
+   
     echo "Received:" $IBC_RECEIVED_RES_AMOUNT $IBC_RECEIVED_RES_DENOM
 done
 

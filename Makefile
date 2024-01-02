@@ -162,9 +162,13 @@ test-tokenfactory:
 	@echo "Testing tokenfactory..."
 	./scripts/tests/tokenfactory/tokenfactory.sh
 
+test-alliance: 
+	@echo "Testing alliance..."
+	./scripts/tests/alliance/delegate.sh
+
 
 clean-testing-data:
-	@echo "Killing terrad and removing previous data"
+	@echo "Killing migallod and removing previous data"
 	-@pkill $(BINARY) 2>/dev/null
 	-@pkill rly 2>/dev/null
 	-@pkill migalood_new 2>/dev/null

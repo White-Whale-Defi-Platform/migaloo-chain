@@ -137,8 +137,9 @@ update_test_genesis () {
 update_test_genesis ".app_state[\"staking\"][\"params\"][\"bond_denom\"]=\"$DENOM\""
 update_test_genesis ".app_state[\"mint\"][\"params\"][\"mint_denom\"]=\"$DENOM\""
 update_test_genesis ".app_state[\"crisis\"][\"constant_fee\"][\"denom\"]=\"$DENOM\""
-update_test_genesis ".app_state[\"gov\"][\"deposit_params\"][\"min_deposit\"][0][\"denom\"]=\"$DENOM\""
+update_test_genesis ".app_state[\"gov\"][\"params\"][\"min_deposit\"][0][\"denom\"]=\"$DENOM\""
 update_test_genesis ".app_state[\"tokenfactory\"][\"params\"][\"denom_creation_fee\"][0][\"denom\"]=\"$DENOM\""
+update_test_genesis
 
 
 # Starting the chain 
