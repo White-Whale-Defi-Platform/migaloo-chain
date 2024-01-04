@@ -717,9 +717,6 @@ func NewMigalooApp(
 		),
 	)
 
-	// upgrade handlers
-	cfg := module.NewConfigurator(appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
-
 	/****  Module Options ****/
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
@@ -891,7 +888,7 @@ func NewMigalooApp(
 	app.MountTransientStores(tkeys)
 	app.MountMemoryStores(memKeys)
 	// register upgrade
-	app.setupUpgradeHandlers(cfg)
+	app.setupUpgradeHandlers()
 
 	anteHandler, err := NewAnteHandler(
 		HandlerOptions{
@@ -1094,7 +1091,7 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 }
 
 // Setup Upgrade Handler
-func (app *MigalooApp) setupUpgradeHandlers(cfg module.Configurator) {
+func (app *MigalooApp) setupUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler(
 		v2.UpgradeName,
 		v2.CreateUpgradeHandler(app.mm, app.configurator),

@@ -66,7 +66,6 @@ update_test_genesis '.app_state["mint"]["params"]["mint_denom"]="'$DENOM'"'
 update_test_genesis '.app_state["gov"]["deposit_params"]["min_deposit"]=[{"denom":"'$DENOM'","amount": "1000000"}]'
 update_test_genesis '.app_state["crisis"]["constant_fee"]={"denom":"'$DENOM'","amount":"1000"}'
 update_test_genesis '.app_state["staking"]["params"]["bond_denom"]="'$DENOM'"'
-update_test_genesis '.app_state["
 
 # enable rest server and swagger
 $SED_BINARY -i '0,/enable = false/s//enable = true/' $HOME_DIR/config/app.toml
