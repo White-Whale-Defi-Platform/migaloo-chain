@@ -37,6 +37,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
+
+	feeburnkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
@@ -130,6 +132,10 @@ import (
 	tokenfactorykeeper "github.com/terra-money/core/v2/x/tokenfactory/keeper"
 	tokenfactorytypes "github.com/terra-money/core/v2/x/tokenfactory/types"
 
+	feeburnmodule "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn"
+	feeburnmodulekeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
+	feeburnmoduletypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. It has no known issues, but do your own research before using it.
 
@@ -161,7 +167,6 @@ const (
 	MockFeePort string = ibcmock.ModuleName + ibcfeetypes.ModuleName
 )
 
-// We pull these out so we can set them with LDFLAGS in the Makefile
 var (
 	NodeDir = ".migalood"
 )
@@ -217,6 +222,7 @@ var (
 		router.AppModuleBasic{},
 		ica.AppModuleBasic{},
 		ibcfee.AppModuleBasic{},
+		feeburnmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -235,6 +241,7 @@ var (
 		tokenfactorytypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		alliancemoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		alliancemoduletypes.RewardsPoolName: nil,
+		feeburnmoduletypes.ModuleName:       {authtypes.Burner},
 	}
 )
 
@@ -284,6 +291,7 @@ type MigalooApp struct {
 	RouterKeeper          routerkeeper.Keeper
 	ContractKeeper        *wasmkeeper.PermissionedKeeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
+	FeeBurnKeeper         feeburnkeeper.Keeper
 
 	// IBC hooks
 	IBCHooksKeeper *ibchookskeeper.Keeper
@@ -349,7 +357,9 @@ func NewMigalooApp(
 		evidencetypes.StoreKey, icqtypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		feegrant.StoreKey, authzkeeper.StoreKey, wasmtypes.StoreKey, icahosttypes.StoreKey,
 		icacontrollertypes.StoreKey, ibcfeetypes.StoreKey, tokenfactorytypes.StoreKey,
-		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey, ibchookstypes.StoreKey,
+		alliancemoduletypes.StoreKey, consensusparamtypes.StoreKey, crisistypes.StoreKey,
+		ibchookstypes.StoreKey,
+		feeburnmoduletypes.StoreKey,
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -507,6 +517,13 @@ func NewMigalooApp(
 		app.StakingKeeper,
 		app.UpgradeKeeper,
 		scopedIBCKeeper,
+	)
+
+	app.FeeBurnKeeper = *feeburnmodulekeeper.NewKeeper(
+		appCodec,
+		keys[feeburnmoduletypes.StoreKey],
+		keys[feeburnmoduletypes.MemStoreKey],
+		authtypes.NewModuleAddress(govtypes.ModuleName),
 	)
 
 	// Register the proposal types
@@ -743,6 +760,7 @@ func NewMigalooApp(
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName)),
 		consensus.NewAppModule(appCodec, app.ConsensusParamsKeeper),
 		upgrade.NewAppModule(&app.UpgradeKeeper),
+		feeburnmodule.NewAppModule(appCodec, app.FeeBurnKeeper, app.AccountKeeper, app.BankKeeper),
 		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.MsgServiceRouter(), app.GetSubspace(wasmtypes.ModuleName)),
 		evidence.NewAppModule(app.EvidenceKeeper),
 		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
@@ -783,6 +801,7 @@ func NewMigalooApp(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		icqtypes.ModuleName,
+		feeburnmoduletypes.ModuleName,
 		// additional non simd modules
 		ibctransfertypes.ModuleName,
 		ibcexported.ModuleName,
@@ -813,6 +832,7 @@ func NewMigalooApp(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
+		feeburnmoduletypes.ModuleName,
 		// additional non simd modules
 		icqtypes.ModuleName,
 		routertypes.ModuleName,
@@ -845,6 +865,7 @@ func NewMigalooApp(
 		minttypes.ModuleName,
 		crisistypes.ModuleName,
 		genutiltypes.ModuleName,
+		feeburnmoduletypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,
 		icqtypes.ModuleName,
@@ -900,6 +921,8 @@ func NewMigalooApp(
 				SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 			},
 			IBCKeeper:         app.IBCKeeper,
+			BankKeeper:        app.BankKeeper,
+			FeeburnKeeper:     &app.FeeBurnKeeper,
 			WasmConfig:        &wasmConfig,
 			TXCounterStoreKey: keys[wasm.StoreKey],
 		},
@@ -1194,6 +1217,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(wasmtypes.ModuleName).WithKeyTable(wasmtypes.ParamKeyTable())
 	paramsKeeper.Subspace(routertypes.ModuleName).WithKeyTable(routertypes.ParamKeyTable())
 	paramsKeeper.Subspace(alliancemoduletypes.ModuleName).WithKeyTable(alliancemoduletypes.ParamKeyTable())
+	paramsKeeper.Subspace(feeburnmoduletypes.ModuleName)
 
 	return paramsKeeper
 }
