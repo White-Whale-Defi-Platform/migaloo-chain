@@ -167,6 +167,10 @@ test-alliance:
 	./scripts/tests/alliance/delegate.sh
 
 
+test-ibc-hooks:
+	@echo "Testing ibc-hooks..."
+	./scripts/tests/ibc-hooks/increment.sh
+
 clean-testing-data:
 	@echo "Killing migallod and removing previous data"
 	-@pkill $(BINARY) 2>/dev/null
