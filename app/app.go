@@ -1165,6 +1165,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 				consensusparamtypes.StoreKey,
 				crisistypes.StoreKey,
 				icqtypes.StoreKey,
+				feeburnmoduletypes.StoreKey,
 			},
 			Deleted: []string{
 				"intertx",
