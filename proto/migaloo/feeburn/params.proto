@@ -9,6 +9,6 @@ option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/fee
 message Params {
   option (gogoproto.goproto_stringer) = false;
 
-  string txFeeBurnPercent = 1
+  string tx_fee_burn_percent = 1
       [ (gogoproto.moretags) = "yaml:\"tx_fee_burn_percent\"" ];
 }
