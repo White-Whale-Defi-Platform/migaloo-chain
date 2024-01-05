@@ -209,15 +209,17 @@ docs:
 	@echo "=========== Generate Complete ============"
 	@echo
 
-protoVer=v0.2
-protoImageName=tendermintdev/sdk-proto-gen:$(protoVer)
-containerProtoGen=osmosis-proto-gen-$(protoVer)
-containerProtoFmt=osmosis-proto-fmt-$(protoVer)
+###############################################################################
+###                                Protobuf                                 ###
+###############################################################################
+
+containerProtoVer=0.13.0
+containerProtoImage=ghcr.io/cosmos/proto-builder:$(containerProtoVer)
 
 proto-gen:
 	@echo "Generating Protobuf files"
-	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then docker start -a $(containerProtoGen); else docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(protoImageName) \
-		sh ./scripts/protocgen.sh; fi
+	@$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) \
+		sh ./scripts/protocgen.sh;
 
 proto-format:
 	@echo "Formatting Protobuf files"
