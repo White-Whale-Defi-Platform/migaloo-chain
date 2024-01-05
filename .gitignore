@@ -7,4 +7,5 @@ bin
 mytestnet
 data
 screenlog.0
-_build 
+_build
+.idea
