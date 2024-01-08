@@ -10,23 +10,23 @@ import (
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 )
 
-var _ types.MsgServer = msgServer{}
+var _ types.MsgServer = MsgServer{}
 
-type msgServer struct {
+type MsgServer struct {
 	Keeper
 }
 
 // NewMsgServerImpl returns an implementation of the MsgServer interface
 // for the provided Keeper.
 func NewMsgServerImpl(keeper Keeper) types.MsgServer {
-	return &msgServer{Keeper: keeper}
+	return &MsgServer{Keeper: keeper}
 }
 
 // UpdateParams implements the gRPC MsgServer interface. When an UpdateParams
 // proposal passes, it updates the module parameters. The update can only be
 // performed if the requested authority is the Cosmos SDK governance module
 // account.
-func (k msgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+func (k MsgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
 	if k.authority.String() != req.Authority {
 		return nil, errorsmod.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.authority.String(), req.Authority)
 	}
