@@ -12,7 +12,8 @@ import (
 func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 	suite.SetupTest(false) // reset
 
-	fbd := ante.NewDeductFeeDecorator(suite.app.AccountKeeper, suite.app.BankKeeper, suite.app.FeeGrantKeeper, nil, suite.app.FeeBurnKeeper)
+	fbd := ante.NewDeductFeeDecorator(suite.App.AccountKeeper, suite.App.BankKeeper, suite.App.FeeGrantKeeper, nil,
+		suite.App.FeeBurnKeeper)
 	antehandler := sdk.ChainAnteDecorators(fbd)
 
 	priv := ed25519.GenPrivKey()
@@ -22,14 +23,14 @@ func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 	addrRecv := getAddr(privNew)
 
 	accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
-	err := suite.FundAccount(suite.ctx, addr, accBalance)
+	err := suite.FundAccount(suite.Ctx, addr, accBalance)
 	suite.Require().NoError(err)
 
 	sendAmount := sdk.NewCoin(config.BaseDenom, sdk.NewInt(10))
 	amount := sdk.Coins{sendAmount}
 	sendMsg := banktypes.NewMsgSend(accountAddress, addrRecv, amount)
 	txBuilder := prepareCosmosTx(priv, sendMsg)
-	_, err = antehandler(suite.ctx, txBuilder.GetTx(), false)
+	_, err = antehandler(suite.Ctx, txBuilder.GetTx(), false)
 
 	suite.Require().NoError(err, "Did not error on invalid tx")
 }
@@ -37,14 +38,15 @@ func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 func (suite *AnteTestSuite) TestFeeBurnDecoratorWhenTxNull() {
 	suite.SetupTest(false) // reset
 
-	fbd := ante.NewDeductFeeDecorator(suite.app.AccountKeeper, suite.app.BankKeeper, suite.app.FeeGrantKeeper, nil, suite.app.FeeBurnKeeper)
+	fbd := ante.NewDeductFeeDecorator(suite.App.AccountKeeper, suite.App.BankKeeper, suite.App.FeeGrantKeeper, nil,
+		suite.App.FeeBurnKeeper)
 	antehandler := sdk.ChainAnteDecorators(fbd)
 
 	priv := ed25519.GenPrivKey()
 	addr := getAddr(priv)
 	accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
-	err := suite.FundAccount(suite.ctx, addr, accBalance)
+	err := suite.FundAccount(suite.Ctx, addr, accBalance)
 	suite.Require().NoError(err)
-	_, err = antehandler(suite.ctx, nil, false)
+	_, err = antehandler(suite.Ctx, nil, false)
 	suite.Require().Error(err, "Tx must be a FeeTx")
 }
