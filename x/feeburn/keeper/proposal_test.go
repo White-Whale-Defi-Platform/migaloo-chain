@@ -26,7 +26,7 @@ func (suite *KeeperTestSuite) TestUpdateTxFeeBurnPercent() {
 			} else {
 				suite.Nil(err)
 				params := suite.app.FeeBurnKeeper.GetParams(suite.ctx)
-				suite.Equal(tt.fee, params.TxFeeBurnPercent)
+				suite.Equal(tt.fee, params.GetTxFeeBurnPercent())
 			}
 		})
 	}

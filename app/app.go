@@ -1016,6 +1016,11 @@ func (app *MigalooApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
+// InterfaceRegistry returns Migaloo InterfaceRegistry
+func (app *MigalooApp) InterfaceRegistry() types.InterfaceRegistry {
+	return app.interfaceRegistry
+}
+
 // ModuleAccountAddrs returns all the app's module account addresses.
 func (app *MigalooApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
