@@ -133,6 +133,7 @@ import (
 	tokenfactorytypes "github.com/terra-money/core/v2/x/tokenfactory/types"
 
 	feeburnmodule "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn"
+	feeburnmoduleclient "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/client"
 	feeburnmodulekeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
 	feeburnmoduletypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
 
@@ -202,6 +203,7 @@ var (
 			alliancemoduleclient.CreateAllianceProposalHandler,
 			alliancemoduleclient.UpdateAllianceProposalHandler,
 			alliancemoduleclient.DeleteAllianceProposalHandler,
+			feeburnmoduleclient.UpdateTxFeeBurnPercentProposalHandler,
 		}),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -534,7 +536,8 @@ func NewMigalooApp(
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(&app.UpgradeKeeper)).
 		AddRoute(ibcclienttypes.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
-		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper))
+		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper)).
+		AddRoute(feeburnmoduletypes.RouterKey, feeburnmodule.NewFeeBurnProposalHandler(&app.FeeBurnKeeper))
 
 	// RouterKeeper must be created before TransferKeeper
 	app.RouterKeeper = *routerkeeper.NewKeeper(
