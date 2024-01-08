@@ -59,9 +59,11 @@ done
 
 echo "Executing the IBC Hook to increment the counter on callback"
 # Execute an IBC transfer with ibc_callback to test the callback acknowledgement twice.
-IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1uluna --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --fees 6000000$DENOM --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --fees 6000000$DENOM --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+
+
 sleep 3
-IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1uluna --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 6000000$DENOM --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --fees 6000000$DENOM --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
 export WALLET_2_WASM_SENDER=$($BINARY q ibchooks wasm-sender channel-0 "$WALLET_2" --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657)
 
 COUNT_RES=""
@@ -74,9 +76,9 @@ done
 
 # echo "Executing the IBC Hook to increment the counter on callback with timeout"
 # # Prepare two callback queries but this time with a timeout height that is unreachable (0-1) to test the timeout callback.
-# IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1uluna --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+# IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
 # sleep 3
-# IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1uluna --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+# IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
 # export WALLET_2_WASM_SENDER=$($BINARY q ibchooks wasm-sender channel-0 "$WALLET_2" --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657)
 
 # COUNT_RES=""
