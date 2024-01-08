@@ -297,7 +297,7 @@ type MigalooApp struct {
 
 	// IBC hooks
 	IBCHooksKeeper *ibchookskeeper.Keeper
-	TransferStack  *ibchooks.IBCMiddleware
+	TransferStack  *ibcporttypes.IBCModule
 
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
@@ -668,6 +668,7 @@ func NewMigalooApp(
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 	transferStack = router.NewIBCMiddleware(
 		transferStack,
 		&app.RouterKeeper,
@@ -676,8 +677,7 @@ func NewMigalooApp(
 		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
 	// Hooks Middleware
-	hooksTransferStack := ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
-	app.TransferStack = &hooksTransferStack
+	app.TransferStack = &transferStack
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
@@ -707,7 +707,7 @@ func NewMigalooApp(
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter().
-		AddRoute(ibctransfertypes.ModuleName, transferStack).
+		AddRoute(ibctransfertypes.ModuleName, *app.TransferStack).
 		AddRoute(wasmtypes.ModuleName, wasmStack).
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(icqtypes.ModuleName, icqStack)

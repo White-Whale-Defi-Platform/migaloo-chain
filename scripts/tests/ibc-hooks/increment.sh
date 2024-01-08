@@ -6,10 +6,10 @@ echo "# IBC Hook call #"
 echo "#################"
 echo ""
 
-BINARY=migalood
-CHAIN_DIR=$(pwd)/data
-WALLET_1=$($BINARY keys show wallet1 -a --keyring-backend test --home $CHAIN_DIR/test-1)
-WALLET_2=$($BINARY keys show wallet2 -a --keyring-backend test --home $CHAIN_DIR/test-2)
+export BINARY=migalood
+export CHAIN_DIR=$(pwd)/data
+export WALLET_1=$($BINARY keys show wallet1 -a --keyring-backend test --home $CHAIN_DIR/test-1)
+export WALLET_2=$($BINARY keys show wallet2 -a --keyring-backend test --home $CHAIN_DIR/test-2)
 
 # Deploy the smart contract on chain to test the callbacks. (find the source code under the following url: `~/scripts/tests/ibc-hooks/counter/src/contract.rs`)
 echo "Deploying counter contract"
@@ -22,8 +22,11 @@ CODE_ID=$($BINARY query tx $TX_HASH -o josn --chain-id test-2 --home $CHAIN_DIR/
 echo "Instantiating counter contract"
 RANDOM_HASH=$(hexdump -vn16 -e'4/4 "%08X" 1 "\n"' /dev/urandom)
 TX_HASH=$($BINARY tx wasm instantiate2 $CODE_ID '{"count": 0}' $RANDOM_HASH --no-admin --label="Label with $RANDOM_HASH" --from $WALLET_2 --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test -y --gas 10000000 --fees 6000000uwhale -o json | jq -r '.txhash')
+
+echo "TX hash: $TX_HASH"
 sleep 3
 CONTRACT_ADDRESS=$($BINARY query tx $TX_HASH -o josn --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 | jq -r '.logs[0].events[1].attributes[0].value')
+echo "Contract address: $CONTRACT_ADDRESS"
 
 echo "Executing the IBC Hook to increment the counter"
 # First execute an IBC transfer to create the entry in the smart contract with the sender address ...
@@ -36,6 +39,8 @@ export WALLET_1_WASM_SENDER=$($BINARY q ibchooks wasm-sender channel-0 "$WALLET_
 
 IBC_RECEIVER_BALANCE=$($BINARY query bank balances $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --node tcp://localhost:16657 -o json)
 echo "IBC Receiver balance: $IBC_RECEIVER_BALANCE"
+
+echo "wallet 1 wasm sender: $WALLET_1_WASM_SENDER"
 
 COUNT_RES=""
 COUNT_FUNDS_RES=""
