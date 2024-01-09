@@ -121,7 +121,7 @@ sed -i -e 's#":8080"#":'"$ROSETTA_2"'"#g' $CHAIN_DIR/$CHAINID_2/config/app.toml
 sed -i -e 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/g' $CHAIN_DIR/$CHAINID_2/config/app.toml
 
 
-echo "Chaning genesis.json..."
+echo "Changing genesis.json..."
 sed -i -e 's/"voting_period": "172800s"/"voting_period": "10s"/g' $CHAIN_DIR/$CHAINID_1/config/genesis.json
 sed -i -e 's/"voting_period": "172800s"/"voting_period": "10s"/g' $CHAIN_DIR/$CHAINID_2/config/genesis.json
 sed -i -e 's/"reward_delay_time": "604800s"/"reward_delay_time": "0s"/g' $CHAIN_DIR/$CHAINID_1/config/genesis.json
@@ -134,10 +134,11 @@ update_test_genesis () {
     jq "$1" $GENESIS_2 > $TMP_GENESIS_2 && mv $TMP_GENESIS_2 $GENESIS_2
 }
 
+echo "update test genesis"
 update_test_genesis ".app_state[\"staking\"][\"params\"][\"bond_denom\"]=\"$DENOM\""
 update_test_genesis ".app_state[\"mint\"][\"params\"][\"mint_denom\"]=\"$DENOM\""
 update_test_genesis ".app_state[\"crisis\"][\"constant_fee\"][\"denom\"]=\"$DENOM\""
-update_test_genesis ".app_state[\"gov\"][\"deposit_params\"][\"min_deposit\"][0][\"denom\"]=\"$DENOM\""
+update_test_genesis ".app_state[\"gov\"][\"params\"][\"min_deposit\"][0][\"denom\"]=\"$DENOM\""
 update_test_genesis ".app_state[\"tokenfactory\"][\"params\"][\"denom_creation_fee\"][0][\"denom\"]=\"$DENOM\""
 
 

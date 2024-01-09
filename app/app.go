@@ -3,6 +3,12 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sort"
+
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -44,11 +50,6 @@ import (
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	icq "github.com/strangelove-ventures/async-icq/v7"
-	"io"
-	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
 
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -296,7 +297,7 @@ type MigalooApp struct {
 
 	// IBC hooks
 	IBCHooksKeeper *ibchookskeeper.Keeper
-	TransferStack  *ibchooks.IBCMiddleware
+	TransferStack  *ibcporttypes.IBCModule
 
 	ScopedIBCKeeper           capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
@@ -321,7 +322,7 @@ type MigalooApp struct {
 }
 
 func (app *MigalooApp) Close() error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -568,7 +569,7 @@ func NewMigalooApp(
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
-		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
+		app.HooksICS4Wrapper, // may be replaced with IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
 	)
@@ -667,16 +668,16 @@ func NewMigalooApp(
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
 	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
+	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 	transferStack = router.NewIBCMiddleware(
 		transferStack,
 		&app.RouterKeeper,
-		0,
+		5,
 		routerkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
 		routerkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
 	// Hooks Middleware
-	hooksTransferStack := ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
-	app.TransferStack = &hooksTransferStack
+	app.TransferStack = &transferStack
 
 	// Create Interchain Accounts Stack
 	// SendPacket, since it is originating from the application to core IBC:
@@ -706,9 +707,10 @@ func NewMigalooApp(
 
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter().
-		AddRoute(ibctransfertypes.ModuleName, transferStack).
-		AddRoute(wasmtypes.ModuleName, wasmStack).
+		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
 		AddRoute(icahosttypes.SubModuleName, icaHostStack).
+		AddRoute(ibctransfertypes.ModuleName, *app.TransferStack).
+		AddRoute(wasmtypes.ModuleName, wasmStack).
 		AddRoute(icqtypes.ModuleName, icqStack)
 
 	app.IBCKeeper.SetRouter(ibcRouter)

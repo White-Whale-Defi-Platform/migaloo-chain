@@ -151,8 +151,12 @@ ictest-all: ictest-start-cosmos ictest-ibc
 ###                        Integration Tests                                ###
 ###############################################################################
 
-#./scripts/tests/relayer/interchain-acc-config/rly-init.sh
-	
+integration-test-all: init-test-framework \
+	test-ica \
+	test-ibc-hooks \
+	test-alliance \
+	test-tokenfactory 
+
 init-test-framework: clean-testing-data install
 	@echo "Initializing both blockchains..."
 	./scripts/tests/init-test-framework.sh
@@ -162,9 +166,20 @@ test-tokenfactory:
 	@echo "Testing tokenfactory..."
 	./scripts/tests/tokenfactory/tokenfactory.sh
 
+test-alliance: 
+	@echo "Testing alliance..."
+	./scripts/tests/alliance/delegate.sh
+
+test-ica:
+	@echo "Testing ica..."
+	./scripts/tests/ica/delegate.sh
+
+test-ibc-hooks:
+	@echo "Testing ibc-hooks..."
+	./scripts/tests/ibc-hooks/increment.sh
 
 clean-testing-data:
-	@echo "Killing terrad and removing previous data"
+	@echo "Killing migallod and removing previous data"
 	-@pkill $(BINARY) 2>/dev/null
 	-@pkill rly 2>/dev/null
 	-@pkill migalood_new 2>/dev/null
