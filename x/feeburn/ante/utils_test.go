@@ -1,8 +1,8 @@
 package ante_test
 
 import (
+	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/testing"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"

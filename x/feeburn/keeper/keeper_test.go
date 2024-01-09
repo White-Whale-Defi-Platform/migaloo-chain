@@ -1,8 +1,8 @@
 package keeper_test
 
 import (
+	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/testing"
 	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"

@@ -1,10 +1,12 @@
-package helpers
+package app
 
 import (
 	"encoding/json"
+	"testing"
+	"time"
+
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -25,8 +27,6 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"testing"
-	"time"
 )
 
 // SimAppChainID hardcoded chainID for simulation
@@ -39,7 +39,7 @@ var emptyWasmOpts []wasm.Option
 type KeeperTestHelper struct {
 	suite.Suite
 
-	App         *app.MigalooApp
+	App         *MigalooApp
 	Ctx         sdk.Context // ctx is deliver ctx
 	CheckCtx    sdk.Context
 	QueryHelper *baseapp.QueryServiceTestHelper
@@ -81,7 +81,7 @@ type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(_ string) interface{} { return nil }
 
-func SetupApp(t *testing.T) *app.MigalooApp {
+func SetupApp(t *testing.T) *MigalooApp {
 	t.Helper()
 
 	privVal := NewPV()
@@ -108,7 +108,7 @@ func SetupApp(t *testing.T) *app.MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the app from first genesis
 // account. A Nop logger is set in app.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *app.MigalooApp {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
 
 	migalooApp, genesisState := setup(true)
@@ -140,23 +140,23 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	return migalooApp
 }
 
-func setup(withGenesis bool, opts ...wasmkeeper.Option) (*app.MigalooApp, app.GenesisState) {
+func setup(withGenesis bool, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
 	db := dbm.NewMemDB()
-	migalooApp := app.NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{},
-		app.DefaultNodeHome, 5, app.MakeEncodingConfig(), EmptyBaseAppOptions{}, opts)
+	migalooApp := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{},
+		DefaultNodeHome, 5, MakeEncodingConfig(), EmptyBaseAppOptions{}, opts)
 
 	if withGenesis {
-		return migalooApp, app.NewDefaultGenesisState()
+		return migalooApp, NewDefaultGenesisState()
 	}
 
-	return migalooApp, app.GenesisState{}
+	return migalooApp, GenesisState{}
 }
 
 func genesisStateWithValSet(t *testing.T,
-	app *app.MigalooApp, genesisState app.GenesisState,
+	app *MigalooApp, genesisState GenesisState,
 	valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount,
 	balances ...banktypes.Balance,
-) app.GenesisState {
+) GenesisState {
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.AppCodec().MustMarshalJSON(authGenesis)
