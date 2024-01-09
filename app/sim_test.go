@@ -1,9 +1,14 @@
 package app
 
 import (
-	"cosmossdk.io/simapp"
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
+	"cosmossdk.io/simapp"
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbm "github.com/cometbft/cometbft-db"
@@ -36,10 +41,6 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	"github.com/stretchr/testify/require"
-	"os"
-	"path/filepath"
-	"testing"
-	"time"
 )
 
 // Get flags every time the simulator is run

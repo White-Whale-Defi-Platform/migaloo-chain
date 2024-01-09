@@ -38,9 +38,16 @@ migalood init $MONIKER --chain-id $CHAINID --home $HOMEDIR
 # Change parameter token denominations to uwhale
 jq '.app_state["staking"]["params"]["bond_denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["mint"]["params"]["mint_denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["mint"]["params"]["inflation_rate_change"]="0"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["mint"]["params"]["inflation_max"]="0"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["mint"]["params"]["inflation_min"]="0"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["mint"]["minter"]["inflation"]="0"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["crisis"]["constant_fee"]["denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-jq '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["gov"]["params"]["min_deposit"][0]["denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["gov"]["params"]["max_deposit_period"]="20s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["gov"]["params"]["voting_period"]="60s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["tokenfactory"]["params"]["denom_creation_fee"][0]["denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["feeburn"]["params"]["tx_fee_burn_percent"]="50"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
 
 # Set gas limit in genesis
@@ -95,4 +102,4 @@ fi
 sed -i'' -e 's/max_body_bytes = /max_body_bytes = 1/g' "$CONFIG"
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-# migalood start --pruning=nothing  --minimum-gas-prices=0.0001uwhale --rpc.laddr tcp://0.0.0.0:26657 --home $HOMEDIR
+migalood start --pruning=nothing  --minimum-gas-prices=0.0001uwhale --rpc.laddr tcp://0.0.0.0:26657 --home $HOMEDIR

@@ -94,7 +94,7 @@ func (app *MigalooApp) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddr
 		_, _ = app.DistrKeeper.WithdrawDelegationRewards(ctx, delAddr, valAddr)
 	}
 
-	// clear validator slash events
+	// clear validator slash events.go
 	app.DistrKeeper.DeleteAllValidatorSlashEvents(ctx)
 
 	// clear validator historical rewards
