@@ -6,13 +6,12 @@ import (
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 // NewFeeBurnProposalHandler returns a handler for FeeBurn proposals.
-func NewFeeBurnProposalHandler(k *keeper.Keeper) govv1beta1.Handler {
-	return func(ctx sdk.Context, content govv1beta1.Content) error {
-
+func NewFeeBurnProposalHandler(k keeper.Keeper) govtypes.Handler {
+	return func(ctx sdk.Context, content govtypes.Content) error {
 		switch c := content.(type) {
 		case *types.MsgUpdateTxFeeBurnPercentProposal:
 			return handleUpdateTxFeeBurnPercentProposal(ctx, k, c)
@@ -25,7 +24,7 @@ func NewFeeBurnProposalHandler(k *keeper.Keeper) govv1beta1.Handler {
 
 func handleUpdateTxFeeBurnPercentProposal(
 	ctx sdk.Context,
-	k *keeper.Keeper,
+	k keeper.Keeper,
 	p *types.MsgUpdateTxFeeBurnPercentProposal,
 ) error {
 	err := k.UpdateTxFeeBurnPercent(ctx, p.TxFeeBurnPercent)

@@ -2,8 +2,7 @@ package types
 
 import (
 	"fmt"
-	govcdc "github.com/cosmos/cosmos-sdk/x/gov/codec"
-	"github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"strconv"
 )
 
@@ -13,15 +12,14 @@ const (
 
 // Implements Proposal Interface
 var (
-	_ v1beta1.Content = &MsgUpdateTxFeeBurnPercentProposal{}
+	_ govtypes.Content = &MsgUpdateTxFeeBurnPercentProposal{}
 )
 
 func init() {
-	v1beta1.RegisterProposalType(ProposalTypeUpdateTxFeeBurnPercent)
-	govcdc.ModuleCdc.Amino.RegisterConcrete(&MsgUpdateTxFeeBurnPercentProposal{}, "feeburn/UpdateTxFeeBurnPercentProposal", nil)
+	govtypes.RegisterProposalType(ProposalTypeUpdateTxFeeBurnPercent)
 }
 
-func NewMsgUpdateTxFeeBurnPercentProposal(title, description, txFeeBurnPercent string) v1beta1.Content {
+func NewMsgUpdateTxFeeBurnPercentProposal(title, description, txFeeBurnPercent string) govtypes.Content {
 	return &MsgUpdateTxFeeBurnPercentProposal{
 		Title:            title,
 		Description:      description,
@@ -29,22 +27,25 @@ func NewMsgUpdateTxFeeBurnPercentProposal(title, description, txFeeBurnPercent s
 	}
 }
 
+func (m *MsgUpdateTxFeeBurnPercentProposal) GetTitle() string       { return m.Title }
+func (m *MsgUpdateTxFeeBurnPercentProposal) GetDescription() string { return m.Description }
+
 // ProposalRoute returns router key for this proposal
-func (*MsgUpdateTxFeeBurnPercentProposal) ProposalRoute() string { return RouterKey }
+func (m *MsgUpdateTxFeeBurnPercentProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
-func (*MsgUpdateTxFeeBurnPercentProposal) ProposalType() string {
+func (m *MsgUpdateTxFeeBurnPercentProposal) ProposalType() string {
 	return ProposalTypeUpdateTxFeeBurnPercent
 }
 
 // ValidateBasic performs a stateless check of the proposal fields
-func (u *MsgUpdateTxFeeBurnPercentProposal) ValidateBasic() error {
-	txFeeBurnPercentInt, err := strconv.Atoi(u.TxFeeBurnPercent)
+func (m *MsgUpdateTxFeeBurnPercentProposal) ValidateBasic() error {
+	txFeeBurnPercentInt, err := strconv.Atoi(m.TxFeeBurnPercent)
 	if err != nil {
 		return err
 	}
 	if txFeeBurnPercentInt < 0 || txFeeBurnPercentInt > 100 {
 		return fmt.Errorf("fee must be between 0 and 100")
 	}
-	return v1beta1.ValidateAbstract(u)
+	return govtypes.ValidateAbstract(m)
 }

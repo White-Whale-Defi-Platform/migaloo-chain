@@ -6,8 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
-	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
-
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -35,7 +34,7 @@ func NewUpdateTxFeeBurnPercentProposalHandler() *cobra.Command {
 		Args:    cobra.ExactArgs(1),
 		Short:   "Submit a proposal update tx_fee_burn_percent",
 		Long:    "Submit a proposal update tx_fee_burn_percent.",
-		Example: fmt.Sprintf("$ %s tx gov submit-proposal --from=<key_or_address>", version.AppName),
+		Example: fmt.Sprintf("$ %s tx gov submit-legacy-proposal --from=<key_or_address>", version.AppName),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -63,10 +62,10 @@ func NewUpdateTxFeeBurnPercentProposalHandler() *cobra.Command {
 			}
 
 			from := clientCtx.GetFromAddress()
-			token := args[0]
-			content := types.NewMsgUpdateTxFeeBurnPercentProposal(title, description, token)
+			percent := args[0]
+			content := types.NewMsgUpdateTxFeeBurnPercentProposal(title, description, percent)
 
-			msg, err := govv1beta1.NewMsgSubmitProposal(content, deposit, from)
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {
 				return err
 			}
