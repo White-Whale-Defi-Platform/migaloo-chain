@@ -43,18 +43,23 @@ GENERATED_PACKET=$($BINARY tx interchain-accounts host generate-packet-data '{
     "delegator_address": "'"$ICS_TX_RESULT"'",
     "validator_address": "'"$VAL_ADDR_1"'",
     "amount": {
-        "denom": "$DENOM",
+        "denom": "'"$DENOM"'",
         "amount": "'"$ICS_ACCOUNT_BALANCE"'"
     }
 }')
 
-$BINARY tx interchain-accounts controller send-tx connection-0 $GENERATED_PACKET --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --fees 3000000$DENOM --node tcp://localhost:16657  --keyring-backend test -y &> /dev/null
 
-VALIDATOR_DELEGATIONS=""
+SEND_TX_RESULT=$($BINARY tx interchain-accounts controller send-tx connection-0 $GENERATED_PACKET --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --fees 3000000$DENOM --node tcp://localhost:16657  --keyring-backend test -y)
+
+PRE_VALIDATOR_DELEGATIONS=""
 while [[ "$VALIDATOR_DELEGATIONS" != "$ICS_ACCOUNT_BALANCE" ]]; do 
     sleep 2
     echo "Waiting for the transaction '/cosmos.bank.v1beta1.MsgDelegate' to be relayed..."
     VALIDATOR_DELEGATIONS=$($BINARY query staking delegations-to $VAL_ADDR_1 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 -o json | jq -r '.delegation_responses[-1].balance.amount')
+
+    # log the validator delegations, and ics account balance 
+    echo "Validator Delegations: $VALIDATOR_DELEGATIONS"
+    echo "ICS Account Balance: $ICS_ACCOUNT_BALANCE"
 done
 
 echo ""

@@ -708,9 +708,9 @@ func NewMigalooApp(
 	// Create static IBC router, add app routes, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter().
 		AddRoute(icacontrollertypes.SubModuleName, icaControllerStack).
+		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(ibctransfertypes.ModuleName, *app.TransferStack).
 		AddRoute(wasmtypes.ModuleName, wasmStack).
-		AddRoute(icahosttypes.SubModuleName, icaHostStack).
 		AddRoute(icqtypes.ModuleName, icqStack)
 
 	app.IBCKeeper.SetRouter(ibcRouter)
