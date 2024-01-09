@@ -166,6 +166,9 @@ test-alliance:
 	@echo "Testing alliance..."
 	./scripts/tests/alliance/delegate.sh
 
+test-ica:
+	@echo "Testing ica..."
+	./scripts/tests/ica/delegate.sh
 
 test-ibc-hooks:
 	@echo "Testing ibc-hooks..."

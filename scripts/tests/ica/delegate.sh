@@ -6,14 +6,16 @@ echo "# ICA Cross Chain Delegation to Validator #"
 echo "###########################################"
 echo ""
 
-BINARY=terrad
-CHAIN_DIR=$(pwd)/data
-
-WALLET_1=$($BINARY keys show wallet1 -a --keyring-backend test --home $CHAIN_DIR/test-1)
-WALLET_2=$($BINARY keys show wallet2 -a --keyring-backend test --home $CHAIN_DIR/test-2)
+export BINARY=migalood
+export CHAIN_DIR=$(pwd)/data
+export DENOM=uwhale
+ 
+export WALLET_1=$($BINARY keys show wallet1 -a --keyring-backend test --home $CHAIN_DIR/test-1)
+export WALLET_2=$($BINARY keys show wallet2 -a --keyring-backend test --home $CHAIN_DIR/test-2)
 
 echo "Registering ICA on chain test-1"
-ICA_REGISTER_RESPONSE=$($BINARY tx interchain-accounts controller register connection-0 --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --node tcp://localhost:16657 --keyring-backend test  -y --gas 10000000)
+ICA_REGISTER_RESPONSE=$($BINARY tx interchain-accounts controller register connection-0 --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --node tcp://localhost:16657 --keyring-backend test --fees 3000000$DENOM  -y --gas 10000000)
+
 
 ICS_TX_RESULT="Error:"
 ICS_TX_ERROR="Error:"
@@ -24,7 +26,7 @@ while [[ "$ICS_TX_ERROR" == "$ICS_TX_RESULT"* ]]; do
 done
 
 echo "Sending tokens to ICA on chain test-2"
-$BINARY tx bank send $WALLET_2 $ICS_TX_RESULT 10000000uluna --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test -y &> /dev/null
+$BINARY tx bank send $WALLET_2 $ICS_TX_RESULT 10000000$DENOM --chain-id test-2 --home $CHAIN_DIR/test-2 --fees 3000000$DENOM --node tcp://localhost:26657 --keyring-backend test -y &> /dev/null
 sleep 5
 ICS_ACCOUNT_BALANCE=$($BINARY query bank balances $ICS_TX_RESULT --chain-id test-2 --node tcp://localhost:26657 -o json | jq -r '.balances[0].amount')
 
@@ -41,12 +43,12 @@ GENERATED_PACKET=$($BINARY tx interchain-accounts host generate-packet-data '{
     "delegator_address": "'"$ICS_TX_RESULT"'",
     "validator_address": "'"$VAL_ADDR_1"'",
     "amount": {
-        "denom": "uluna",
+        "denom": "$DENOM",
         "amount": "'"$ICS_ACCOUNT_BALANCE"'"
     }
 }')
 
-$BINARY tx interchain-accounts controller send-tx connection-0 $GENERATED_PACKET --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --node tcp://localhost:16657  --keyring-backend test -y &> /dev/null
+$BINARY tx interchain-accounts controller send-tx connection-0 $GENERATED_PACKET --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --fees 3000000$DENOM --node tcp://localhost:16657  --keyring-backend test -y &> /dev/null
 
 VALIDATOR_DELEGATIONS=""
 while [[ "$VALIDATOR_DELEGATIONS" != "$ICS_ACCOUNT_BALANCE" ]]; do 
