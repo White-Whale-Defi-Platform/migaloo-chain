@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"fmt"
+
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
@@ -11,7 +12,7 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestBurnFeeCosmosTxDelegate() {
-	suite.SetupTest(false)
+	suite.SetupTest()
 	priv0 := secp256k1.GenPrivKey()
 	addr := sdk.AccAddress(priv0.PubKey().Address())
 	accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(10000000000000)}}
@@ -27,7 +28,6 @@ func (suite *KeeperTestSuite) TestBurnFeeCosmosTxDelegate() {
 	expectAmount := totalSupplyAfter.Amount.Sub(totalSupplyBefore.Amount)
 	expectAmount = mintedCoin.Amount.Sub(expectAmount)
 	fmt.Println("expectAmount", expectAmount)
-	//s.Require().Equal(getExpectTotalFeeBurn(1), expectAmount)
 }
 
 func delegate(priv cryptotypes.PrivKey, delegateAmount sdk.Coin) {
@@ -48,6 +48,7 @@ func deliverTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) abci.ResponseDeliverTx
 	res := s.App.BaseApp.DeliverTx(req)
 	return res
 }
+
 func getMintedCoin() sdk.Coin {
 	mintParams := s.App.MintKeeper.GetParams(s.Ctx)
 	return s.App.MintKeeper.GetMinter(s.Ctx).BlockProvision(mintParams)

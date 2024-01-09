@@ -3,8 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"github.com/terra-money/alliance/app"
 	"testing"
+
+	"github.com/terra-money/alliance/app"
 
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/spf13/viper"

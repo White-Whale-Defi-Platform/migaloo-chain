@@ -6,10 +6,11 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/CosmWasm/wasmd/app"
 	"net"
 	"os"
 	"path/filepath"
+
+	"github.com/CosmWasm/wasmd/app"
 
 	tmconfig "github.com/cometbft/cometbft/config"
 	tmos "github.com/cometbft/cometbft/libs/os"
@@ -103,7 +104,8 @@ func NewTestnetCmd(mbm module.BasicManager, genBalIterator banktypes.GenesisBala
 
 // testnetInitFilesCmd returns a cmd to initialize all files for tendermint testnet and application
 func testnetInitFilesCmd(mbm module.BasicManager, genBalIterator banktypes.GenesisBalancesIterator,
-	validator genutiltypes.MessageValidator) *cobra.Command {
+	validator genutiltypes.MessageValidator,
+) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "init-files",
 		Short: "Initialize config directories & files for a multi-validator testnet running locally via separate processes (e.g. Docker Compose or similar)",
@@ -425,7 +427,6 @@ func collectGenFiles(
 		}
 
 		nodeAppState, err := genutil.GenAppStateFromConfig(clientCtx.Codec, clientCtx.TxConfig, nodeConfig, initCfg, *genDoc, genBalIterator, validator)
-
 		if err != nil {
 			return err
 		}

@@ -18,5 +18,4 @@ func (k Keeper) UpdateTxFeeBurnPercent(ctx sdk.Context, newTxFeeBurnPercent stri
 		Params:    newParams,
 	})
 	return err
-
 }

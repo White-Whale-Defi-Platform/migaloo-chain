@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	dbm "github.com/cometbft/cometbft-db"
@@ -33,8 +32,6 @@ import (
 const (
 	SimAppChainID = ""
 )
-
-var emptyWasmOpts []wasm.Option
 
 type KeeperTestHelper struct {
 	suite.Suite

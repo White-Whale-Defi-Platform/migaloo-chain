@@ -20,14 +20,14 @@ func (suite *KeeperTestSuite) TestUpdateTxFeeBurnPercent() {
 
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
-			suite.SetupTest(false)
+			suite.SetupTest()
 			err := suite.App.FeeBurnKeeper.UpdateTxFeeBurnPercent(suite.Ctx, tt.fee)
 			if tt.wantErr {
-				suite.NotNil(err)
+				suite.Require().Error(err)
 			} else {
-				suite.Nil(err)
+				suite.Require().NoError(err)
 				params := suite.App.FeeBurnKeeper.GetParams(suite.Ctx)
-				suite.Equal(tt.fee, params.GetTxFeeBurnPercent())
+				suite.Require().Equal(tt.fee, params.GetTxFeeBurnPercent())
 			}
 		})
 	}

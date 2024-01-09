@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"cosmossdk.io/simapp"
-	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	dbm "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
@@ -192,13 +191,13 @@ func TestAppImportExport(t *testing.T) {
 		{app.keys[ibctransfertypes.StoreKey], newApp.keys[ibctransfertypes.StoreKey], [][]byte{}},
 		{app.keys[authzkeeper.StoreKey], newApp.keys[authzkeeper.StoreKey], [][]byte{}},
 		{app.keys[feegrant.StoreKey], newApp.keys[feegrant.StoreKey], [][]byte{}},
-		{app.keys[wasm.StoreKey], newApp.keys[wasm.StoreKey], [][]byte{}},
+		{app.keys[wasmtypes.StoreKey], newApp.keys[wasmtypes.StoreKey], [][]byte{}},
 		{app.keys[consensusparamtypes.StoreKey], newApp.keys[consensusparamtypes.StoreKey], [][]byte{}},
 		{app.keys[crisistypes.StoreKey], newApp.keys[crisistypes.StoreKey], [][]byte{}},
 	}
 
 	// delete persistent tx counter value
-	ctxA.KVStore(app.keys[wasm.StoreKey]).Delete(wasmtypes.TXCounterPrefix)
+	ctxA.KVStore(app.keys[wasmtypes.StoreKey]).Delete(wasmtypes.TXCounterPrefix)
 
 	// diff both stores
 	for _, skp := range storeKeysPrefixes {

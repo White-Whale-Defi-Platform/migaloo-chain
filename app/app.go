@@ -43,8 +43,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/crisis"
 	crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
-
-	feeburnkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
@@ -169,9 +167,7 @@ const (
 	MockFeePort string = ibcmock.ModuleName + ibcfeetypes.ModuleName
 )
 
-var (
-	NodeDir = ".migalood"
-)
+var NodeDir = ".migalood"
 
 // These constants are derived from the above variables.
 // These are the ones we will want to use in the code, based on
@@ -293,7 +289,7 @@ type MigalooApp struct {
 	RouterKeeper          routerkeeper.Keeper
 	ContractKeeper        *wasmkeeper.PermissionedKeeper
 	ConsensusParamsKeeper consensusparamkeeper.Keeper
-	FeeBurnKeeper         feeburnkeeper.Keeper
+	FeeBurnKeeper         feeburnmodulekeeper.Keeper
 
 	// IBC hooks
 	IBCHooksKeeper *ibchookskeeper.Keeper
@@ -928,7 +924,7 @@ func NewMigalooApp(
 			BankKeeper:        app.BankKeeper,
 			FeeburnKeeper:     &app.FeeBurnKeeper,
 			WasmConfig:        &wasmConfig,
-			TXCounterStoreKey: keys[wasm.StoreKey],
+			TXCounterStoreKey: keys[wasmtypes.StoreKey],
 		},
 	)
 	if err != nil {
@@ -1162,14 +1158,11 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 		return
 	}
 
-	var storeUpgrades *storetypes.StoreUpgrades
-
-	switch upgradeInfo.Name {
-	case v4.UpgradeName:
+	if upgradeInfo.Name == v4.UpgradeName {
 		// !! ATTENTION !!
 		// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
 		// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md
-		storeUpgrades = &storetypes.StoreUpgrades{
+		storeUpgrades := &storetypes.StoreUpgrades{
 			Added: []string{
 				consensusparamtypes.StoreKey,
 				crisistypes.StoreKey,
@@ -1180,9 +1173,6 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 				"intertx",
 			},
 		}
-	}
-
-	if storeUpgrades != nil {
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))
 	}
@@ -1207,6 +1197,8 @@ func stringMapKeys(m map[string][]string) []string {
 }
 
 // initParamsKeeper init params keeper and its subspaces
+//
+//nolint:staticcheck // ParamsKeyTable is deprecated but used here for migration
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 

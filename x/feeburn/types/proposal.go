@@ -2,8 +2,9 @@ package types
 
 import (
 	"fmt"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	"strconv"
+
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 )
 
 const (

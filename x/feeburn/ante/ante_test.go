@@ -2,21 +2,22 @@ package ante_test
 
 import (
 	"fmt"
+	"math"
+	"strconv"
+
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/ante"
 	abci "github.com/cometbft/cometbft/abci/types"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"math"
-	"strconv"
 )
 
 func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 	listTxFeeBurnPercent := []string{"0", "10", "40", "50", "80", "100"}
 	for _, percent := range listTxFeeBurnPercent {
 		fmt.Println("tx fee burn percent", percent)
-		suite.SetupTest(false) // reset
+		suite.SetupTest() // reset
 		err1 := suite.App.FeeBurnKeeper.UpdateTxFeeBurnPercent(suite.Ctx, percent)
 		suite.Require().NoError(err1)
 
@@ -24,10 +25,10 @@ func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 			suite.App.FeeBurnKeeper)
 		antehandler := sdk.ChainAnteDecorators(fbd)
 
-		priv := ed25519.GenPrivKey()
+		priv := secp256k1.GenPrivKey()
 		addr := getAddr(priv)
 		accountAddress := sdk.AccAddress(priv.PubKey().Address().Bytes())
-		privNew := ed25519.GenPrivKey()
+		privNew := secp256k1.GenPrivKey()
 		addrRecv := getAddr(privNew)
 
 		accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
@@ -56,13 +57,13 @@ func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 }
 
 func (suite *AnteTestSuite) TestFeeBurnDecoratorWhenTxNull() {
-	suite.SetupTest(false) // reset
+	suite.SetupTest() // reset
 
 	fbd := ante.NewDeductFeeDecorator(suite.App.AccountKeeper, suite.App.BankKeeper, suite.App.FeeGrantKeeper, nil,
 		suite.App.FeeBurnKeeper)
 	antehandler := sdk.ChainAnteDecorators(fbd)
 
-	priv := ed25519.GenPrivKey()
+	priv := secp256k1.GenPrivKey()
 	addr := getAddr(priv)
 	accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
 	err := suite.FundAccount(suite.Ctx, addr, accBalance)

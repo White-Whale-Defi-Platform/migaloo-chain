@@ -1,15 +1,16 @@
 package ante_test
 
 import (
+	"testing"
+
 	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/ibc-go/v7/testing/simapp"
-	"testing"
 
 	"github.com/stretchr/testify/suite"
 
@@ -20,20 +21,19 @@ import (
 )
 
 var (
-	DEFAULT_FEE int64 = 1000000000000
+	DefaultFee int64 = 1000000000000
+	s          *AnteTestSuite
 )
-var s *AnteTestSuite
 
 // AnteTestSuite is a test suite to be used with ante handler tests.
 type AnteTestSuite struct {
 	apptesting.KeeperTestHelper
 	anteHandler sdk.AnteHandler
 	clientCtx   client.Context
-	txBuilder   client.TxBuilder
 }
 
 // SetupTest setups a new test, with new app, context, and anteHandler.
-func (suite *AnteTestSuite) SetupTest(isCheckTx bool) {
+func (suite *AnteTestSuite) SetupTest() {
 	suite.Setup(suite.T(), apptesting.SimAppChainID)
 
 	// Set up TxConfig.
@@ -57,13 +57,6 @@ func (suite *AnteTestSuite) SetupTest(isCheckTx bool) {
 
 	suite.Require().NoError(err)
 	suite.anteHandler = anteHandler
-	//
-	//feePoolBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
-	//
-	//err = suite.App.BankKeeper.MintCoins(suite.ctx, minttypes.ModuleName, feePoolBalance)
-	//suite.Require().NoError(err)
-	//err = suite.App.BankKeeper.SendCoinsFromModuleToModule(suite.ctx, minttypes.ModuleName, authtypes.FeeCollectorName, feePoolBalance)
-	//suite.Require().NoError(err)
 }
 
 func TestAnteTestSuite(t *testing.T) {
@@ -71,11 +64,11 @@ func TestAnteTestSuite(t *testing.T) {
 	suite.Run(t, s)
 }
 
-func getAddr(priv *ed25519.PrivKey) sdk.AccAddress {
+func getAddr(priv cryptotypes.PrivKey) sdk.AccAddress {
 	return priv.PubKey().Address().Bytes()
 }
 
-func prepareCosmosTx(priv *ed25519.PrivKey, msgs ...sdk.Msg) client.TxBuilder {
+func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) client.TxBuilder {
 	encodingConfig := config.MakeEncodingConfig()
 	accountAddress := sdk.AccAddress(priv.PubKey().Address().Bytes())
 
@@ -83,7 +76,7 @@ func prepareCosmosTx(priv *ed25519.PrivKey, msgs ...sdk.Msg) client.TxBuilder {
 
 	txBuilder.SetGasLimit(1000000)
 	gasPrice := sdk.NewInt(1)
-	fees := &sdk.Coins{{Denom: config.BaseDenom, Amount: gasPrice.MulRaw(DEFAULT_FEE)}}
+	fees := &sdk.Coins{{Denom: config.BaseDenom, Amount: gasPrice.MulRaw(DefaultFee)}}
 	txBuilder.SetFeeAmount(*fees)
 	err := txBuilder.SetMsgs(msgs...)
 	s.Require().NoError(err)
