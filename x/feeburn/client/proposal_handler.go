@@ -5,6 +5,4 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 )
 
-var (
-	UpdateTxFeeBurnPercentProposalHandler = govclient.NewProposalHandler(cli.NewUpdateTxFeeBurnPercentProposalHandler)
-)
+var UpdateTxFeeBurnPercentProposalHandler = govclient.NewProposalHandler(cli.NewUpdateTxFeeBurnPercentProposalHandler)

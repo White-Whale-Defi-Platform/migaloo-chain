@@ -3,9 +3,10 @@ package cmd_test
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/terra-money/alliance/app"
 	alliancecmd "github.com/terra-money/alliance/cmd/allianced/cmd"
-	"testing"
 
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"

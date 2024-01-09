@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
+	"testing"
+
 	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -14,24 +15,22 @@ import (
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 var (
-	DEFAULT_FEE int64 = 1000000000000
+	DefaultFee int64 = 1000000000000
+	s          *KeeperTestSuite
 )
-var s *KeeperTestSuite
 
 // AnteTestSuite is a test suite to be used with ante handler tests.
 type KeeperTestSuite struct {
 	apptesting.KeeperTestHelper
 	anteHandler sdk.AnteHandler
 	clientCtx   client.Context
-	txBuilder   client.TxBuilder
 }
 
 // SetupTest setups a new test, with new app, context, and anteHandler.
-func (suite *KeeperTestSuite) SetupTest(isCheckTx bool) {
+func (suite *KeeperTestSuite) SetupTest() {
 	suite.Setup(suite.T(), apptesting.SimAppChainID)
 
 	// Set up TxConfig.
@@ -62,10 +61,6 @@ func TestKeeperTestSuite(t *testing.T) {
 	suite.Run(t, s)
 }
 
-func getAddr(priv *ed25519.PrivKey) sdk.AccAddress {
-	return priv.PubKey().Address().Bytes()
-}
-
 func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) []byte {
 	encodingConfig := config.MakeEncodingConfig()
 	accountAddress := sdk.AccAddress(priv.PubKey().Address().Bytes())
@@ -74,7 +69,7 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) []byte {
 
 	txBuilder.SetGasLimit(1000000)
 	gasPrice := sdk.NewInt(1)
-	fees := &sdk.Coins{{Denom: config.BaseDenom, Amount: gasPrice.MulRaw(DEFAULT_FEE)}}
+	fees := &sdk.Coins{{Denom: config.BaseDenom, Amount: gasPrice.MulRaw(DefaultFee)}}
 	txBuilder.SetFeeAmount(*fees)
 	err := txBuilder.SetMsgs(msgs...)
 	s.Require().NoError(err)
