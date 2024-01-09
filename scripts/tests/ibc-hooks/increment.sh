@@ -34,7 +34,7 @@ echo "Executing the IBC Hook to increment the counter"
 IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $CONTRACT_ADDRESS 1uwhale --memo='{"wasm":{"contract": "'"$CONTRACT_ADDRESS"'" ,"msg": {"increment": {}}}}' --chain-id test-1 --home $CHAIN_DIR/test-1 --node tcp://localhost:16657 --keyring-backend test --from $WALLET_1 --fees 6000000$DENOM  -y -o json)
 echo "IBC Hook response: $IBC_HOOK_RES"
 sleep 3
-# ... then send another transfer to increments the count value from 0 to 1, send 1 more uluna to the contract address to validate that it increased the value correctly.
+# ... then send another transfer to increments the count value from 0 to 1, send 1 more uwhale to the contract address to validate that it increased the value correctly.
 IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $CONTRACT_ADDRESS 1uwhale --memo='{"wasm":{"contract": "'"$CONTRACT_ADDRESS"'" ,"msg": {"increment": {}}}}' --chain-id test-1 --home $CHAIN_DIR/test-1 --fees 6000000$DENOM  --node tcp://localhost:16657 --keyring-backend test --from $WALLET_1 -y -o json)
 export WALLET_1_WASM_SENDER=$($BINARY q ibchooks wasm-sender channel-0 "$WALLET_1" --chain-id test-1 --home $CHAIN_DIR/test-1 --node tcp://localhost:16657)
 
@@ -51,7 +51,7 @@ while [ "$COUNT_RES" != "1" ] || [ "$COUNT_FUNDS_RES" != "2" ]; do
     RES=$($BINARY query wasm contract-state smart "$CONTRACT_ADDRESS" '{"get_count": {"addr": "'"$WALLET_1_WASM_SENDER"'"}}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 -o json)
     echo "Query response: $RES"
 
-    # Query to assert that the counter value is 1 and the fund send are 2uluna (remeber that the first time fund are send to the contract the counter is set to 0 instead of 1)
+    # Query to assert that the counter value is 1 and the fund send are 2uwhale (remeber that the first time fund are send to the contract the counter is set to 0 instead of 1)
     COUNT_RES=$($BINARY query wasm contract-state smart "$CONTRACT_ADDRESS" '{"get_count": {"addr": "'"$WALLET_1_WASM_SENDER"'"}}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 -o json |  jq -r '.data.count')
     COUNT_FUNDS_RES=$($BINARY query wasm contract-state smart "$CONTRACT_ADDRESS" '{"get_total_funds": {"addr": "'"$WALLET_1_WASM_SENDER"'"}}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 -o json |  jq -r '.data.total_funds[0].amount')
     echo "transaction relayed count: $COUNT_RES and relayed funds: $COUNT_FUNDS_RES"
@@ -74,23 +74,23 @@ while [ "$COUNT_RES" != "2" ]; do
     echo "relayed callback transaction count: $COUNT_RES"
 done
 
-# echo "Executing the IBC Hook to increment the counter on callback with timeout"
-# # Prepare two callback queries but this time with a timeout height that is unreachable (0-1) to test the timeout callback.
-# IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
-# sleep 3
-# IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
-# export WALLET_2_WASM_SENDER=$($BINARY q ibchooks wasm-sender channel-0 "$WALLET_2" --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657)
+echo "Executing the IBC Hook to increment the counter on callback with timeout"
+# Prepare two callback queries but this time with a timeout height that is unreachable (0-1) to test the timeout callback.
+IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --fees 6000000$DENOM --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+sleep 3
+IBC_HOOK_RES=$($BINARY tx ibc-transfer transfer transfer channel-0 $WALLET_1_WASM_SENDER 1$DENOM --packet-timeout-height="0-1" --memo='{"ibc_callback":"'"$CONTRACT_ADDRESS"'"}' --chain-id test-2 --home $CHAIN_DIR/test-2 --fees 6000000$DENOM --node tcp://localhost:26657 --keyring-backend test --from $WALLET_2  -y -o json)
+export WALLET_2_WASM_SENDER=$($BINARY q ibchooks wasm-sender channel-0 "$WALLET_2" --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657)
 
-# COUNT_RES=""
-# while [ "$COUNT_RES" != "22" ]; do
-#     sleep 3
-#     # Query the smart contract to validate that it received the timeout callback twice and keep in mind that per each timeout the contract increases 10 counts (notice that the queried addess is the contract address itself).
-#     COUNT_RES=$($BINARY query wasm contract-state smart "$CONTRACT_ADDRESS" '{"get_count": {"addr": "'"$CONTRACT_ADDRESS"'"}}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 -o json |  jq -r '.data.count')
-#     echo "relayed timeout callback transaction count: $COUNT_RES"
-# done
+COUNT_RES=""
+while [ "$COUNT_RES" != "22" ]; do
+    sleep 3
+    # Query the smart contract to validate that it received the timeout callback twice and keep in mind that per each timeout the contract increases 10 counts (notice that the queried addess is the contract address itself).
+    COUNT_RES=$($BINARY query wasm contract-state smart "$CONTRACT_ADDRESS" '{"get_count": {"addr": "'"$CONTRACT_ADDRESS"'"}}' --chain-id test-2 --home $CHAIN_DIR/test-2 --node tcp://localhost:26657 -o json |  jq -r '.data.count')
+    echo "relayed timeout callback transaction count: $COUNT_RES"
+done
 
-# echo ""
-# echo "##########################"
-# echo "# SUCCESS: IBC Hook call #"
-# echo "##########################"
-# echo ""
+echo ""
+echo "##########################"
+echo "# SUCCESS: IBC Hook call #"
+echo "##########################"
+echo ""

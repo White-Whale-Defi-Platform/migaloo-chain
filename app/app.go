@@ -322,7 +322,7 @@ type MigalooApp struct {
 }
 
 func (app *MigalooApp) Close() error {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
@@ -569,7 +569,7 @@ func NewMigalooApp(
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
 		appCodec, keys[ibcfeetypes.StoreKey],
-		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
+		app.HooksICS4Wrapper, // may be replaced with IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
 	)
@@ -579,7 +579,7 @@ func NewMigalooApp(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.HooksICS4Wrapper, // ISC4 Wrapper: fee IBC middleware
+		app.IBCFeeKeeper, // ISC4 Wrapper: fee IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
