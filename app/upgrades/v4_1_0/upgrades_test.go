@@ -1,10 +1,10 @@
 package v4_test
 
 import (
-	abci "github.com/cometbft/cometbft/abci/types"
 	"testing"
 
 	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
+	abci "github.com/cometbft/cometbft/abci/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/suite"
 )

@@ -1119,7 +1119,6 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers() {
-
 	app.UpgradeKeeper.SetUpgradeHandler(
 		v3_0_2.UpgradeName,
 		v3_0_2.CreateUpgradeHandler(app.mm, app.configurator),
