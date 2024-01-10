@@ -1,4 +1,4 @@
-package v3
+package v4
 
 import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -14,7 +14,7 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 )
 
-// small security fix, can be a no-op, running mm.RunMigarions just to be sure
+// CreateUpgradeHandler small security fix, can be a no-op, running mm.RunMigarions just to be sure
 func CreateUpgradeHandler(
 	mm *module.Manager,
 	configurator module.Configurator,
