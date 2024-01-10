@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"fmt"
 
-	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"

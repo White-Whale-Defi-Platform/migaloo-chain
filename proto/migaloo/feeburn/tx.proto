@@ -5,7 +5,7 @@ import "cosmos_proto/cosmos.proto";
 import "migaloo/feeburn/params.proto";
 import "gogoproto/gogo.proto";
 import "amino/amino.proto";
-option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types";
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types";
 
 // Msg defines the Msg service.
 service Msg {

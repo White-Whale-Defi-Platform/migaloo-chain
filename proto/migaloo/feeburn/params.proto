@@ -3,7 +3,7 @@ package migaloo.feeburn;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types";
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types";
 
 // Params defines the parameters for the module.
 message Params {

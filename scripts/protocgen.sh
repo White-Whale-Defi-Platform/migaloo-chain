@@ -17,5 +17,5 @@ done
 
 cd ..
 # move proto files to the right places
-cp -r github.com/White-Whale-Defi-Platform/migaloo-chain/v3/* ./
+cp -r github.com/White-Whale-Defi-Platform/migaloo-chain/v4/* ./
 rm -rf github.com

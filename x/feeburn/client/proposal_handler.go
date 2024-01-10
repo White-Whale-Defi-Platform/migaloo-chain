@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/client/cli"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/client/cli"
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 )
 

@@ -27,8 +27,8 @@ import (
 	"github.com/spf13/cobra"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 

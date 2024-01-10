@@ -5,8 +5,8 @@ import (
 	"math"
 	"strconv"
 
-	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/ante"
+	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/ante"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"

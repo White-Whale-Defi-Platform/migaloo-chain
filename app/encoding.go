@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/cosmos/cosmos-sdk/std"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 )
 
 // MakeEncodingConfig creates a new EncodingConfig with all modules registered
