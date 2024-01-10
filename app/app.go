@@ -131,10 +131,10 @@ import (
 	tokenfactorykeeper "github.com/terra-money/core/v2/x/tokenfactory/keeper"
 	tokenfactorytypes "github.com/terra-money/core/v2/x/tokenfactory/types"
 
-	feeburnmodule "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn"
-	feeburnmoduleclient "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/client"
-	feeburnmodulekeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
-	feeburnmoduletypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+	feeburnmodule "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn"
+	feeburnmoduleclient "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/client"
+	feeburnmodulekeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/keeper"
+	feeburnmoduletypes "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types"
 
 	// Note: please do your research before using this in production app, this is a demo and not an officially
 	// supported IBC team implementation. It has no known issues, but do your own research before using it.
@@ -152,14 +152,13 @@ import (
 
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
-	v2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v2"
-	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v3_0_2"
-	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/upgrades/v4_1_0"
+	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
 )
 
 const (
@@ -1120,10 +1119,6 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler(
-		v2.UpgradeName,
-		v2.CreateUpgradeHandler(app.mm, app.configurator),
-	)
 
 	app.UpgradeKeeper.SetUpgradeHandler(
 		v3_0_2.UpgradeName,

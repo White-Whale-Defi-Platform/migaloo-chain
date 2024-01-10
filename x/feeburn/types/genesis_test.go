@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types"
 	"github.com/stretchr/testify/require"
 )
 

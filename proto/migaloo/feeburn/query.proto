@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "migaloo/feeburn/params.proto";
 
-option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types";
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types";
 
 // Query defines the gRPC querier service.
 service Query {

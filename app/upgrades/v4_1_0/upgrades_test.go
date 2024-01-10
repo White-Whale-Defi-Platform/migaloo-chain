@@ -4,7 +4,7 @@ import (
 	abci "github.com/cometbft/cometbft/abci/types"
 	"testing"
 
-	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app"
+	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/suite"
 )

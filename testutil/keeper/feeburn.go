@@ -3,8 +3,8 @@ package keeper
 import (
 	"testing"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/keeper"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types"
 	tmdb "github.com/cometbft/cometbft-db"
 	"github.com/cometbft/cometbft/libs/log"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"

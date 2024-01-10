@@ -1,4 +1,4 @@
-module github.com/White-Whale-Defi-Platform/migaloo-chain/v3
+module github.com/White-Whale-Defi-Platform/migaloo-chain/v4
 
 go 1.21
 

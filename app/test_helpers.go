@@ -6,7 +6,7 @@ import (
 	"time"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/app/params"
+	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"

@@ -3,9 +3,9 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/testutil/keeper"
+	testkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/testutil/keeper"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types"
 	"github.com/stretchr/testify/require"
 )
 

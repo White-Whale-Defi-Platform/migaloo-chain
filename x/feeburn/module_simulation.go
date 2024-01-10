@@ -1,11 +1,11 @@
 package feeburn
 
 import (
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/testutil/sample"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/testutil/sample"
 
 	// simappparams "cosmossdk.io/simapp/params"
-	feeburnsimulation "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/simulation"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+	feeburnsimulation "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/simulation"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"

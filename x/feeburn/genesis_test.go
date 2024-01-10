@@ -3,11 +3,11 @@ package feeburn_test
 import (
 	"testing"
 
-	keepertest "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/testutil/keeper"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/testutil/nullify"
+	keepertest "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/testutil/keeper"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/testutil/nullify"
 
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/types"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn"
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types"
 	"github.com/stretchr/testify/require"
 )
 

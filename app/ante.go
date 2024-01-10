@@ -2,8 +2,8 @@ package app
 
 import (
 	errorsmod "cosmossdk.io/errors"
-	feeburnAnte "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/ante"
-	feeburnkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v3/x/feeburn/keeper"
+	feeburnAnte "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/ante"
+	feeburnkeeper "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/keeper"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
