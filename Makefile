@@ -7,6 +7,7 @@ APP_DIR = ./app
 BINDIR ?= ~/go/bin
 RUNSIM  = $(BINDIR)/runsim
 BINARY ?= migalood
+BUILD_DIR ?= $(CURDIR)/build
 
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
@@ -25,6 +26,10 @@ BUILDDIR ?= $(CURDIR)/build
 HTTPS_GIT := https://github.com/White-Whale-Defi-Platform/migaloo-chain.git
 
 export GO111MODULE = on
+
+TESTNET_NVAL := $(if $(TESTNET_NVAL),$(TESTNET_NVAL),3)
+TESTNET_CHAINID := $(if $(TESTNET_CHAINID),$(TESTNET_CHAINID),localmigaloo)
+
 
 # process build tags
 
@@ -240,3 +245,31 @@ proto-format:
 	@echo "Formatting Protobuf files"
 	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoFmt}$$"; then docker start -a $(containerProtoFmt); else docker run --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
 		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
+
+
+###############################################################################
+###                                Localnet                                 ###
+###############################################################################
+build-image:
+	docker build -t migaloo:latest .
+
+build-linux:
+	mkdir -p $(BUILDDIR)
+	docker build --platform linux/amd64 --no-cache --tag migalood ./
+	docker create --platform linux/amd64 --name temp migaloo:latest
+	docker cp temp:/usr/local/bin/migalood $(BUILDDIR)/
+	docker rm temp
+
+
+#TODO: check if the image is build and automate here
+
+## TODO: mount volume: build config -> mount to container
+localnet-start: 
+	$(DOCKER) run --platform linux/amd64 -v $(shell pwd)/build:/migalood migalood testnet init-files --chain-id ${TESTNET_CHAINID} --v ${TESTNET_NVAL} -o /migalood --starting-ip-address 192.168.10.2 --keyring-backend=test
+
+	docker compose up -d
+
+localnet-stop:
+	docker-compose down
+	rm -rf build/node*
+	rm -rf build/gentxs

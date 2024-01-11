@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  migaloo0:
+    platform: linux/amd64
+    container_name: migaloo0
+    image: migalood
+    restart: "no"
+    command: start
+    environment:
+      - ID=0
+      - LOG=migalood.log
+    ports:
+      - "1317:1317"
+      - "9090:9090"
+      - "26656-26657:26656-26657"
+    volumes:
+      - ./build/node1/simd:/.migalood/.migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.2
+
+  # migaloo1:
+  #   platform: linux/amd64
+  #   container_name: migaloo1
+  #   image: migalood
+  #   restart: "no"
+  #   command: start
+  #   ports:
+  #     - "1318:1317"
+  #     - "9091:9090"
+  #     - "26659-26660:26656-26657"
+  #   environment:
+  #     - ID=1
+  #     - LOG=migalood.log
+  #   volumes:
+  #     - ./build/node2/simd:/.migalood/.migalood:Z
+  #   networks:
+  #     localnet:
+  #       ipv4_address: 192.168.10.3
+
+  # migaloo2:
+  #   platform: linux/amd64
+  #   container_name: migaloo2
+  #   image: migalood
+  #   restart: "no"
+  #   command: start
+  #   environment:
+  #     - ID=2
+  #     - LOG=migalood.log
+  #   ports:
+  #     - "1319:1317"
+  #     - "9092:9090"
+  #     - "26661-26662:26656-26657"
+  #   volumes:
+  #     - ./build/node3/simd:/.migalood/.migalood:Z
+  #   networks:
+  #     localnet:
+  #       ipv4_address: 192.168.10.4
+
+  
+
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 192.168.10.0/24
