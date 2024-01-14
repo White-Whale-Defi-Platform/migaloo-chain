@@ -7,7 +7,9 @@ APP_DIR = ./app
 BINDIR ?= ~/go/bin
 RUNSIM  = $(BINDIR)/runsim
 BINARY ?= migalood
-MIGALOO_ENV_V3 ?= $(CURDIR)/migalood-env/v3
+MIGALOO_ENV_V3 ?= $(CURDIR)/contrib/v3
+BUILDDIR ?= $(CURDIR)/build
+
 
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
@@ -278,6 +280,9 @@ localnetv3-stop:
 	rm -rf build/gentxs.
 	docker-compose down
 
+localnet-start-upgrade:
+	$(MAKE) -C contrib/updates build-cosmovisor-linux BUILDDIR=$(BUILDDIR)
+
 
 
 ###############################################################################
@@ -291,3 +296,12 @@ localnet-stop:
 	docker-compose down
 	rm -rf build/node*
 	rm -rf build/gentxs.
+
+###############################################################################
+###                                Upgrade                                 ###
+###############################################################################
+build-cosmovisor-linux:
+	$(MAKE) -C contrib/updates build-cosmovisor-linux BUILDDIR=$(BUILDDIR)
+
+build-migalood-env:
+	$(MAKE) -C contrib/migalood-env migalood-upgrade-env
