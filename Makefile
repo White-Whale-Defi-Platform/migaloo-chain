@@ -28,7 +28,7 @@ HTTPS_GIT := https://github.com/White-Whale-Defi-Platform/migaloo-chain.git
 export GO111MODULE = on
 
 TESTNET_NVAL := $(if $(TESTNET_NVAL),$(TESTNET_NVAL),3)
-TESTNET_CHAINID := $(if $(TESTNET_CHAINID),$(TESTNET_CHAINID),localmigaloo)
+TESTNET_CHAINID := $(if $(TESTNET_CHAINID),$(TESTNET_CHAINID),migaloo-1)
 
 
 # process build tags
@@ -251,7 +251,7 @@ proto-format:
 ###                                Localnet                                 ###
 ###############################################################################
 build-image:
-	docker build -t migaloo:latest .
+	docker build -t migalood0:latest .
 
 build-linux:
 	mkdir -p $(BUILDDIR)
@@ -263,13 +263,15 @@ build-linux:
 
 #TODO: check if the image is build and automate here
 
-## TODO: mount volume: build config -> mount to container
-localnet-start: 
-	$(DOCKER) run --platform linux/amd64 -v $(shell pwd)/build:/migalood migalood testnet init-files --chain-id ${TESTNET_CHAINID} --v ${TESTNET_NVAL} -o /migalood --starting-ip-address 192.168.10.2 --keyring-backend=test
 
-	docker compose up -d
+## TODO: mount volume: build config -> mount to container
+localnet-start: localnet-stop
+	@if ! [ -f build/node0/$(BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/migaloo:Z migalood testnet init-files --chain-id ${TESTNET_CHAINID} --v ${TESTNET_NVAL} -o /migaloo --keyring-backend=test --starting-ip-address 192.168.10.2; fi
 
 localnet-stop:
 	docker-compose down
 	rm -rf build/node*
-	rm -rf build/gentxs
+	rm -rf build/gentxs.
+
+build-v3:
+	docker build -t migaloodv3 -f migalood-v3/Dockerfile .
