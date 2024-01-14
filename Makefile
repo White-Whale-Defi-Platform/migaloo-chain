@@ -7,7 +7,7 @@ APP_DIR = ./app
 BINDIR ?= ~/go/bin
 RUNSIM  = $(BINDIR)/runsim
 BINARY ?= migalood
-BUILD_DIR ?= $(CURDIR)/build
+MIGALOO_ENV_V3 ?= $(CURDIR)/migalood-env/v3
 
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
@@ -248,30 +248,46 @@ proto-format:
 
 
 ###############################################################################
+###                                V3 setup                                 ###
+###############################################################################
+build-v4:
+	docker build -t migalood:latest .
+
+build-v3:
+	docker build -t migaloodv3 -f migalood-v3/Dockerfile .
+
+localnetv3-start: localnetv3-stop
+	@if ! [ -f $(MIGALOO_ENV_V3)/build/node0/migalood/config/genesis.json ]; then \
+		docker run --rm \
+		-v $(MIGALOO_ENV_V3)/build/:/migaloo:Z \
+		migaloodv3 \
+		testnet init-files \
+		--chain-id ${TESTNET_CHAINID} \
+		--v ${TESTNET_NVAL} \
+		-o /migaloo \
+		--keyring-backend=test \
+		--starting-ip-address 192.168.10.2; \
+	fi
+
+	cd $(MIGALOO_ENV_V3) && docker-compose up -d
+
+
+localnetv3-stop:
+	@cd $(MIGALOO_ENV_V3) 
+	rm -rf build/node* 
+	rm -rf build/gentxs.
+	docker-compose down
+
+
+
+###############################################################################
 ###                                Localnet                                 ###
 ###############################################################################
-build-image:
-	docker build -t migalood0:latest .
-
-build-linux:
-	mkdir -p $(BUILDDIR)
-	docker build --platform linux/amd64 --no-cache --tag migalood ./
-	docker create --platform linux/amd64 --name temp migaloo:latest
-	docker cp temp:/usr/local/bin/migalood $(BUILDDIR)/
-	docker rm temp
-
-
-#TODO: check if the image is build and automate here
-
-
-## TODO: mount volume: build config -> mount to container
 localnet-start: localnet-stop
 	@if ! [ -f build/node0/$(BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/migaloo:Z migalood testnet init-files --chain-id ${TESTNET_CHAINID} --v ${TESTNET_NVAL} -o /migaloo --keyring-backend=test --starting-ip-address 192.168.10.2; fi
+
 
 localnet-stop:
 	docker-compose down
 	rm -rf build/node*
 	rm -rf build/gentxs.
-
-build-v3:
-	docker build -t migaloodv3 -f migalood-v3/Dockerfile .

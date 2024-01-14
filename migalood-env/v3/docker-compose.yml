@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  migaloo0:
+    container_name: migaloo0
+    image: migaloodv3
+    command: start --home /migalood
+    environment:
+      - ID=0
+      - LOG=migalood.log
+    ports:
+      - "1317:1317"
+      - "9090:9090"
+      - "26656-26657:26656-26657"
+    volumes:
+      - ./build/node0/simd:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.2
+
+  migaloo1:
+    container_name: migaloo1
+    image: migaloodv3
+    command: start --home /migalood
+    ports:
+      - "1318:1317"
+      - "9091:9090"
+      - "26659-26660:26656-26657"
+    environment:
+      - ID=1
+      - LOG=migalood.log
+    volumes:
+      - ./build/node1/simd:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.3
+
+  migaloo2:
+    container_name: migaloo2
+    image: migaloodv3
+    command: start --home /migalood
+    environment:
+      - ID=2
+      - LOG=migalood.log
+    ports:
+      - "1319:1317"
+      - "9092:9090"
+      - "26661-26662:26656-26657"
+    volumes:
+      - ./build/node2/simd:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.4
+
+  # migaloo3:
+  #   container_name: migaloo3
+  #   image: migaloodv3
+  #   command: start --home /migalood
+  #   environment:
+  #     - ID=3
+  #     - LOG=migalood.log
+  #   ports:
+  #     - "1320:1317"
+  #     - "9093:9090"
+  #     - "26663-26664:26656-26657"
+  #   volumes:
+  #     - ./build/node3/simd:/migalood:Z
+  #   networks:
+  #     localnet:
+  #       ipv4_address: 192.168.10.5
+
+  # migaloo4:
+  #   container_name: migaloo4
+  #   image: migaloodv3
+  #   command: start --home /migalood
+  #   environment:
+  #     - ID=4
+  #     - LOG=migalood.log
+  #   ports:
+  #     - "1321:1317"
+  #     - "9094:9090"
+  #     - "26665-26666:26656-26657"
+  #   volumes:
+  #     - ./build/node4/simd:/migalood:Z
+  #   networks:
+  #     localnet:
+  #       ipv4_address: 192.168.10.6
+
+
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 192.168.10.0/24
