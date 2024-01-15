@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  migaloodnode0:
+    container_name: migaloodnode0
+    platform: linux/amd64
+    image: "migaloo/migalood-upgrade-env"
+    ports:
+      - "9090:9090"
+      - "26656-26657:26656-26657"
+    environment:
+      - ID=0
+      - LOG=migalood.log
+      - DAEMON_HOME=/migalood/node0/migalood
+      - DAEMON_NAME=migalood
+      - DAEMON_RESTART_AFTER_UPGRADE=true
+    volumes:
+      - ../../build:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.2
+
+  migaloodnode1:
+    container_name: migaloodnode1
+    platform: linux/amd64
+    image: "migaloo/migalood-upgrade-env"
+    ports:
+      - "9091:9090"
+      - "26659-26660:26656-26657"
+    environment:
+      - ID=1
+      - LOG=migalood.log
+      - DAEMON_HOME=/migalood/node1/migalood
+      - DAEMON_NAME=migalood
+      - DAEMON_RESTART_AFTER_UPGRADE=true
+    volumes:
+      - ../../build:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.3
+
+  migaloodnode2:
+    container_name: migaloodnode2
+    platform: linux/amd64
+    image: "migaloo/migalood-upgrade-env"
+    environment:
+      - ID=2
+      - LOG=migalood.log
+      - DAEMON_HOME=/migalood/node2/migalood
+      - DAEMON_NAME=migalood
+      - DAEMON_RESTART_AFTER_UPGRADE=true
+    ports:
+      - "9092:9090"
+      - "26661-26662:26656-26657"
+    volumes:
+      - ../../build:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.4
+
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      -
+        subnet: 192.168.10.0/16
