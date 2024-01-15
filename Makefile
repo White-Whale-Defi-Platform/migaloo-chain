@@ -302,7 +302,6 @@ localnet-stop:
 	docker-compose down
 	rm -rf build/node*
 	rm -rf build/gentxs.
-
 ###############################################################################
 ###                                Upgrade                                 ###
 ###############################################################################
@@ -312,6 +311,6 @@ build-cosmovisor-linux:
 build-migalood-env:
 	$(MAKE) -C contrib/migalood-env migalood-upgrade-env
 	
-
+## Should contain: build-comovisor-linux -> build-linux -> build-migalood-env
 upgrade-test:
 	bash contrib/updates/prepare_cosmovisor.sh $(BUILDDIR) ${TESTNET_NVAL} ${TESTNET_CHAINID}
