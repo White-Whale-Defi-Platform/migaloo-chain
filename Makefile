@@ -252,8 +252,14 @@ proto-format:
 ###############################################################################
 ###                                V3 setup                                 ###
 ###############################################################################
-build-v4:
-	docker build -t migalood:latest .
+build-linux:
+	mkdir -p $(BUILDDIR)
+	docker build --platform linux/amd64 --tag migalood ./
+	docker create --platform limux/amd64 --name temp migalood:latest 
+	docker cp temp:/usr/bin/migalood $(BUILDDIR)/
+	docker rm temp
+
+
 
 build-v3:
 	docker build -t migaloodv3 -f migalood-v3/Dockerfile .
@@ -305,3 +311,7 @@ build-cosmovisor-linux:
 
 build-migalood-env:
 	$(MAKE) -C contrib/migalood-env migalood-upgrade-env
+	
+
+upgrade-test:
+	bash contrib/updates/prepare_cosmovisor.sh $(BUILDDIR) ${TESTNET_NVAL} ${TESTNET_CHAINID}
