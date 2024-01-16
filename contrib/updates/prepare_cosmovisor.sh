@@ -43,7 +43,7 @@ if [ ! -f "$BUILDDIR/node0/migalood/config/genesis.json" ]; then docker run --rm
     -v $BUILDDIR:/migalood:Z \
     --platform linux/amd64 \
     --entrypoint /migalood/old/migalood \
-    migaloo/migalood-upgrade-env testnet init-files --v $TESTNET_NVAL --chain-id $TESTNET_CHAINID -o . --starting-ip-address 192.168.10.2 --node-daemon-home migalood --keyring-backend=test --home=temp; \
+    migaloo/migalood-upgrade-env testnet init-files --v $TESTNET_NVAL --chain-id $TESTNET_CHAINID -o . --starting-ip-address 192.168.10.2 --minimum-gas-prices "0stake" --node-daemon-home migalood --keyring-backend=test --home=temp; \
 fi
 
 
