@@ -10,14 +10,15 @@ TESTNET_NVAL=${1:-3}
 
 # sleep to wait for localnet to come up
 echo "Wait for localnet to come up"
-# sleep 10 // TODO: enable this
+sleep 5
 
 # 20 block from now
+$BINARY_OLD status --home $NODE1_HOME 
 STATUS_INFO=($($BINARY_OLD status --home $NODE1_HOME | jq -r '.NodeInfo.network,.SyncInfo.latest_block_height'))
-echo $STATUS_INFO
+echo "Current status info: $STATUS_INFO"
 CHAIN_ID=${STATUS_INFO[0]}
-UPGRADE_HEIGHT=$((STATUS_INFO[1] + 20))
-echo $UPGRADE_HEIGHT
+UPGRADE_HEIGHT=$((STATUS_INFO[1] + 40))
+echo "Upgrade should happens at: $UPGRADE_HEIGHT"
 
 
 docker exec $SELECTED_CONTAINER tar -cf ./migalood.tar -C . migalood
@@ -33,20 +34,23 @@ UPGRADE_INFO=$(jq -n '
 
 echo $UPGRADE_INFO
 
-$BINARY_OLD tx gov submit-legacy-proposal software-upgrade "$SOFTWARE_UPGRADE_NAME" --upgrade-height $UPGRADE_HEIGHT --upgrade-info "$UPGRADE_INFO" --title "upgrade" --description "upgrade"  --from node1 --keyring-backend test --chain-id $CHAIN_ID --home $NODE1_HOME -y
+echo "Submitting software upgrade proposal..."
+$BINARY_OLD tx gov submit-legacy-proposal software-upgrade "$SOFTWARE_UPGRADE_NAME" --upgrade-height $UPGRADE_HEIGHT --upgrade-info "$UPGRADE_INFO" --title "upgrade" --description "upgrade"  --from node1 --keyring-backend test --chain-id $CHAIN_ID --home $NODE1_HOME -y > /dev/null 2>&1
 
 sleep 5
 
-$BINARY_OLD tx gov deposit 1 "20000000uwhale" --from node1 --keyring-backend test --chain-id $CHAIN_ID --home $NODE1_HOME -y
+echo "Depositing to software upgrade proposal..."
+$BINARY_OLD tx gov deposit 1 "20000000stake" --from node1 --keyring-backend test --chain-id $CHAIN_ID --home $NODE1_HOME -y > /dev/null 2>&1
 
 sleep 5
 
 # loop from 0 to TESTNET_NVAL
 for (( i=0; i<$TESTNET_NVAL; i++ )); do
     # check if docker for node i is running
-    if [[ $(docker ps -a | grep terradnode$i | wc -l) -eq 1 ]]; then
-        $BINARY_OLD tx gov vote 1 yes --from node$i --keyring-backend test --chain-id $CHAIN_ID --home "node$i/terrad" -y
-        sleep 5
+    if [[ $(docker ps -a | grep migaloodnode$i | wc -l) -eq 1 ]]; then
+        $BINARY_OLD tx gov vote 1 yes --from node$i --keyring-backend test --chain-id $CHAIN_ID --home "node$i/migalood" -y > /dev/null 2>&1
+        echo -e "---> Node $i voted yes"
+        sleep 1
     fi
 done
 
@@ -82,7 +86,7 @@ while true; do
     fi
 
     if [[ $BLOCK_HEIGHT -ge $UPGRADE_HEIGHT ]]; then
-        # assuming running only 1 terrad
+        # assuming running only 1 migalood
         echo "UPGRADE REACHED, CONTINUING NEW CHAIN"
         break
     else
@@ -93,7 +97,7 @@ while true; do
 done
 
 if [[ $SAME_BLOCK -ge 5 ]]; then
-    docker logs terradnode0
+    docker logs migaloodnode0
     exit 1
 fi
 
@@ -101,16 +105,16 @@ sleep 40
 
 # check all nodes are online after upgrade
 for (( i=0; i<$TESTNET_NVAL; i++ )); do
-    if [[ $(docker ps -a | grep terradnode$i | wc -l) -eq 1 ]]; then
-        docker exec terradnode$i ./terrad status --home "node$i/terrad"
+    if [[ $(docker ps -a | grep migaloodnode$i | wc -l) -eq 1 ]]; then
+        docker exec migaloodnode$i ./migalood status --home "node$i/migalood"
         if [[ "${PIPESTATUS[0]}" != "0" ]]; then
             echo "node$i is not online"
-            docker logs terradnode$i
+            docker logs migaloodnode$i
             exit 1
         fi
     else
-        echo "terradnode$i is not running"
-        docker logs terradnode$i
+        echo "migaloodnode$i is not running"
+        docker logs migaloodnode$i
         exit 1
     fi
 done

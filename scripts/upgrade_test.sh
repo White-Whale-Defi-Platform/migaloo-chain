@@ -45,7 +45,7 @@ fi
 
 # run old node
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    screen -L -dmS node1 bash scripts/run-node.sh _build/old/migalood $DENOM
+    screen -L -dmS node1 bash scripts/run-node.sh _build/old/migalood $DENOM --Logfile $HOME/log-screen.txt
 else
     screen -L -Logfile $HOME/log-screen.txt -dmS node1 bash scripts/run-node.sh _build/old/migalood $DENOM
 fi
@@ -123,7 +123,6 @@ run_upgrade () {
         if [ $BLOCK_HEIGHT = "$UPGRADE_HEIGHT" ]; then
             # assuming running only 1 migalood
             echo "BLOCK HEIGHT = $UPGRADE_HEIGHT REACHED, KILLING OLD ONE"
-            pkill migalood
             break
         else
             ./_build/old/migalood q gov proposal 1 --output=json | jq ".status"

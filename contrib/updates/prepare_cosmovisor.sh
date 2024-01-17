@@ -51,7 +51,7 @@ for (( i=0; i<$TESTNET_NVAL; i++ )); do
     CURRENT=$BUILDDIR/node$i/migalood
 
     # change gov params voting_period
-    jq '.app_state.gov.voting_params.voting_period = "50s"' $CURRENT/config/genesis.json > $CURRENT/config/genesis.json.tmp && mv $CURRENT/config/genesis.json.tmp $CURRENT/config/genesis.json
+    jq '.app_state.gov.params.voting_period = "50s"' $CURRENT/config/genesis.json > $CURRENT/config/genesis.json.tmp && mv $CURRENT/config/genesis.json.tmp $CURRENT/config/genesis.json
 
     docker run --rm \
         -v $BUILDDIR:/migalood:Z \
