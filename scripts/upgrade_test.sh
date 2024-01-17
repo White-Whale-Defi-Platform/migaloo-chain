@@ -3,7 +3,7 @@
 # the upgrade is a fork, "true" otherwise
 FORK=${FORK:-"false"}
 
-OLD_VERSION=v3.0.2
+OLD_VERSION=v3.0.4
 UPGRADE_WAIT=${UPGRADE_WAIT:-20}
 HOME=mytestnet
 ROOT=$(pwd)

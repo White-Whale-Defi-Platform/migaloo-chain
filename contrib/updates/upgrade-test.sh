@@ -7,6 +7,7 @@ NODE1_HOME=node1/migalood
 SELECTED_CONTAINER=migaloodnode1
 BINARY_OLD="docker exec $SELECTED_CONTAINER ./old/migalood"
 TESTNET_NVAL=${1:-3}
+UPGRADE_CLIFF_HEIGHT=25
 
 # sleep to wait for localnet to come up
 echo "Wait for localnet to come up"
@@ -17,7 +18,7 @@ $BINARY_OLD status --home $NODE1_HOME
 STATUS_INFO=($($BINARY_OLD status --home $NODE1_HOME | jq -r '.NodeInfo.network,.SyncInfo.latest_block_height'))
 echo "Current status info: $STATUS_INFO"
 CHAIN_ID=${STATUS_INFO[0]}
-UPGRADE_HEIGHT=$((STATUS_INFO[1] + 40))
+UPGRADE_HEIGHT=$((STATUS_INFO[1] + UPGRADE_CLIFF_HEIGHT))
 echo "Upgrade should happens at: $UPGRADE_HEIGHT"
 
 
@@ -37,6 +38,9 @@ echo $UPGRADE_INFO
 echo "Submitting software upgrade proposal..."
 $BINARY_OLD tx gov submit-legacy-proposal software-upgrade "$SOFTWARE_UPGRADE_NAME" --upgrade-height $UPGRADE_HEIGHT --upgrade-info "$UPGRADE_INFO" --title "upgrade" --description "upgrade"  --from node1 --keyring-backend test --chain-id $CHAIN_ID --home $NODE1_HOME -y > /dev/null 2>&1
 
+
+echo "upgrade name: $SOFTWARE_UPGRADE_NAME"
+
 sleep 5
 
 echo "Depositing to software upgrade proposal..."
@@ -50,7 +54,6 @@ for (( i=0; i<$TESTNET_NVAL; i++ )); do
     if [[ $(docker ps -a | grep migaloodnode$i | wc -l) -eq 1 ]]; then
         $BINARY_OLD tx gov vote 1 yes --from node$i --keyring-backend test --chain-id $CHAIN_ID --home "node$i/migalood" -y > /dev/null 2>&1
         echo -e "---> Node $i voted yes"
-        sleep 1
     fi
 done
 
