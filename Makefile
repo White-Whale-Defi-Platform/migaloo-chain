@@ -249,9 +249,12 @@ proto-format:
 		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
 
 
+
+
 ###############################################################################
-###                                V3 setup                                 ###
+###                                Localnet                                 ###
 ###############################################################################
+
 build-linux:
 	mkdir -p $(BUILDDIR)
 	docker build --platform linux/amd64 --tag migalood ./
@@ -260,40 +263,6 @@ build-linux:
 	docker rm temp
 
 
-
-build-v3:
-	docker build -t migaloodv3 -f migalood-v3/Dockerfile .
-
-localnetv3-start: localnetv3-stop
-	@if ! [ -f $(MIGALOO_ENV_V3)/build/node0/migalood/config/genesis.json ]; then \
-		docker run --rm \
-		-v $(MIGALOO_ENV_V3)/build/:/migaloo:Z \
-		migaloodv3 \
-		testnet init-files \
-		--chain-id ${TESTNET_CHAINID} \
-		--v ${TESTNET_NVAL} \
-		-o /migaloo \
-		--keyring-backend=test \
-		--starting-ip-address 192.168.10.2; \
-	fi
-
-	cd $(MIGALOO_ENV_V3) && docker-compose up -d
-
-
-localnetv3-stop:
-	@cd $(MIGALOO_ENV_V3) 
-	rm -rf build/node* 
-	rm -rf build/gentxs.
-	docker-compose down
-
-localnet-start-upgrade:
-	$(MAKE) -C contrib/updates build-cosmovisor-linux BUILDDIR=$(BUILDDIR)
-
-
-
-###############################################################################
-###                                Localnet                                 ###
-###############################################################################
 localnet-start: localnet-stop
 	@if ! [ -f build/node0/$(BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/migaloo:Z migalood testnet init-files --chain-id ${TESTNET_CHAINID} --v ${TESTNET_NVAL} -o /migaloo --keyring-backend=test --starting-ip-address 192.168.10.2; fi
 
@@ -311,6 +280,14 @@ build-cosmovisor-linux:
 build-migalood-env:
 	$(MAKE) -C contrib/migalood-env migalood-upgrade-env
 	
-## Should contain: build-comovisor-linux -> build-linux -> build-migalood-env
-upgrade-test:
+## Presiquites: build-cosmovisor-linux build-linux build-migalood-env 
+localnet-start-upgrade: localnet-upgrade-stop
 	bash contrib/updates/prepare_cosmovisor.sh $(BUILDDIR) ${TESTNET_NVAL} ${TESTNET_CHAINID}
+	docker-compose -f ./contrib/updates/docker-compose.yml up -d
+	@./contrib/updates/upgrade-test.sh
+	$(MAKE) localnet-upgrade-stop
+
+localnet-upgrade-stop:
+	docker-compose -f contrib/updates/docker-compose.yml down
+	rm -rf build/node*
+	rm -rf build/gentxs.

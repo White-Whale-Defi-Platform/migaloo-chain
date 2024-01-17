@@ -30,7 +30,7 @@ fi
 if [ ! -f "$BUILDDIR/$OLD_VERSION.zip" ] &> /dev/null
 then
     mkdir -p BUILDDIR/old
-    # docker build --platform linux/amd64 --no-cache --build-arg source=./_build/migaloo-chain-${OLD_VERSION:1}/ --tag migaloo/migalood.binary.old . 
+    docker build --platform linux/amd64 --no-cache --build-arg source=./_build/migaloo-chain-${OLD_VERSION:1}/ --tag migaloo/migalood.binary.old ./_build/migaloo-chain-${OLD_VERSION:1}
     docker create --platform linux/amd64 --name old-temp migaloo/migalood.binary.old:latest
     mkdir -p $BUILDDIR/old
     docker cp old-temp:/usr/bin/migalood $BUILDDIR/old/
@@ -46,13 +46,11 @@ if [ ! -f "$BUILDDIR/node0/migalood/config/genesis.json" ]; then docker run --rm
     migaloo/migalood-upgrade-env testnet init-files --v $TESTNET_NVAL --chain-id $TESTNET_CHAINID -o . --starting-ip-address 192.168.10.2 --minimum-gas-prices "0stake" --node-daemon-home migalood --keyring-backend=test --home=temp; \
 fi
 
-
-
 for (( i=0; i<$TESTNET_NVAL; i++ )); do
     CURRENT=$BUILDDIR/node$i/migalood
 
     # change gov params voting_period
-    jq '.app_state.gov.params.voting_period = "50s"' $CURRENT/config/genesis.json > $CURRENT/config/genesis.json.tmp && mv $CURRENT/config/genesis.json.tmp $CURRENT/config/genesis.json
+    jq '.app_state.gov.voting_params.voting_period = "50s"' $CURRENT/config/genesis.json > $CURRENT/config/genesis.json.tmp && mv $CURRENT/config/genesis.json.tmp $CURRENT/config/genesis.json
 
     docker run --rm \
         -v $BUILDDIR:/migalood:Z \
