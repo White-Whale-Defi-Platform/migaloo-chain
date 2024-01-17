@@ -2,12 +2,12 @@
 
 # should make this auto fetch upgrade name from app upgrades once many upgrades have been done
 # this command will retrieve the folder with the largest number in format v<number>
-SOFTWARE_UPGRADE_NAME=$(ls -d -- ./app/upgrades/v* | sort -Vr | head -n 1 | xargs basename)
+SOFTWARE_UPGRADE_NAME="v4.1.0"
 NODE1_HOME=node1/migalood
 SELECTED_CONTAINER=migaloodnode1
 BINARY_OLD="docker exec $SELECTED_CONTAINER ./old/migalood"
 TESTNET_NVAL=${1:-3}
-UPGRADE_CLIFF_HEIGHT=25
+UPGRADE_CLIFF_HEIGHT=20
 
 # sleep to wait for localnet to come up
 echo "Wait for localnet to come up"

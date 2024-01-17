@@ -7,7 +7,7 @@
 # Need to do more upgrade to see upgrade patterns
 OLD_VERSION=v3.0.4
 # this command will retrieve the folder with the largest number in format v<number>
-SOFTWARE_UPGRADE_NAME=$(ls -d -- ./app/upgrades/v* | sort -Vr | head -n 1 | xargs basename)
+SOFTWARE_UPGRADE_NAME="v4.1.0"
 BUILDDIR=$1
 TESTNET_NVAL=$2
 TESTNET_CHAINID=$3
@@ -45,6 +45,7 @@ if [ ! -f "$BUILDDIR/node0/migalood/config/genesis.json" ]; then docker run --rm
     --entrypoint /migalood/old/migalood \
     migaloo/migalood-upgrade-env testnet init-files --v $TESTNET_NVAL --chain-id $TESTNET_CHAINID -o . --starting-ip-address 192.168.10.2 --minimum-gas-prices "0stake" --node-daemon-home migalood --keyring-backend=test --home=temp; \
 fi
+
 
 
 for (( i=0; i<$TESTNET_NVAL; i++ )); do

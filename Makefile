@@ -106,7 +106,7 @@ build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
 
 docker-build-debug:
-	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
+	@DOCKER_BUILDKIT=1 docker bufild -t migaloo:debug -f Dockerfile .
 
 runsim: $(RUNSIM)
 $(RUNSIM):
