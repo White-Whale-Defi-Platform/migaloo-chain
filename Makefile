@@ -29,7 +29,7 @@ HTTPS_GIT := https://github.com/White-Whale-Defi-Platform/migaloo-chain.git
 
 export GO111MODULE = on
 
-TESTNET_NVAL := $(if $(TESTNET_NVAL),$(TESTNET_NVAL),3)
+TESTNET_NVAL := $(if $(TESTNET_NVAL),$(TESTNET_NVAL),6)
 TESTNET_CHAINID := $(if $(TESTNET_CHAINID),$(TESTNET_CHAINID),migaloo-1)
 
 
@@ -106,7 +106,7 @@ build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
 
 docker-build-debug:
-	@DOCKER_BUILDKIT=1 docker bufild -t migaloo:debug -f Dockerfile .
+	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
 
 runsim: $(RUNSIM)
 $(RUNSIM):

@@ -52,39 +52,39 @@ services:
       localnet:
         ipv4_address: 192.168.10.4
 
-  # migaloo3:
-  #   container_name: migaloo3
-  #   image: migalood
-  #   command: start --home /migalood
-  #   environment:
-  #     - ID=3
-  #     - LOG=migalood.log
-  #   ports:
-  #     - "1320:1317"
-  #     - "9093:9090"
-  #     - "26663-26664:26656-26657"
-  #   volumes:
-  #     - ./build/node3/simd:/migalood:Z
-  #   networks:
-  #     localnet:
-  #       ipv4_address: 192.168.10.5
+  migaloo3:
+    container_name: migaloo3
+    image: migalood
+    command: start --home /migalood
+    environment:
+      - ID=3
+      - LOG=migalood.log
+    ports:
+      - "1320:1317"
+      - "9093:9090"
+      - "26663-26664:26656-26657"
+    volumes:
+      - ./build/node3/simd:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.5
 
-  # migaloo4:
-  #   container_name: migaloo4
-  #   image: migalood
-  #   command: start --home /migalood
-  #   environment:
-  #     - ID=4
-  #     - LOG=migalood.log
-  #   ports:
-  #     - "1321:1317"
-  #     - "9094:9090"
-  #     - "26665-26666:26656-26657"
-  #   volumes:
-  #     - ./build/node4/simd:/migalood:Z
-  #   networks:
-  #     localnet:
-  #       ipv4_address: 192.168.10.6
+  migaloo4:
+    container_name: migaloo4
+    image: migalood
+    command: start --home /migalood
+    environment:
+      - ID=4
+      - LOG=migalood.log
+    ports:
+      - "1321:1317"
+      - "9094:9090"
+      - "26665-26666:26656-26657"
+    volumes:
+      - ./build/node4/simd:/migalood:Z
+    networks:
+      localnet:
+        ipv4_address: 192.168.10.6
 
 
 networks:
