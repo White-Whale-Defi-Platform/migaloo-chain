@@ -123,6 +123,7 @@ run_upgrade () {
         if [ $BLOCK_HEIGHT = "$UPGRADE_HEIGHT" ]; then
             # assuming running only 1 migalood
             echo "BLOCK HEIGHT = $UPGRADE_HEIGHT REACHED, KILLING OLD ONE"
+            pkill migalood
             break
         else
             ./_build/old/migalood q gov proposal 1 --output=json | jq ".status"
