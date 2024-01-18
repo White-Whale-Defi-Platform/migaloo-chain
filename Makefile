@@ -248,19 +248,14 @@ proto-format:
 	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoFmt}$$"; then docker start -a $(containerProtoFmt); else docker run --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
 		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
 
-
-
-
 ###############################################################################
 ###                                Localnet                                 ###
 ###############################################################################
 
 build-linux:
 	mkdir -p $(BUILDDIR)
-	@if [ -z "$(docker images -q migalood 2> /dev/null)" ]; then \
-		docker build --platform linux/amd64 --tag migalood ./; \
-	fi
-	docker create --platform limux/amd64 --name temp migalood:latest 
+	docker build --platform linux/amd64 --tag migalood ./
+	docker create --platform linux/amd64 --name temp migalood:latest 
 	docker cp temp:/usr/bin/migalood $(BUILDDIR)/
 	docker rm temp
 
