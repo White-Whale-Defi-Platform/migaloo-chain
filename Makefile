@@ -7,6 +7,9 @@ APP_DIR = ./app
 BINDIR ?= ~/go/bin
 RUNSIM  = $(BINDIR)/runsim
 BINARY ?= migalood
+MIGALOO_ENV_V3 ?= $(CURDIR)/contrib/v3
+BUILDDIR ?= $(CURDIR)/build
+
 
 ifeq (,$(VERSION))
   VERSION := $(shell git describe --tags)
@@ -25,6 +28,10 @@ BUILDDIR ?= $(CURDIR)/build
 HTTPS_GIT := https://github.com/White-Whale-Defi-Platform/migaloo-chain.git
 
 export GO111MODULE = on
+
+TESTNET_NVAL := $(if $(TESTNET_NVAL),$(TESTNET_NVAL),6)
+TESTNET_CHAINID := $(if $(TESTNET_CHAINID),$(TESTNET_CHAINID),migaloo-1)
+
 
 # process build tags
 
@@ -240,3 +247,53 @@ proto-format:
 	@echo "Formatting Protobuf files"
 	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoFmt}$$"; then docker start -a $(containerProtoFmt); else docker run --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
 		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
+
+
+
+
+###############################################################################
+###                                Localnet                                 ###
+###############################################################################
+
+build-linux:
+	mkdir -p $(BUILDDIR)
+	@if [ -z "$(docker images -q migalood 2> /dev/null)" ]; then \
+		docker build --platform linux/amd64 --tag migalood ./; \
+	fi
+	docker create --platform limux/amd64 --name temp migalood:latest 
+	docker cp temp:/usr/bin/migalood $(BUILDDIR)/
+	docker rm temp
+
+
+localnet-start: localnet-stop
+	@if ! [ -f build/node0/$(BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/build:/migaloo:Z migalood testnet init-files --chain-id ${TESTNET_CHAINID} --v ${TESTNET_NVAL} -o /migaloo --keyring-backend=test --starting-ip-address 192.168.10.2; fi
+
+
+localnet-stop:
+	docker-compose down
+	rm -rf build/node*
+	rm -rf build/gentxs.
+###############################################################################
+###                                Upgrade                                 ###
+###############################################################################
+build-cosmovisor-linux:
+	@if [ -z "$(docker images -q migaloo/migaloo.cosmovisor-binary 2> /dev/null)" ]; then \
+		$(MAKE) -C contrib/updates build-cosmovisor-linux BUILDDIR=$(BUILDDIR); \
+	fi
+
+build-migalood-env:
+	@if [ -z "$(docker images -q migaloo/migalood-upgrade-env 2> /dev/null)" ]; then \
+		$(MAKE) -C contrib/migalood-env migalood-upgrade-env; \
+	fi
+	
+## Presiquites: build-cosmovisor-linux build-linux build-migalood-env 
+localnet-start-upgrade: localnet-upgrade-stop build-linux build-cosmovisor-linux build-migalood-env
+	bash contrib/updates/prepare_cosmovisor.sh $(BUILDDIR) ${TESTNET_NVAL} ${TESTNET_CHAINID}
+	docker-compose -f ./contrib/updates/docker-compose.yml up
+	@./contrib/updates/upgrade-test.sh
+	$(MAKE) localnet-upgrade-stop
+
+localnet-upgrade-stop:
+	docker-compose -f contrib/updates/docker-compose.yml down
+	rm -rf build/node*
+	rm -rf build/gentxs.
