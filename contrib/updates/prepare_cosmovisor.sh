@@ -27,10 +27,12 @@ then
 fi
 
 
-if [ ! -f "$BUILDDIR/$OLD_VERSION.zip" ] &> /dev/null
+if [ ! -f "$BUILDDIR/old/migalood" ] &> /dev/null
 then
     mkdir -p BUILDDIR/old
-    docker build --platform linux/amd64 --no-cache --build-arg source=./_build/migaloo-chain-${OLD_VERSION:1}/ --tag migaloo/migalood.binary.old ./_build/migaloo-chain-${OLD_VERSION:1}
+    if [ ! "$(docker images -q migaloo/migalood.binary.old 2> /dev/null)" ]; then
+        docker build --platform linux/amd64 --no-cache --build-arg source=./_build/migaloo-chain-${OLD_VERSION:1}/ --tag migaloo/migalood.binary.old ./_build/migaloo-chain-${OLD_VERSION:1}
+    fi
     docker create --platform linux/amd64 --name old-temp migaloo/migalood.binary.old:latest
     mkdir -p $BUILDDIR/old
     docker cp old-temp:/usr/bin/migalood $BUILDDIR/old/

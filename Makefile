@@ -257,7 +257,9 @@ proto-format:
 
 build-linux:
 	mkdir -p $(BUILDDIR)
-	docker build --platform linux/amd64 --tag migalood ./
+	@if [ -z "$(docker images -q migalood 2> /dev/null)" ]; then \
+		docker build --platform linux/amd64 --tag migalood ./; \
+	fi
 	docker create --platform limux/amd64 --name temp migalood:latest 
 	docker cp temp:/usr/bin/migalood $(BUILDDIR)/
 	docker rm temp
@@ -275,15 +277,19 @@ localnet-stop:
 ###                                Upgrade                                 ###
 ###############################################################################
 build-cosmovisor-linux:
-	$(MAKE) -C contrib/updates build-cosmovisor-linux BUILDDIR=$(BUILDDIR)
+	@if [ -z "$(docker images -q migaloo/migaloo.cosmovisor-binary 2> /dev/null)" ]; then \
+		$(MAKE) -C contrib/updates build-cosmovisor-linux BUILDDIR=$(BUILDDIR); \
+	fi
 
 build-migalood-env:
-	$(MAKE) -C contrib/migalood-env migalood-upgrade-env
+	@if [ -z "$(docker images -q migaloo/migalood-upgrade-env 2> /dev/null)" ]; then \
+		$(MAKE) -C contrib/migalood-env migalood-upgrade-env; \
+	fi
 	
 ## Presiquites: build-cosmovisor-linux build-linux build-migalood-env 
-localnet-start-upgrade: localnet-upgrade-stop
+localnet-start-upgrade: localnet-upgrade-stop build-linux build-cosmovisor-linux build-migalood-env
 	bash contrib/updates/prepare_cosmovisor.sh $(BUILDDIR) ${TESTNET_NVAL} ${TESTNET_CHAINID}
-	docker-compose -f ./contrib/updates/docker-compose.yml up -d
+	docker-compose -f ./contrib/updates/docker-compose.yml up
 	@./contrib/updates/upgrade-test.sh
 	$(MAKE) localnet-upgrade-stop
 
