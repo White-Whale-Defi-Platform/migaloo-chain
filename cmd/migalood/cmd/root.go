@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"errors"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types" //nolint:gofumpt
 	"io"
 	"os"
-	"path/filepath"
+	"path/filepath" //nolint:gofumpt
 
 	tmtypes "github.com/cometbft/cometbft/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
