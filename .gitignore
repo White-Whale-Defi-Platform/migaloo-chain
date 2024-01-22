@@ -4,3 +4,8 @@ bin
 */.DS_Store
 
 
+mytestnet
+build
+_build
+data 
+screenlog.0
