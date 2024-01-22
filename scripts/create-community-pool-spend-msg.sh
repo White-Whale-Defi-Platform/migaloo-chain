@@ -24,14 +24,15 @@ echo "Recipient: $recipient"
 echo "Pre receipient amount: $PRE_AMOUNT"
 
 ## Test1 Create a community pool spend message, receipient is test2
+AMOUNT_REQUEST=$COMMUNITY_POOL_AMOUNT$DENOM
 proposal_file=$SCRIPTS_FOLDER/proposal.json
 cat << EOF > $proposal_file
 {
-  "title": "Community Spend: Liquid stake",
-  "description": "This proposal is to request funds for liquid staking development.",
+  "title": "Community Spend: Chihuahua ... ",
+  "description": "This proposal is to request funds for ...",
   "recipient": "$recipient",
-  "amount": "$COMMUNITY_POOL_AMOUNT$DENOM",
-  "deposit": "1000000$DENOM"
+  "amount": "$AMOUNT_REQUEST",
+  "deposit": "25000000000$DENOM"
 }
 EOF
 
