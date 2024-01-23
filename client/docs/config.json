@@ -1,0 +1,31 @@
+{
+  "swagger": "2.0",
+
+  "info": {
+    "description": "Swagger for cosmos sdk",
+
+    "version": "2.6"
+  },
+
+  "apis": [
+    {
+      "url": "./tmp-swagger-gen/alliance/alliance/query.swagger.json",
+
+      "operationIds": {
+        "rename": {
+          "Params": "AllianceParams"
+        }
+      }
+    },
+
+    {
+      "url": "./tmp-swagger-gen/migaloo/feeburn/query.swagger.json",
+
+      "operationIds": {
+        "rename": {
+          "Params": "FeeBurnParams"
+        }
+      }
+    }
+  ]
+}

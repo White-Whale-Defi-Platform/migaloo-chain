@@ -1,0 +1,3276 @@
+swagger: '2.0'
+info:
+  description: Swagger for cosmos sdk
+  version: '2.6'
+paths:
+  /terra/alliances:
+    get:
+      summary: Query paginated alliances
+      operationId: Alliances
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              alliances:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                      title: >-
+                        Denom of the asset. It could either be a native token or
+                        an IBC token
+                    reward_weight:
+                      type: string
+                      title: >-
+                        The reward weight specifies the ratio of rewards that
+                        will be given to each alliance asset
+
+                        It does not need to sum to 1. rate = weight /
+                        total_weight
+
+                        Native asset is always assumed to have a weight of 1.s
+                    take_rate:
+                      type: string
+                      title: >-
+                        A positive take rate is used for liquid staking
+                        derivatives. It defines an rate that is applied per
+                        take_rate_interval
+
+                        that will be redirected to the distribution rewards pool
+                    total_tokens:
+                      type: string
+                    total_validator_shares:
+                      type: string
+                    reward_start_time:
+                      type: string
+                      format: date-time
+                    reward_change_rate:
+                      type: string
+                    reward_change_interval:
+                      type: string
+                    last_reward_change_time:
+                      type: string
+                      format: date-time
+                    reward_weight_range:
+                      description: >-
+                        set a bound of weight range to limit how much reward
+                        weights can scale.
+                      type: object
+                      properties:
+                        min:
+                          type: string
+                        max:
+                          type: string
+                    is_initialized:
+                      type: boolean
+                      title: >-
+                        flag to check if an asset has completed the
+                        initialization process after the reward delay
+                  title: 'key: denom value: AllianceAsset'
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/delegations:
+    get:
+      summary: Query all paginated alliance delegations
+      operationId: AllAlliancesDelegations
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              delegations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    delegation:
+                      type: object
+                      properties:
+                        delegator_address:
+                          type: string
+                          description: >-
+                            delegator_address is the bech32-encoded address of
+                            the delegator.
+                        validator_address:
+                          type: string
+                          description: >-
+                            validator_address is the bech32-encoded address of
+                            the validator.
+                        denom:
+                          type: string
+                          title: denom of token staked
+                        shares:
+                          type: string
+                          description: shares define the delegation shares received.
+                        reward_history:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              denom:
+                                type: string
+                              index:
+                                type: string
+                        last_reward_claim_height:
+                          type: string
+                          format: uint64
+                    balance:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                  description: >-
+                    DelegationResponse is equivalent to Delegation except that
+                    it contains a
+
+                    balance in addition to shares which is more suitable for
+                    client responses.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/delegations/{delegator_addr}:
+    get:
+      summary: Query all paginated alliance delegations for a delegator addr
+      operationId: AlliancesDelegation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              delegations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    delegation:
+                      type: object
+                      properties:
+                        delegator_address:
+                          type: string
+                          description: >-
+                            delegator_address is the bech32-encoded address of
+                            the delegator.
+                        validator_address:
+                          type: string
+                          description: >-
+                            validator_address is the bech32-encoded address of
+                            the validator.
+                        denom:
+                          type: string
+                          title: denom of token staked
+                        shares:
+                          type: string
+                          description: shares define the delegation shares received.
+                        reward_history:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              denom:
+                                type: string
+                              index:
+                                type: string
+                        last_reward_claim_height:
+                          type: string
+                          format: uint64
+                    balance:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                  description: >-
+                    DelegationResponse is equivalent to Delegation except that
+                    it contains a
+
+                    balance in addition to shares which is more suitable for
+                    client responses.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/delegations/{delegator_addr}/{validator_addr}:
+    get:
+      summary: >-
+        Query all paginated alliance delegations for a delegator addr and
+        validator_addr
+      operationId: AlliancesDelegationByValidator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              delegations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    delegation:
+                      type: object
+                      properties:
+                        delegator_address:
+                          type: string
+                          description: >-
+                            delegator_address is the bech32-encoded address of
+                            the delegator.
+                        validator_address:
+                          type: string
+                          description: >-
+                            validator_address is the bech32-encoded address of
+                            the validator.
+                        denom:
+                          type: string
+                          title: denom of token staked
+                        shares:
+                          type: string
+                          description: shares define the delegation shares received.
+                        reward_history:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              denom:
+                                type: string
+                              index:
+                                type: string
+                        last_reward_claim_height:
+                          type: string
+                          format: uint64
+                    balance:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                  description: >-
+                    DelegationResponse is equivalent to Delegation except that
+                    it contains a
+
+                    balance in addition to shares which is more suitable for
+                    client responses.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/delegations/{delegator_addr}/{validator_addr}/ibc/{hash}:
+    get:
+      summary: >-
+        Query a delegation to an alliance by delegator addr, validator_addr and
+        denom
+
+        @deprecated: this endpoint will be replaced for by the encoded version
+
+        of the denom e.g.:
+        GET:/terra/alliances/terradr1231/terravaloper41234/ibc%2Falliance
+      operationId: IBCAllianceDelegation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              delegation:
+                type: object
+                properties:
+                  delegation:
+                    type: object
+                    properties:
+                      delegator_address:
+                        type: string
+                        description: >-
+                          delegator_address is the bech32-encoded address of the
+                          delegator.
+                      validator_address:
+                        type: string
+                        description: >-
+                          validator_address is the bech32-encoded address of the
+                          validator.
+                      denom:
+                        type: string
+                        title: denom of token staked
+                      shares:
+                        type: string
+                        description: shares define the delegation shares received.
+                      reward_history:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            denom:
+                              type: string
+                            index:
+                              type: string
+                      last_reward_claim_height:
+                        type: string
+                        format: uint64
+                  balance:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                description: >-
+                  DelegationResponse is equivalent to Delegation except that it
+                  contains a
+
+                  balance in addition to shares which is more suitable for
+                  client responses.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+        - name: hash
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/delegations/{delegator_addr}/{validator_addr}/{denom}:
+    get:
+      summary: >-
+        Query a delegation to an alliance by delegator addr, validator_addr and
+        denom
+      operationId: AllianceDelegation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              delegation:
+                type: object
+                properties:
+                  delegation:
+                    type: object
+                    properties:
+                      delegator_address:
+                        type: string
+                        description: >-
+                          delegator_address is the bech32-encoded address of the
+                          delegator.
+                      validator_address:
+                        type: string
+                        description: >-
+                          validator_address is the bech32-encoded address of the
+                          validator.
+                      denom:
+                        type: string
+                        title: denom of token staked
+                      shares:
+                        type: string
+                        description: shares define the delegation shares received.
+                      reward_history:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            denom:
+                              type: string
+                            index:
+                              type: string
+                      last_reward_claim_height:
+                        type: string
+                        format: uint64
+                  balance:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                    description: >-
+                      Coin defines a token with a denomination and an amount.
+
+
+                      NOTE: The amount field is an Int which implements the
+                      custom method
+
+                      signatures required by gogoproto.
+                description: >-
+                  DelegationResponse is equivalent to Delegation except that it
+                  contains a
+
+                  balance in addition to shares which is more suitable for
+                  client responses.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/ibc/{hash}:
+    get:
+      summary: |-
+        Query a specific alliance by ibc hash
+        @deprecated: this endpoint will be replaced for by the encoded version
+        of the denom e.g.: GET:/terra/alliances/ibc%2Falliance
+      operationId: IBCAlliance
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              alliance:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                    title: >-
+                      Denom of the asset. It could either be a native token or
+                      an IBC token
+                  reward_weight:
+                    type: string
+                    title: >-
+                      The reward weight specifies the ratio of rewards that will
+                      be given to each alliance asset
+
+                      It does not need to sum to 1. rate = weight / total_weight
+
+                      Native asset is always assumed to have a weight of 1.s
+                  take_rate:
+                    type: string
+                    title: >-
+                      A positive take rate is used for liquid staking
+                      derivatives. It defines an rate that is applied per
+                      take_rate_interval
+
+                      that will be redirected to the distribution rewards pool
+                  total_tokens:
+                    type: string
+                  total_validator_shares:
+                    type: string
+                  reward_start_time:
+                    type: string
+                    format: date-time
+                  reward_change_rate:
+                    type: string
+                  reward_change_interval:
+                    type: string
+                  last_reward_change_time:
+                    type: string
+                    format: date-time
+                  reward_weight_range:
+                    description: >-
+                      set a bound of weight range to limit how much reward
+                      weights can scale.
+                    type: object
+                    properties:
+                      min:
+                        type: string
+                      max:
+                        type: string
+                  is_initialized:
+                    type: boolean
+                    title: >-
+                      flag to check if an asset has completed the initialization
+                      process after the reward delay
+                title: 'key: denom value: AllianceAsset'
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: hash
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /terra/alliances/params:
+    get:
+      operationId: AllianceParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                type: object
+                properties:
+                  reward_delay_time:
+                    type: string
+                  take_rate_claim_interval:
+                    type: string
+                    title: >-
+                      Time interval between consecutive applications of
+                      `take_rate`
+                  last_take_rate_claim_time:
+                    type: string
+                    format: date-time
+                    title: Last application of `take_rate` on assets
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      tags:
+        - Query
+  /terra/alliances/redelegations/{denom}/{delegator_addr}:
+    get:
+      summary: Query redelegations by denom and delegator address
+      operationId: AllianceRedelegations
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              redelegations:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    delegator_address:
+                      type: string
+                      title: internal or external user address
+                    src_validator_address:
+                      type: string
+                      title: redelegation source validator
+                    dst_validator_address:
+                      type: string
+                      title: redelegation destination validator
+                    balance:
+                      type: object
+                      properties:
+                        denom:
+                          type: string
+                        amount:
+                          type: string
+                      description: >-
+                        Coin defines a token with a denomination and an amount.
+
+
+                        NOTE: The amount field is an Int which implements the
+                        custom method
+
+                        signatures required by gogoproto.
+                      title: amount to redelegate
+                    completion_time:
+                      type: string
+                      format: date-time
+                      description: >-
+                        completion_time defines the unix time for redelegation
+                        completion.
+                  title: Used on QueryServer
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/rewards/{delegator_addr}/{validator_addr}/ibc/{hash}:
+    get:
+      summary: >-
+        Query for rewards by delegator addr, validator_addr and denom
+
+        @deprecated: this endpoint will be replaced for by the encoded version
+
+        of the denom e.g.:
+        GET:/terra/alliances/terradr1231/terravaloper41234/ibc%2Falliance
+      operationId: IBCAllianceDelegationRewards
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rewards:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+        - name: hash
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/rewards/{delegator_addr}/{validator_addr}/{denom}:
+    get:
+      summary: Query for rewards by delegator addr, validator_addr and denom
+      operationId: AllianceDelegationRewards
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              rewards:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    Coin defines a token with a denomination and an amount.
+
+
+                    NOTE: The amount field is an Int which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/unbondings/{denom}/{delegator_addr}:
+    get:
+      summary: Query for rewards by delegator addr, validator_addr and denom
+      operationId: AllianceUnbondingsByDenomAndDelegator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              unbondings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    completion_time:
+                      type: string
+                      format: date-time
+                      description: >-
+                        completion_time is the unix time for unbonding
+                        completion.
+                    validator_address:
+                      type: string
+                      description: >-
+                        validator_address is the bech32-encoded address of the
+                        validator.
+                    amount:
+                      type: string
+                      description: amount defines the tokens to receive at completion.
+                  description: >-
+                    UnbondingDelegation defines an unbonding object with
+                    relevant metadata.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/unbondings/{denom}/{delegator_addr}/{validator_addr}:
+    get:
+      summary: Query for rewards by delegator addr, validator_addr and denom
+      operationId: AllianceUnbondings
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              unbondings:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    completion_time:
+                      type: string
+                      format: date-time
+                      description: >-
+                        completion_time is the unix time for unbonding
+                        completion.
+                    validator_address:
+                      type: string
+                      description: >-
+                        validator_address is the bech32-encoded address of the
+                        validator.
+                    amount:
+                      type: string
+                      description: amount defines the tokens to receive at completion.
+                  description: >-
+                    UnbondingDelegation defines an unbonding object with
+                    relevant metadata.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+        - name: delegator_addr
+          in: path
+          required: true
+          type: string
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/validators:
+    get:
+      summary: Query all paginated alliance validators
+      operationId: AllAllianceValidators
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validators:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    validator_addr:
+                      type: string
+                    total_delegation_shares:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          denom:
+                            type: string
+                          amount:
+                            type: string
+                        description: >-
+                          DecCoin defines a token with a denomination and a
+                          decimal amount.
+
+
+                          NOTE: The amount field is an Dec which implements the
+                          custom method
+
+                          signatures required by gogoproto.
+                    validator_shares:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          denom:
+                            type: string
+                          amount:
+                            type: string
+                        description: >-
+                          DecCoin defines a token with a denomination and a
+                          decimal amount.
+
+
+                          NOTE: The amount field is an Dec which implements the
+                          custom method
+
+                          signatures required by gogoproto.
+                    total_staked:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          denom:
+                            type: string
+                          amount:
+                            type: string
+                        description: >-
+                          DecCoin defines a token with a denomination and a
+                          decimal amount.
+
+
+                          NOTE: The amount field is an Dec which implements the
+                          custom method
+
+                          signatures required by gogoproto.
+              pagination:
+                type: object
+                properties:
+                  next_key:
+                    type: string
+                    format: byte
+                    description: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently. It will be empty if
+                      there are no more results.
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.count_total
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  /terra/alliances/validators/{validator_addr}:
+    get:
+      summary: Query alliance validator
+      operationId: AllianceValidator
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              validator_addr:
+                type: string
+              total_delegation_shares:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    DecCoin defines a token with a denomination and a decimal
+                    amount.
+
+
+                    NOTE: The amount field is an Dec which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+              validator_shares:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    DecCoin defines a token with a denomination and a decimal
+                    amount.
+
+
+                    NOTE: The amount field is an Dec which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+              total_staked:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    amount:
+                      type: string
+                  description: >-
+                    DecCoin defines a token with a denomination and a decimal
+                    amount.
+
+
+                    NOTE: The amount field is an Dec which implements the custom
+                    method
+
+                    signatures required by gogoproto.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: validator_addr
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /terra/alliances/{denom}:
+    get:
+      summary: Query a specific alliance by denom
+      operationId: Alliance
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              alliance:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                    title: >-
+                      Denom of the asset. It could either be a native token or
+                      an IBC token
+                  reward_weight:
+                    type: string
+                    title: >-
+                      The reward weight specifies the ratio of rewards that will
+                      be given to each alliance asset
+
+                      It does not need to sum to 1. rate = weight / total_weight
+
+                      Native asset is always assumed to have a weight of 1.s
+                  take_rate:
+                    type: string
+                    title: >-
+                      A positive take rate is used for liquid staking
+                      derivatives. It defines an rate that is applied per
+                      take_rate_interval
+
+                      that will be redirected to the distribution rewards pool
+                  total_tokens:
+                    type: string
+                  total_validator_shares:
+                    type: string
+                  reward_start_time:
+                    type: string
+                    format: date-time
+                  reward_change_rate:
+                    type: string
+                  reward_change_interval:
+                    type: string
+                  last_reward_change_time:
+                    type: string
+                    format: date-time
+                  reward_weight_range:
+                    description: >-
+                      set a bound of weight range to limit how much reward
+                      weights can scale.
+                    type: object
+                    properties:
+                      min:
+                        type: string
+                      max:
+                        type: string
+                  is_initialized:
+                    type: boolean
+                    title: >-
+                      flag to check if an asset has completed the initialization
+                      process after the reward delay
+                title: 'key: denom value: AllianceAsset'
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      parameters:
+        - name: denom
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /migaloo/feeburn/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: FeeBurnParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                description: params holds all the parameters of this module.
+                type: object
+                properties:
+                  tx_fee_burn_percent:
+                    type: string
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type_url:
+                      type: string
+                    value:
+                      type: string
+                      format: byte
+      tags:
+        - Query
+definitions:
+  alliance.alliance.AllianceAsset:
+    type: object
+    properties:
+      denom:
+        type: string
+        title: Denom of the asset. It could either be a native token or an IBC token
+      reward_weight:
+        type: string
+        title: >-
+          The reward weight specifies the ratio of rewards that will be given to
+          each alliance asset
+
+          It does not need to sum to 1. rate = weight / total_weight
+
+          Native asset is always assumed to have a weight of 1.s
+      take_rate:
+        type: string
+        title: >-
+          A positive take rate is used for liquid staking derivatives. It
+          defines an rate that is applied per take_rate_interval
+
+          that will be redirected to the distribution rewards pool
+      total_tokens:
+        type: string
+      total_validator_shares:
+        type: string
+      reward_start_time:
+        type: string
+        format: date-time
+      reward_change_rate:
+        type: string
+      reward_change_interval:
+        type: string
+      last_reward_change_time:
+        type: string
+        format: date-time
+      reward_weight_range:
+        description: >-
+          set a bound of weight range to limit how much reward weights can
+          scale.
+        type: object
+        properties:
+          min:
+            type: string
+          max:
+            type: string
+      is_initialized:
+        type: boolean
+        title: >-
+          flag to check if an asset has completed the initialization process
+          after the reward delay
+    title: 'key: denom value: AllianceAsset'
+  alliance.alliance.Delegation:
+    type: object
+    properties:
+      delegator_address:
+        type: string
+        description: delegator_address is the bech32-encoded address of the delegator.
+      validator_address:
+        type: string
+        description: validator_address is the bech32-encoded address of the validator.
+      denom:
+        type: string
+        title: denom of token staked
+      shares:
+        type: string
+        description: shares define the delegation shares received.
+      reward_history:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            index:
+              type: string
+      last_reward_claim_height:
+        type: string
+        format: uint64
+  alliance.alliance.DelegationResponse:
+    type: object
+    properties:
+      delegation:
+        type: object
+        properties:
+          delegator_address:
+            type: string
+            description: delegator_address is the bech32-encoded address of the delegator.
+          validator_address:
+            type: string
+            description: validator_address is the bech32-encoded address of the validator.
+          denom:
+            type: string
+            title: denom of token staked
+          shares:
+            type: string
+            description: shares define the delegation shares received.
+          reward_history:
+            type: array
+            items:
+              type: object
+              properties:
+                denom:
+                  type: string
+                index:
+                  type: string
+          last_reward_claim_height:
+            type: string
+            format: uint64
+      balance:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+    description: |-
+      DelegationResponse is equivalent to Delegation except that it contains a
+      balance in addition to shares which is more suitable for client responses.
+  alliance.alliance.Params:
+    type: object
+    properties:
+      reward_delay_time:
+        type: string
+      take_rate_claim_interval:
+        type: string
+        title: Time interval between consecutive applications of `take_rate`
+      last_take_rate_claim_time:
+        type: string
+        format: date-time
+        title: Last application of `take_rate` on assets
+  alliance.alliance.QueryAllianceDelegationResponse:
+    type: object
+    properties:
+      delegation:
+        type: object
+        properties:
+          delegation:
+            type: object
+            properties:
+              delegator_address:
+                type: string
+                description: >-
+                  delegator_address is the bech32-encoded address of the
+                  delegator.
+              validator_address:
+                type: string
+                description: >-
+                  validator_address is the bech32-encoded address of the
+                  validator.
+              denom:
+                type: string
+                title: denom of token staked
+              shares:
+                type: string
+                description: shares define the delegation shares received.
+              reward_history:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    denom:
+                      type: string
+                    index:
+                      type: string
+              last_reward_claim_height:
+                type: string
+                format: uint64
+          balance:
+            type: object
+            properties:
+              denom:
+                type: string
+              amount:
+                type: string
+            description: >-
+              Coin defines a token with a denomination and an amount.
+
+
+              NOTE: The amount field is an Int which implements the custom
+              method
+
+              signatures required by gogoproto.
+        description: >-
+          DelegationResponse is equivalent to Delegation except that it contains
+          a
+
+          balance in addition to shares which is more suitable for client
+          responses.
+  alliance.alliance.QueryAllianceDelegationRewardsResponse:
+    type: object
+    properties:
+      rewards:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
+  alliance.alliance.QueryAllianceRedelegationsResponse:
+    type: object
+    properties:
+      redelegations:
+        type: array
+        items:
+          type: object
+          properties:
+            delegator_address:
+              type: string
+              title: internal or external user address
+            src_validator_address:
+              type: string
+              title: redelegation source validator
+            dst_validator_address:
+              type: string
+              title: redelegation destination validator
+            balance:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+              title: amount to redelegate
+            completion_time:
+              type: string
+              format: date-time
+              description: >-
+                completion_time defines the unix time for redelegation
+                completion.
+          title: Used on QueryServer
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  alliance.alliance.QueryAllianceResponse:
+    type: object
+    properties:
+      alliance:
+        type: object
+        properties:
+          denom:
+            type: string
+            title: >-
+              Denom of the asset. It could either be a native token or an IBC
+              token
+          reward_weight:
+            type: string
+            title: >-
+              The reward weight specifies the ratio of rewards that will be
+              given to each alliance asset
+
+              It does not need to sum to 1. rate = weight / total_weight
+
+              Native asset is always assumed to have a weight of 1.s
+          take_rate:
+            type: string
+            title: >-
+              A positive take rate is used for liquid staking derivatives. It
+              defines an rate that is applied per take_rate_interval
+
+              that will be redirected to the distribution rewards pool
+          total_tokens:
+            type: string
+          total_validator_shares:
+            type: string
+          reward_start_time:
+            type: string
+            format: date-time
+          reward_change_rate:
+            type: string
+          reward_change_interval:
+            type: string
+          last_reward_change_time:
+            type: string
+            format: date-time
+          reward_weight_range:
+            description: >-
+              set a bound of weight range to limit how much reward weights can
+              scale.
+            type: object
+            properties:
+              min:
+                type: string
+              max:
+                type: string
+          is_initialized:
+            type: boolean
+            title: >-
+              flag to check if an asset has completed the initialization process
+              after the reward delay
+        title: 'key: denom value: AllianceAsset'
+  alliance.alliance.QueryAllianceUnbondingsByDenomAndDelegatorResponse:
+    type: object
+    properties:
+      unbondings:
+        type: array
+        items:
+          type: object
+          properties:
+            completion_time:
+              type: string
+              format: date-time
+              description: completion_time is the unix time for unbonding completion.
+            validator_address:
+              type: string
+              description: >-
+                validator_address is the bech32-encoded address of the
+                validator.
+            amount:
+              type: string
+              description: amount defines the tokens to receive at completion.
+          description: >-
+            UnbondingDelegation defines an unbonding object with relevant
+            metadata.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  alliance.alliance.QueryAllianceUnbondingsResponse:
+    type: object
+    properties:
+      unbondings:
+        type: array
+        items:
+          type: object
+          properties:
+            completion_time:
+              type: string
+              format: date-time
+              description: completion_time is the unix time for unbonding completion.
+            validator_address:
+              type: string
+              description: >-
+                validator_address is the bech32-encoded address of the
+                validator.
+            amount:
+              type: string
+              description: amount defines the tokens to receive at completion.
+          description: >-
+            UnbondingDelegation defines an unbonding object with relevant
+            metadata.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  alliance.alliance.QueryAllianceValidatorResponse:
+    type: object
+    properties:
+      validator_addr:
+        type: string
+      total_delegation_shares:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            DecCoin defines a token with a denomination and a decimal amount.
+
+            NOTE: The amount field is an Dec which implements the custom method
+            signatures required by gogoproto.
+      validator_shares:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            DecCoin defines a token with a denomination and a decimal amount.
+
+            NOTE: The amount field is an Dec which implements the custom method
+            signatures required by gogoproto.
+      total_staked:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            DecCoin defines a token with a denomination and a decimal amount.
+
+            NOTE: The amount field is an Dec which implements the custom method
+            signatures required by gogoproto.
+  alliance.alliance.QueryAllianceValidatorsResponse:
+    type: object
+    properties:
+      validators:
+        type: array
+        items:
+          type: object
+          properties:
+            validator_addr:
+              type: string
+            total_delegation_shares:
+              type: array
+              items:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  DecCoin defines a token with a denomination and a decimal
+                  amount.
+
+
+                  NOTE: The amount field is an Dec which implements the custom
+                  method
+
+                  signatures required by gogoproto.
+            validator_shares:
+              type: array
+              items:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  DecCoin defines a token with a denomination and a decimal
+                  amount.
+
+
+                  NOTE: The amount field is an Dec which implements the custom
+                  method
+
+                  signatures required by gogoproto.
+            total_staked:
+              type: array
+              items:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  DecCoin defines a token with a denomination and a decimal
+                  amount.
+
+
+                  NOTE: The amount field is an Dec which implements the custom
+                  method
+
+                  signatures required by gogoproto.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  alliance.alliance.QueryAlliancesDelegationsResponse:
+    type: object
+    properties:
+      delegations:
+        type: array
+        items:
+          type: object
+          properties:
+            delegation:
+              type: object
+              properties:
+                delegator_address:
+                  type: string
+                  description: >-
+                    delegator_address is the bech32-encoded address of the
+                    delegator.
+                validator_address:
+                  type: string
+                  description: >-
+                    validator_address is the bech32-encoded address of the
+                    validator.
+                denom:
+                  type: string
+                  title: denom of token staked
+                shares:
+                  type: string
+                  description: shares define the delegation shares received.
+                reward_history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      denom:
+                        type: string
+                      index:
+                        type: string
+                last_reward_claim_height:
+                  type: string
+                  format: uint64
+            balance:
+              type: object
+              properties:
+                denom:
+                  type: string
+                amount:
+                  type: string
+              description: >-
+                Coin defines a token with a denomination and an amount.
+
+
+                NOTE: The amount field is an Int which implements the custom
+                method
+
+                signatures required by gogoproto.
+          description: >-
+            DelegationResponse is equivalent to Delegation except that it
+            contains a
+
+            balance in addition to shares which is more suitable for client
+            responses.
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  alliance.alliance.QueryAlliancesResponse:
+    type: object
+    properties:
+      alliances:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+              title: >-
+                Denom of the asset. It could either be a native token or an IBC
+                token
+            reward_weight:
+              type: string
+              title: >-
+                The reward weight specifies the ratio of rewards that will be
+                given to each alliance asset
+
+                It does not need to sum to 1. rate = weight / total_weight
+
+                Native asset is always assumed to have a weight of 1.s
+            take_rate:
+              type: string
+              title: >-
+                A positive take rate is used for liquid staking derivatives. It
+                defines an rate that is applied per take_rate_interval
+
+                that will be redirected to the distribution rewards pool
+            total_tokens:
+              type: string
+            total_validator_shares:
+              type: string
+            reward_start_time:
+              type: string
+              format: date-time
+            reward_change_rate:
+              type: string
+            reward_change_interval:
+              type: string
+            last_reward_change_time:
+              type: string
+              format: date-time
+            reward_weight_range:
+              description: >-
+                set a bound of weight range to limit how much reward weights can
+                scale.
+              type: object
+              properties:
+                min:
+                  type: string
+                max:
+                  type: string
+            is_initialized:
+              type: boolean
+              title: >-
+                flag to check if an asset has completed the initialization
+                process after the reward delay
+          title: 'key: denom value: AllianceAsset'
+      pagination:
+        type: object
+        properties:
+          next_key:
+            type: string
+            format: byte
+            description: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently. It will be empty if
+              there are no more results.
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  alliance.alliance.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        type: object
+        properties:
+          reward_delay_time:
+            type: string
+          take_rate_claim_interval:
+            type: string
+            title: Time interval between consecutive applications of `take_rate`
+          last_take_rate_claim_time:
+            type: string
+            format: date-time
+            title: Last application of `take_rate` on assets
+  alliance.alliance.RedelegationEntry:
+    type: object
+    properties:
+      delegator_address:
+        type: string
+        title: internal or external user address
+      src_validator_address:
+        type: string
+        title: redelegation source validator
+      dst_validator_address:
+        type: string
+        title: redelegation destination validator
+      balance:
+        type: object
+        properties:
+          denom:
+            type: string
+          amount:
+            type: string
+        description: |-
+          Coin defines a token with a denomination and an amount.
+
+          NOTE: The amount field is an Int which implements the custom method
+          signatures required by gogoproto.
+        title: amount to redelegate
+      completion_time:
+        type: string
+        format: date-time
+        description: completion_time defines the unix time for redelegation completion.
+    title: Used on QueryServer
+  alliance.alliance.RewardHistory:
+    type: object
+    properties:
+      denom:
+        type: string
+      index:
+        type: string
+  alliance.alliance.RewardWeightRange:
+    type: object
+    properties:
+      min:
+        type: string
+      max:
+        type: string
+  alliance.alliance.UnbondingDelegation:
+    type: object
+    properties:
+      completion_time:
+        type: string
+        format: date-time
+        description: completion_time is the unix time for unbonding completion.
+      validator_address:
+        type: string
+        description: validator_address is the bech32-encoded address of the validator.
+      amount:
+        type: string
+        description: amount defines the tokens to receive at completion.
+    description: UnbondingDelegation defines an unbonding object with relevant metadata.
+  cosmos.base.query.v1beta1.PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+        description: |-
+          key is a value returned in PageResponse.next_key to begin
+          querying the next page most efficiently. Only one of offset or key
+          should be set.
+      offset:
+        type: string
+        format: uint64
+        description: |-
+          offset is a numeric offset that can be used when key is unavailable.
+          It is less efficient than using key. Only one of offset or key should
+          be set.
+      limit:
+        type: string
+        format: uint64
+        description: >-
+          limit is the total number of results to be returned in the result
+          page.
+
+          If left empty it will default to a value to be set by each app.
+      count_total:
+        type: boolean
+        description: >-
+          count_total is set to true  to indicate that the result set should
+          include
+
+          a count of the total number of items available for pagination in UIs.
+
+          count_total is only respected when offset is used. It is ignored when
+          key
+
+          is set.
+      reverse:
+        type: boolean
+        description: >-
+          reverse is set to true if results are to be returned in the descending
+          order.
+
+
+          Since: cosmos-sdk 0.43
+    description: |-
+      message SomeRequest {
+               Foo some_parameter = 1;
+               PageRequest pagination = 2;
+       }
+    title: |-
+      PageRequest is to be embedded in gRPC request messages for efficient
+      pagination. Ex:
+  cosmos.base.query.v1beta1.PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+        description: |-
+          next_key is the key to be passed to PageRequest.key to
+          query the next page most efficiently. It will be empty if
+          there are no more results.
+      total:
+        type: string
+        format: uint64
+        title: |-
+          total is total number of results available if PageRequest.count_total
+          was set, its value is undefined otherwise
+    description: |-
+      PageResponse is to be embedded in gRPC response messages where the
+      corresponding request message has used PageRequest.
+
+       message SomeResponse {
+               repeated Bar results = 1;
+               PageResponse page = 2;
+       }
+  cosmos.base.v1beta1.Coin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+    description: |-
+      Coin defines a token with a denomination and an amount.
+
+      NOTE: The amount field is an Int which implements the custom method
+      signatures required by gogoproto.
+  cosmos.base.v1beta1.DecCoin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+    description: |-
+      DecCoin defines a token with a denomination and a decimal amount.
+
+      NOTE: The amount field is an Dec which implements the custom method
+      signatures required by gogoproto.
+  google.protobuf.Any:
+    type: object
+    properties:
+      type_url:
+        type: string
+      value:
+        type: string
+        format: byte
+  grpc.gateway.runtime.Error:
+    type: object
+    properties:
+      error:
+        type: string
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            type_url:
+              type: string
+            value:
+              type: string
+              format: byte
+  migaloo.feeburn.Params:
+    type: object
+    properties:
+      tx_fee_burn_percent:
+        type: string
+    description: Params defines the parameters for the module.
+  migaloo.feeburn.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        description: params holds all the parameters of this module.
+        type: object
+        properties:
+          tx_fee_burn_percent:
+            type: string
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
