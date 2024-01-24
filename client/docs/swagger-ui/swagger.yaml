@@ -1,14 +1,14 @@
-swagger: '2.0'
+swagger: "2.0"
 info:
-  description: Swagger for cosmos sdk
-  version: '2.6'
+  description: Swagger for migaloo
+  version: "2.6"
 paths:
   /terra/alliances:
     get:
       summary: Query paginated alliances
       operationId: Alliances
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -70,7 +70,7 @@ paths:
                       title: >-
                         flag to check if an asset has completed the
                         initialization process after the reward delay
-                  title: 'key: denom value: AllianceAsset'
+                  title: "key: denom value: AllianceAsset"
               pagination:
                 type: object
                 properties:
@@ -185,7 +185,7 @@ paths:
       summary: Query all paginated alliance delegations
       operationId: AllAlliancesDelegations
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -361,7 +361,7 @@ paths:
       summary: Query all paginated alliance delegations for a delegator addr
       operationId: AlliancesDelegation
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -543,7 +543,7 @@ paths:
         validator_addr
       operationId: AlliancesDelegationByValidator
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -734,7 +734,7 @@ paths:
         GET:/terra/alliances/terradr1231/terravaloper41234/ibc%2Falliance
       operationId: IBCAllianceDelegation
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -894,7 +894,7 @@ paths:
         denom
       operationId: AllianceDelegation
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1055,7 +1055,7 @@ paths:
         of the denom e.g.: GET:/terra/alliances/ibc%2Falliance
       operationId: IBCAlliance
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1114,7 +1114,7 @@ paths:
                     title: >-
                       flag to check if an asset has completed the initialization
                       process after the reward delay
-                title: 'key: denom value: AllianceAsset'
+                title: "key: denom value: AllianceAsset"
         default:
           description: An unexpected error response.
           schema:
@@ -1148,7 +1148,7 @@ paths:
     get:
       operationId: AllianceParams
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1196,7 +1196,7 @@ paths:
       summary: Query redelegations by denom and delegator address
       operationId: AllianceRedelegations
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1366,7 +1366,7 @@ paths:
         GET:/terra/alliances/terradr1231/terravaloper41234/ibc%2Falliance
       operationId: IBCAllianceDelegationRewards
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1486,7 +1486,7 @@ paths:
       summary: Query for rewards by delegator addr, validator_addr and denom
       operationId: AllianceDelegationRewards
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1606,7 +1606,7 @@ paths:
       summary: Query for rewards by delegator addr, validator_addr and denom
       operationId: AllianceUnbondingsByDenomAndDelegator
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1755,7 +1755,7 @@ paths:
       summary: Query for rewards by delegator addr, validator_addr and denom
       operationId: AllianceUnbondings
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -1908,7 +1908,7 @@ paths:
       summary: Query all paginated alliance validators
       operationId: AllAllianceValidators
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -2088,7 +2088,7 @@ paths:
       summary: Query alliance validator
       operationId: AllianceValidator
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -2183,7 +2183,7 @@ paths:
       summary: Query a specific alliance by denom
       operationId: Alliance
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -2242,7 +2242,7 @@ paths:
                     title: >-
                       flag to check if an asset has completed the initialization
                       process after the reward delay
-                title: 'key: denom value: AllianceAsset'
+                title: "key: denom value: AllianceAsset"
         default:
           description: An unexpected error response.
           schema:
@@ -2277,7 +2277,7 @@ paths:
       summary: Parameters queries the parameters of the module.
       operationId: FeeBurnParams
       responses:
-        '200':
+        "200":
           description: A successful response.
           schema:
             type: object
@@ -2367,7 +2367,7 @@ definitions:
         title: >-
           flag to check if an asset has completed the initialization process
           after the reward delay
-    title: 'key: denom value: AllianceAsset'
+    title: "key: denom value: AllianceAsset"
   alliance.alliance.Delegation:
     type: object
     properties:
@@ -2649,7 +2649,7 @@ definitions:
             title: >-
               flag to check if an asset has completed the initialization process
               after the reward delay
-        title: 'key: denom value: AllianceAsset'
+        title: "key: denom value: AllianceAsset"
   alliance.alliance.QueryAllianceUnbondingsByDenomAndDelegatorResponse:
     type: object
     properties:
@@ -3029,7 +3029,7 @@ definitions:
               title: >-
                 flag to check if an asset has completed the initialization
                 process after the reward delay
-          title: 'key: denom value: AllianceAsset'
+          title: "key: denom value: AllianceAsset"
       pagination:
         type: object
         properties:

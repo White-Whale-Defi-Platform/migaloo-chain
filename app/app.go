@@ -147,7 +147,6 @@ import (
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/gorilla/mux"
-	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
 
 	"github.com/CosmWasm/wasmd/x/wasm"
@@ -155,7 +154,8 @@ import (
 	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
+	_ "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/client/docs/statik"
+	"github.com/rakyll/statik/fs"
 
 	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
 	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
@@ -1113,7 +1113,20 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 		panic(err)
 	}
 
+	// List the files in the statikFS
+	err = fs.Walk(statikFS, "/", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		fmt.Println("statik path: ", path) // This will log the path of each file in the statikFS
+		return nil
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	staticServer := http.FileServer(statikFS)
+
 	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
