@@ -11,7 +11,7 @@ if [ "$CONTINUE" == "true" ]; then
 fi
 
 rm -rf mytestnet
-pkill migalood
+pkill $BINARY
 
 # check DENOM is set. If not, set to uwhale
 DENOM=${2:-uwhale}
@@ -57,9 +57,9 @@ $BINARY keys add $KEY1 --keyring-backend $KEYRING --home $HOME_DIR
 $BINARY keys add $KEY2 --keyring-backend $KEYRING --home $HOME_DIR
 
 # Allocate genesis accounts (cosmos formatted addresses)
-$BINARY add-genesis-account $KEY "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
-$BINARY add-genesis-account $KEY1 "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
-$BINARY add-genesis-account $KEY2 "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
+$BINARY genesis add-genesis-account $KEY "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
+$BINARY genesis add-genesis-account $KEY1 "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
+$BINARY genesis add-genesis-account $KEY2 "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
 
 update_test_genesis '.app_state["gov"]["voting_params"]["voting_period"]="20s"'
 update_test_genesis '.app_state["mint"]["params"]["mint_denom"]="'$DENOM'"'
@@ -73,12 +73,12 @@ $SED_BINARY -i 's/swagger = false/swagger = true/' $HOME_DIR/config/app.toml
 $SED_BINARY -i -e 's/enabled-unsafe-cors = false/enabled-unsafe-cors = true/g' $HOME_DIR/config/app.toml
 
 # Sign genesis transaction
-$BINARY gentx $KEY "1000000${DENOM}" --commission-rate=$COMMISSION_RATE --commission-max-rate=$COMMISSION_MAX_RATE --keyring-backend $KEYRING --chain-id $CHAIN_ID --home $HOME_DIR
+$BINARY genesis gentx $KEY "1000000${DENOM}" --commission-rate=$COMMISSION_RATE --commission-max-rate=$COMMISSION_MAX_RATE --keyring-backend $KEYRING --chain-id $CHAIN_ID --home $HOME_DIR
 
 # Collect genesis tx
-$BINARY collect-gentxs --home $HOME_DIR
+$BINARY genesis collect-gentxs --home $HOME_DIR
 
 # Run this to ensure everything worked and that the genesis file is setup correctly
-$BINARY validate-genesis --home $HOME_DIR
+$BINARY genesis validate-genesis --home $HOME_DIR
 
-$BINARY start --home $HOME_DIR
+$BINARY start --minimum-gas-prices="0$DENOM" --home $HOME_DIR

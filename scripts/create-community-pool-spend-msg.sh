@@ -1,4 +1,4 @@
-BINARY=migalood
+BINARY=${1:-migalood}
 CONTINUE=${CONTINUE:-"false"}
 HOME_DIR=$(pwd)/mytestnet
 SCRIPTS_FOLDER=$(pwd)/scripts
@@ -17,28 +17,42 @@ COMMUNITY_POOL_AMOUNT=1000000000
 $BINARY tx distribution fund-community-pool $COMMUNITY_POOL_AMOUNT$DENOM  --from $KEY --keyring-backend $KEYRING --chain-id $CHAIN_ID --home $HOME_DIR -y
 
 ## Show receipient balance before proposal.
+test1_addr=$($BINARY keys show $KEY1 -a --keyring-backend $KEYRING --home $HOME_DIR)
 recipient=$($BINARY keys show $KEY2 -a --keyring-backend $KEYRING --home $HOME_DIR)
 
 PRE_AMOUNT=$($BINARY query bank balances $recipient --chain-id $CHAIN_ID --home $HOME_DIR -o json | jq -r ".balances[0].amount")
 echo "Recipient: $recipient"
 echo "Pre receipient amount: $PRE_AMOUNT"
 
-## Test1 Create a community pool spend message, receipient is test2
-AMOUNT_REQUEST=$COMMUNITY_POOL_AMOUNT$DENOM
+
+AMOUNT_REQUEST=$COMMUNITY_POOL_AMOUNT
 proposal_file=$SCRIPTS_FOLDER/proposal.json
 cat << EOF > $proposal_file
 {
-  "title": "Community Spend: Chihuahua ... ",
-  "description": "This proposal is to request funds for ...",
-  "recipient": "$recipient",
-  "amount": "$AMOUNT_REQUEST",
+  "title": "Community Spend: Chihuhua...",
+  "metadata": "ipfs link: ..",
+  "summary": "This proposal is to request funds for ...",
+  "messages": [
+    {
+      "@type": "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
+      "authority": "$test1_addr",
+      "recipient": "$recipient",
+      "amount": [
+        {
+          "denom": "$DENOM",
+          "amount": "$AMOUNT_REQUEST"
+        }
+      ]
+    }
+  ],
   "deposit": "25000000000$DENOM"
 }
 EOF
 
+
 echo "Proposal file: $proposal_file"
 sleep 3
-$BINARY tx gov submit-legacy-proposal community-pool-spend $proposal_file --from test1  --keyring-backend test --chain-id $CHAIN_ID --home $HOME_DIR -y
+$BINARY tx gov submit-proposal $proposal_file --from test1  --keyring-backend test --chain-id $CHAIN_ID --home $HOME_DIR -y
 
 
 ## Validator vote yes 
