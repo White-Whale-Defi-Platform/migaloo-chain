@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
@@ -11,6 +12,8 @@ import (
 
 func main() {
 	rootCmd, _ := cmd.NewRootCmd()
+
+	fmt.Println("app start here")
 
 	if err := svrcmd.Execute(rootCmd, "MIGALOOD", app.DefaultNodeHome); err != nil {
 		switch e := err.(type) {

@@ -46,35 +46,20 @@ for dir in $proto_dirs; do
 
 query_file=$(find "${dir}" -maxdepth 1 \( -name 'query.proto' -o -name 'service.proto' \))
 
-  
-
-# echo $query_file
-
 echo "query file: $query_file"
 
 if [[ ! -z "$query_file" ]]; then
-
-buf generate --template buf.gen.swagger.yaml $query_file
-
+  buf generate --template buf.gen.swagger.yaml $query_file
 fi
 
 done
-
-  
-  
 
 cd ..
 
 npx swagger-combine ./client/docs/config.json -o ./client/docs/swagger-ui/swagger.yaml -f yaml --continueOnConflictingPaths true --includeDefinitions true
 
-  
-
 # cat the content of the file
-
 cat ./client/docs/swagger-ui/swagger.yaml
 
-  
-
 # clean swagger files
-
 rm -rf ./tmp-swagger-gen

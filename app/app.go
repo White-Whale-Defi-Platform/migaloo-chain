@@ -1114,6 +1114,7 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 	}
 
 	// List the files in the statikFS
+	fmt.Println("statikFS files: ")
 	err = fs.Walk(statikFS, "/", func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err

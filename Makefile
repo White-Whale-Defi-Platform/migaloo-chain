@@ -105,6 +105,8 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
 
+.PHONY: build
+
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
 

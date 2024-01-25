@@ -81,5 +81,3 @@ $BINARY collect-gentxs --home $HOME_DIR
 
 # Run this to ensure everything worked and that the genesis file is setup correctly
 $BINARY validate-genesis --home $HOME_DIR
-
-$BINARY start --home $HOME_DIR
