@@ -27,6 +27,10 @@ echo "Pre receipient amount: $PRE_AMOUNT"
 
 AMOUNT_REQUEST=$COMMUNITY_POOL_AMOUNT
 proposal_file=$SCRIPTS_FOLDER/proposal.json
+
+# chihuahua10d07y265gmmuvt4z0w9aw880jnsr700jeh7th3
+authority=$($BINARY query auth module-account gov -o json | jq -r '.account.base_account.address')
+
 cat << EOF > $proposal_file
 {
   "title": "Community Spend: Chihuhua...",
@@ -35,7 +39,7 @@ cat << EOF > $proposal_file
   "messages": [
     {
       "@type": "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
-      "authority": "$test1_addr",
+      "authority": "$authority",
       "recipient": "$recipient",
       "amount": [
         {

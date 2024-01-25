@@ -5,15 +5,15 @@
   "messages": [
     {
       "@type": "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
-      "authority": "chihuahua1xcgxj7rt0xjhapvw5jcktl7ra8pjvrnjl9whkf",
-      "recipient": "chihuahua1pr9hw78fryxcjk7z6aev3pwe5lfmza6uzsx57q",
+      "authority": "chihuahua10d07y265gmmuvt4z0w9aw880jnsr700jeh7th3",
+      "recipient": "chihuahua1r06keh8fcalk9duz7g0vdaa2u67x97ch0thp0g",
       "amount": [
         {
-          "denom": "uchihuahua",
+          "denom": "uwhale",
           "amount": "1000000000"
         }
       ]
     }
   ],
-  "deposit": "25000000000uchihuahua"
+  "deposit": "25000000000uwhale"
 }
