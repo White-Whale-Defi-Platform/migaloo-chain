@@ -1123,7 +1123,7 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 	staticServer := http.FileServer(statikFS)
 
-	rtr.PathPrefix("/swagger/cosmos-sdk").Handler(http.StripPrefix("/swagger/cosmos-sdk", cosmosStaticServer))
+	rtr.PathPrefix("/swagger/cosmos-sdk/").Handler(http.StripPrefix("/swagger/cosmos-sdk/", cosmosStaticServer))
 	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
