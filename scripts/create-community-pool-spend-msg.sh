@@ -33,23 +33,21 @@ authority=$($BINARY query auth module-account gov -o json | jq -r '.account.base
 
 cat << EOF > $proposal_file
 {
-  "title": "Community Spend: Chihuhua...",
-  "metadata": "ipfs link: ..",
+  "title": "Community Spend for Coinhall Integration",
+  "metadata": "ipfs://commonwealth.im/chihuahua/discussion/14608-improve-meme-trading-on-chihuahua-with-coinhall",
   "summary": "This proposal is to request funds for ...",
   "messages": [
     {
       "@type": "/cosmos.distribution.v1beta1.MsgCommunityPoolSpend",
-      "authority": "$authority",
-      "recipient": "$recipient",
+      "recipient": "chihuahua1rqya48t6u5vtj55uumrx3puwucq6tpppz6tj6w",
       "amount": [
         {
-          "denom": "$DENOM",
-          "amount": "$AMOUNT_REQUEST"
+          "denom": "uhuahua",
+          "amount": "275000000000000000"
         }
       ]
     }
-  ],
-  "deposit": "25000000000$DENOM"
+  ]
 }
 EOF
 
