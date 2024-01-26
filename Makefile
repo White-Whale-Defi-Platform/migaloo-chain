@@ -105,6 +105,8 @@ install: go.sum
 build:
 	go build $(BUILD_FLAGS) -o bin/migalood ./cmd/migalood
 
+.PHONY: build
+
 docker-build-debug:
 	@DOCKER_BUILDKIT=1 docker build -t migaloo:debug -f Dockerfile .
 
@@ -216,6 +218,7 @@ test:
 
 docs:
 	@echo
+	@echo "Heloo"
 	@echo "=========== Generate Message ============"
 	@echo
 	./scripts/generate-docs.sh
@@ -243,10 +246,25 @@ proto-gen:
 	@$(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace $(containerProtoImage) \
 		sh ./scripts/protocgen.sh;
 
+proto-swagger-gen:
+	@echo "Generating Protobuf Swagger"
+	@$(DOCKER) run --rm -v $(CURDIR):/workspace -v $(CURDIR)/proto:/proto --workdir /workspace $(containerProtoImage) \
+		sh ./scripts/protoc-swagger-gen.sh;
+		
 proto-format:
 	@echo "Formatting Protobuf files"
 	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoFmt}$$"; then docker start -a $(containerProtoFmt); else docker run --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
 		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
+
+update-swagger-docs:
+	$(BINDIR)/statik -src=client/docs/swagger-ui -dest=client/docs -f -m -ns migaloo
+	@if [ -n "$(git status --porcelain)" ]; then \
+		echo "\033[91mSwagger docs are out of sync!!!\033[0m";\
+		exit 1;\
+	else \
+		echo "\033[92mSwagger docs are in sync\033[0m";\
+	fi
+.PHONY: update-swagger-docs
 
 ###############################################################################
 ###                                Localnet                                 ###
