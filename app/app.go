@@ -154,11 +154,12 @@ import (
 	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/client/docs/statik"
 	"github.com/rakyll/statik/fs"
 
 	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
 	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
+
+	_ "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/client/docs/statik"
 )
 
 const (
@@ -1108,26 +1109,21 @@ func (app *MigalooApp) AppCodec() codec.Codec {
 
 // RegisterSwaggerAPI registers swagger route with API Server
 func RegisterSwaggerAPI(rtr *mux.Router) {
-	statikFS, err := fs.New()
+	cosmosStatikFs, err := fs.New()
 	if err != nil {
 		panic(err)
 	}
 
-	// List the files in the statikFS
-	fmt.Println("statikFS files: ")
-	err = fs.Walk(statikFS, "/", func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		fmt.Println("statik path: ", path) // This will log the path of each file in the statikFS
-		return nil
-	})
+	cosmosStaticServer := http.FileServer(cosmosStatikFs)
+
+	statikFS, err := fs.NewWithNamespace("migaloo")
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	staticServer := http.FileServer(statikFS)
 
+	rtr.PathPrefix("/swagger/cosmos-sdk").Handler(http.StripPrefix("/swagger/cosmos-sdk", cosmosStaticServer))
 	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
