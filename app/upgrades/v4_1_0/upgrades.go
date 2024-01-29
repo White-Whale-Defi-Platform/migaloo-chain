@@ -4,6 +4,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -22,6 +24,8 @@ func CreateUpgradeHandler(
 	paramsKeeper paramskeeper.Keeper,
 	consensusParamsKeeper consensuskeeper.Keeper,
 	icacontrollerKeeper icacontrollerkeeper.Keeper,
+	accountKeeper authkeeper.AccountKeeper,
+
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, _plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
 		// READ: https://github.com/cosmos/cosmos-sdk/blob/v0.47.4/UPGRADING.md#xconsensus
@@ -36,6 +40,12 @@ func CreateUpgradeHandler(
 
 		// READ: https://github.com/terra-money/core/issues/166
 		icacontrollerKeeper.SetParams(ctx, icacontrollertypes.DefaultParams())
+
+		// Burning module permissions
+		moduleAccI := accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName)
+		moduleAcc := moduleAccI.(*authtypes.ModuleAccount)
+		moduleAcc.Permissions = []string{authtypes.Burner}
+		accountKeeper.SetModuleAccount(ctx, moduleAcc)
 
 		return mm.RunMigrations(ctx, configurator, fromVM)
 	}

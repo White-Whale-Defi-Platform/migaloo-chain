@@ -1148,6 +1148,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.ParamsKeeper,
 			app.ConsensusParamsKeeper,
 			app.ICAControllerKeeper,
+			app.AccountKeeper,
 		),
 	)
 
@@ -1173,6 +1174,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 				crisistypes.StoreKey,
 				icqtypes.StoreKey,
 				feeburnmoduletypes.StoreKey,
+				authtypes.FeeCollectorName,
 			},
 			Deleted: []string{
 				"intertx",
