@@ -988,6 +988,7 @@ func (app *MigalooApp) ModuleConfigurator() module.Configurator {
 
 // BeginBlocker application updates every begin block
 func (app *MigalooApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+	BeginBlockForks(ctx, app)
 	return app.mm.BeginBlock(ctx, req)
 }
 
