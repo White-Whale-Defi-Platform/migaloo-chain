@@ -146,6 +146,8 @@ func DeductFees(bankKeeper BankKeeper, ctx sdk.Context, acc types.AccountI, fees
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())
 	}
 
+	fmt.Printf("burning %v\n", burningFees)
+
 	err = bankKeeper.BurnCoins(ctx, types.FeeCollectorName, burningFees)
 	if err != nil {
 		return errorsmod.Wrapf(sdkerrors.ErrInsufficientFunds, err.Error())

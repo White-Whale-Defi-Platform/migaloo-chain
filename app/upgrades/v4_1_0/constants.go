@@ -1,5 +1,4 @@
 package v4
 
-// UpgradeName defines the on-chain upgrade name for the Migaloo v3.0.2 upgrade.
-// this upgrade includes the fix for pfm
+// UpgradeName mainnet v4.1.0
 const UpgradeName = "v4.1.0"

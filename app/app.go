@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
 	"io"
 	"net/http"
 	"os"
@@ -154,10 +155,9 @@ import (
 	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 
 	// unnamed import of statik for swagger UI support
-	"github.com/rakyll/statik/fs"
-
-	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
 	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
+	v4Rc3 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_1"
+	"github.com/rakyll/statik/fs"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/client/docs/statik"
@@ -1152,6 +1152,16 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 		),
 	)
 
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v4Rc3.UpgradeName,
+		v4Rc3.CreateUpgradeHandler(
+			app.mm,
+			app.configurator,
+			app.AccountKeeper,
+			app.FeeBurnKeeper,
+		),
+	)
+
 	// When a planned update height is reached, the old binary will panic
 	// writing on disk the height and name of the update that triggered it
 	// This will read that value, and execute the preparations for the upgrade.
@@ -1165,19 +1175,24 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 	}
 
 	if upgradeInfo.Name == v4.UpgradeName {
-		// !! ATTENTION !!
-		// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
-		// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md
 		storeUpgrades := &storetypes.StoreUpgrades{
 			Added: []string{
 				consensusparamtypes.StoreKey,
 				crisistypes.StoreKey,
 				icqtypes.StoreKey,
 				feeburnmoduletypes.StoreKey,
-				authtypes.FeeCollectorName,
 			},
 			Deleted: []string{
 				"intertx",
+			},
+		}
+		// configure store loader that checks if version == upgradeHeight and applies store upgrades
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))
+	}
+	if upgradeInfo.Name == v4Rc3.UpgradeName {
+		storeUpgrades := &storetypes.StoreUpgrades{
+			Added: []string{
+				authtypes.FeeCollectorName,
 			},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades

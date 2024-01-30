@@ -61,9 +61,9 @@ $BINARY add-genesis-account $KEY "1000000000000${DENOM}" --keyring-backend $KEYR
 $BINARY add-genesis-account $KEY1 "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
 $BINARY add-genesis-account $KEY2 "1000000000000${DENOM}" --keyring-backend $KEYRING --home $HOME_DIR
 
-update_test_genesis '.app_state["gov"]["voting_params"]["voting_period"]="20s"'
+update_test_genesis '.app_state["gov"]["params"]["voting_period"]="20s"'
 update_test_genesis '.app_state["mint"]["params"]["mint_denom"]="'$DENOM'"'
-update_test_genesis '.app_state["gov"]["deposit_params"]["min_deposit"]=[{"denom":"'$DENOM'","amount": "1000000"}]'
+update_test_genesis '.app_state["gov"]["params"]["min_deposit"]=[{"denom":"'$DENOM'","amount": "1000000"}]'
 update_test_genesis '.app_state["crisis"]["constant_fee"]={"denom":"'$DENOM'","amount":"1000"}'
 update_test_genesis '.app_state["staking"]["params"]["bond_denom"]="'$DENOM'"'
 
@@ -82,5 +82,5 @@ $BINARY collect-gentxs --home $HOME_DIR
 
 # Run this to ensure everything worked and that the genesis file is setup correctly
 $BINARY validate-genesis --home $HOME_DIR
-# $BINARY start --home $HOME_DIR
+$BINARY start --home $HOME_DIR
 
