@@ -1,9 +1,10 @@
 package v4_test
 
 import (
-	"cosmossdk.io/math"
 	"fmt"
 	"testing"
+
+	"cosmossdk.io/math"
 
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
