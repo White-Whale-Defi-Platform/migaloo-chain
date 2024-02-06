@@ -103,6 +103,8 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 
 	fmt.Printf("currentAddr Instant Redelegations: %s\n", redelegated)
 	fmt.Printf("currentAddr Instant Unbonding: %s\n", unbonded)
+	// get vested + reward balance
+	totalBalance := bankKeeper.GetBalance(ctx, currentAddr, params.BaseDenom)
 
 	// delegate vesting coin to validator
 	err = delegateToValidator(ctx, stakingKeeper, currentAddr, oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
@@ -110,11 +112,8 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 		panic(err)
 	}
 
-	// get vested + reward balance
-	totalBalance := bankKeeper.GetBalance(ctx, currentAddr, params.BaseDenom)
 	fmt.Println("total balance before migration ", totalBalance)
 	balanceCanSend := totalBalance.Amount.Sub(oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
-
 	fmt.Printf("total balance send to new multisig addr: %s\n", balanceCanSend)
 	// send vested + reward balance no newAddr
 	err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, sdk.NewCoins(sdk.NewCoin(params.BaseDenom, balanceCanSend)))
@@ -203,7 +202,8 @@ func delegateToValidator(ctx sdk.Context,
 ) error {
 	listValidator := stakingKeeper.GetBondedValidatorsByPower(ctx)
 	totalValidatorDelegate := math.Min(10, len(listValidator))
-	balanceDelegate := totalVestingBalance.Quo(totalVestingBalance)
+	balanceDelegate := totalVestingBalance.Quo(math.NewInt(int64(totalValidatorDelegate)))
+	fmt.Printf("balanceDelegate each validator %v, total validator %d\n", balanceDelegate, totalValidatorDelegate)
 
 	for i, validator := range listValidator {
 		if i >= totalValidatorDelegate {
