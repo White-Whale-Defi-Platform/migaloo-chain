@@ -1,6 +1,7 @@
 package v4_test
 
 import (
+	"cosmossdk.io/math"
 	"fmt"
 	"testing"
 
@@ -78,6 +79,12 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 	// check new multisign address balance
 	newBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigAccount))
 	vestedBalance := cVesting.GetVestedCoins(s.Ctx.BlockTime())
-	fmt.Printf("New multisign Upgrade Balance: %s\n", newBalance)
+	fmt.Printf("New multisign Upgrade Balance: %s, vestedBalance %s\n", newBalance, vestedBalance)
 	s.Require().True(newBalance.AmountOf(params.BaseDenom).LTE(vestedBalance.AmountOf(params.BaseDenom)))
+}
+
+func (s *UpgradeTestSuite) TestMath() {
+	s.Require().Equal(math.NewInt(7), math.NewInt(76).Quo(math.NewInt(10)))
+	s.Require().Equal(math.NewInt(7), math.NewInt(79).Quo(math.NewInt(10)))
+	s.Require().Equal(math.NewInt(1), math.NewInt(5).Quo(math.NewInt(3)))
 }

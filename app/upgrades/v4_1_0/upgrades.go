@@ -115,8 +115,6 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 	fmt.Println("total balance before migration ", totalBalance)
 	balanceCanSend := totalBalance.Amount.Sub(oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
 
-	// keep 100.000.000 uwhate for tx fee
-	balanceCanSend = balanceCanSend.Sub(math.NewInt(100_000_000))
 	fmt.Printf("total balance send to new multisig addr: %s\n", balanceCanSend)
 	// send vested + reward balance no newAddr
 	err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, sdk.NewCoins(sdk.NewCoin(params.BaseDenom, balanceCanSend)))
