@@ -1,9 +1,12 @@
 package app
 
 import (
-	"cosmossdk.io/math"
 	"encoding/json"
 	"fmt"
+	"testing"
+	"time"
+
+	"cosmossdk.io/math"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
@@ -13,15 +16,12 @@ import (
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakinghelper "github.com/cosmos/cosmos-sdk/x/staking/testutil"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"testing"
-	"time"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
-	tdmtypes "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -56,10 +56,10 @@ type KeeperTestHelper struct {
 	StakingHelper *stakinghelper.Helper
 }
 
-func (s *KeeperTestHelper) Setup(_ *testing.T, chainID string) {
+func (s *KeeperTestHelper) Setup(_ *testing.T) {
 	t := s.T()
 	s.App = SetupApp(t)
-	s.Ctx = s.App.BaseApp.NewContext(false, tdmtypes.Header{Height: 1, ChainID: "test-1", Time: time.Now().UTC()})
+	s.Ctx = s.App.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "test-1", Time: time.Now().UTC()})
 	s.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: s.App.GRPCQueryRouter(),
 		Ctx:             s.Ctx,
@@ -274,7 +274,7 @@ func (s *KeeperTestHelper) Commit() {
 	oldHeight := s.Ctx.BlockHeight()
 	oldHeader := s.Ctx.BlockHeader()
 	s.App.Commit()
-	newHeader := tdmtypes.Header{Height: oldHeight + 1, ChainID: "testing", Time: oldHeader.Time.Add(time.Second)}
+	newHeader := tmproto.Header{Height: oldHeight + 1, ChainID: "testing", Time: oldHeader.Time.Add(time.Second)}
 	s.App.BeginBlock(abci.RequestBeginBlock{Header: newHeader})
 	s.Ctx = s.App.NewContext(false, newHeader)
 }
@@ -358,7 +358,7 @@ func (s *KeeperTestHelper) BeginNewBlockWithProposer(proposer sdk.ValAddress) {
 
 	newBlockTime := s.Ctx.BlockTime().Add(5 * time.Second)
 
-	header := tdmtypes.Header{Height: s.Ctx.BlockHeight() + 1, Time: newBlockTime}
+	header := tmproto.Header{Height: s.Ctx.BlockHeight() + 1, Time: newBlockTime}
 	newCtx := s.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(s.Ctx.BlockHeight() + 1)
 	s.Ctx = newCtx
 	lastCommitInfo := abci.CommitInfo{

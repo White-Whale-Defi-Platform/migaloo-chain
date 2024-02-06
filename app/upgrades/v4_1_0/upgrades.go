@@ -70,7 +70,8 @@ func CreateUpgradeHandler(
 func migrateMultisigVesting(ctx sdk.Context,
 	stakingKeeper stakingKeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
-	accountKeeper authkeeper.AccountKeeper) {
+	accountKeeper authkeeper.AccountKeeper,
+) {
 	currentAddr := sdk.MustAccAddressFromBech32(NotionalMultisigVestingAccount)
 	newAddr := sdk.MustAccAddressFromBech32(NewNotionalMultisigVestingAccount)
 
@@ -88,7 +89,8 @@ func migrateMultisigVesting(ctx sdk.Context,
 
 func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 	bankKeeper bankKeeper.Keeper, currentAddr, newAddr sdk.AccAddress,
-	oldAcc *vestingtypes.ContinuousVestingAccount) { // nolint:gocritic
+	oldAcc *vestingtypes.ContinuousVestingAccount,
+) {
 	redelegated, err := completeAllRedelegations(ctx, ctx.BlockTime(), stakingKeeper, currentAddr)
 	if err != nil {
 		panic(err)
@@ -102,7 +104,7 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 	fmt.Printf("currentAddr Instant Redelegations: %s\n", redelegated)
 	fmt.Printf("currentAddr Instant Unbonding: %s\n", unbonded)
 
-	//delegate vesting coin to validator
+	// delegate vesting coin to validator
 	err = delegateToValidator(ctx, stakingKeeper, currentAddr, oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
 	if err != nil {
 		panic(err)
@@ -121,8 +123,8 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 	if err != nil {
 		panic(err)
 	}
-
 }
+
 func GetVestingCoin(ctx sdk.Context, acc *vestingtypes.ContinuousVestingAccount) (unvested math.Int) {
 	vestingCoin := acc.GetVestingCoins(ctx.BlockTime())
 	return vestingCoin[0].Amount
@@ -130,7 +132,8 @@ func GetVestingCoin(ctx sdk.Context, acc *vestingtypes.ContinuousVestingAccount)
 
 func completeAllRedelegations(ctx sdk.Context, now time.Time,
 	stakingKeeper stakingKeeper.Keeper,
-	accAddr sdk.AccAddress) (math.Int, error) {
+	accAddr sdk.AccAddress,
+) (math.Int, error) {
 	redelegatedAmt := math.ZeroInt()
 
 	for _, activeRedelegation := range stakingKeeper.GetRedelegations(ctx, accAddr, 65535) {
@@ -155,7 +158,8 @@ func completeAllRedelegations(ctx sdk.Context, now time.Time,
 
 func unbondAllAndFinish(ctx sdk.Context, now time.Time,
 	stakingKeeper stakingKeeper.Keeper,
-	accAddr sdk.AccAddress) (math.Int, error) {
+	accAddr sdk.AccAddress,
+) (math.Int, error) {
 	unbondedAmt := math.ZeroInt()
 
 	// Unbond all delegations from the account
@@ -196,8 +200,9 @@ func unbondAllAndFinish(ctx sdk.Context, now time.Time,
 // delegate to top 10 validator
 func delegateToValidator(ctx sdk.Context,
 	stakingKeeper stakingKeeper.Keeper,
-	accAddr sdk.AccAddress, totalVestingBalance math.Int) error {
-
+	accAddr sdk.AccAddress,
+	totalVestingBalance math.Int,
+) error {
 	listValidator := stakingKeeper.GetBondedValidatorsByPower(ctx)
 	totalValidatorDelegate := math.Min(10, len(listValidator))
 	balanceDelegate := totalVestingBalance.Quo(totalVestingBalance)

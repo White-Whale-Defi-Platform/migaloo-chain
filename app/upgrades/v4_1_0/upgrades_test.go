@@ -2,12 +2,13 @@ package v4_test
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"testing"
 
 	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 	"github.com/stretchr/testify/suite"
@@ -23,7 +24,7 @@ func TestUpgradeTestSuite(t *testing.T) {
 
 // Ensures the test does not error out.
 func (s *UpgradeTestSuite) TestUpgrade() {
-	s.Setup(s.T(), apptesting.SimAppChainID)
+	s.Setup(s.T())
 	// == CREATE MOCK VESTING ACCOUNT ==
 	cVesting, unvested := v4.CreateMainnetVestingAccount(s.Ctx, s.App.BankKeeper, s.App.AccountKeeper)
 	vestingAddr := cVesting.GetAddress()
@@ -79,5 +80,4 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 	vestedBalance := cVesting.GetVestedCoins(s.Ctx.BlockTime())
 	fmt.Printf("New multisign Upgrade Balance: %s\n", newBalance)
 	s.Require().True(newBalance.AmountOf(params.BaseDenom).LTE(vestedBalance.AmountOf(params.BaseDenom)))
-
 }
