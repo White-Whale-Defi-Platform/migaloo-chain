@@ -1149,6 +1149,8 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.ConsensusParamsKeeper,
 			app.ICAControllerKeeper,
 			app.AccountKeeper,
+			*app.StakingKeeper,
+			app.BankKeeper,
 		),
 	)
 
