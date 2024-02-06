@@ -76,7 +76,7 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 	s.Require().True(oldMultisigBalance.AmountOf(params.BaseDenom).GTE(unvested))
 
 	// check new multisign address balance
-	newBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigVestingAccount))
+	newBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigAccount))
 	vestedBalance := cVesting.GetVestedCoins(s.Ctx.BlockTime())
 	fmt.Printf("New multisign Upgrade Balance: %s\n", newBalance)
 	s.Require().True(newBalance.AmountOf(params.BaseDenom).LTE(vestedBalance.AmountOf(params.BaseDenom)))

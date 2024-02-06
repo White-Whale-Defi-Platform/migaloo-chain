@@ -73,7 +73,7 @@ func migrateMultisigVesting(ctx sdk.Context,
 	accountKeeper authkeeper.AccountKeeper,
 ) {
 	currentAddr := sdk.MustAccAddressFromBech32(NotionalMultisigVestingAccount)
-	newAddr := sdk.MustAccAddressFromBech32(NewNotionalMultisigVestingAccount)
+	newAddr := sdk.MustAccAddressFromBech32(NewNotionalMultisigAccount)
 
 	currentAcc := accountKeeper.GetAccount(ctx, currentAddr)
 
