@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"cosmossdk.io/math"
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -65,7 +64,7 @@ func CreateUpgradeHandler(
 // migrateMultisigVesting moves the vested and reward token from the ContinuousVestingAccount -> the new multisig vesting account.
 // - Retrieves the old multisig vesting account
 // - Instantly finish all redelegations, then unbond all tokens.
-// - Transfer all tokens vested and reward tokens to the new multisig vesting (including the previously held balance)
+// - Transfer all tokens vested and reward tokens to the new multisig account (including the previously held balance)
 // - Delegates the vesting coins to the top 10 validators
 func migrateMultisigVesting(ctx sdk.Context,
 	stakingKeeper stakingKeeper.Keeper,
@@ -103,8 +102,6 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 
 	fmt.Printf("currentAddr Instant Redelegations: %s\n", redelegated)
 	fmt.Printf("currentAddr Instant Unbonding: %s\n", unbonded)
-	// get vested + reward balance
-	totalBalance := bankKeeper.GetBalance(ctx, currentAddr, params.BaseDenom)
 
 	// delegate vesting coin to validator
 	err = delegateToValidator(ctx, stakingKeeper, currentAddr, oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
@@ -112,13 +109,14 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 		panic(err)
 	}
 
-	fmt.Println("total balance before migration ", totalBalance)
-	balanceCanSend := totalBalance.Amount.Sub(oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
-	fmt.Printf("total balance send to new multisig addr: %s\n", balanceCanSend)
-	// send vested + reward balance no newAddr
-	err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, sdk.NewCoins(sdk.NewCoin(params.BaseDenom, balanceCanSend)))
-	if err != nil {
-		panic(err)
+	// get vested + reward balance
+	for _, coin := range bankKeeper.GetAllBalances(ctx, currentAddr) {
+		fmt.Printf("demom %s, total balance send to new multisig addr: %v\n", coin.Denom, coin.Amount)
+		// send vested + reward balance no newAddr
+		err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, sdk.NewCoins(sdk.NewCoin(coin.Denom, coin.Amount)))
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -203,16 +201,20 @@ func delegateToValidator(ctx sdk.Context,
 	listValidator := stakingKeeper.GetBondedValidatorsByPower(ctx)
 	totalValidatorDelegate := math.Min(10, len(listValidator))
 	balanceDelegate := totalVestingBalance.Quo(math.NewInt(int64(totalValidatorDelegate)))
-	fmt.Printf("balanceDelegate each validator %v, total validator %d\n", balanceDelegate, totalValidatorDelegate)
-
+	totalBalanceDelegate := math.ZeroInt()
 	for i, validator := range listValidator {
 		if i >= totalValidatorDelegate {
 			break
 		}
-		_, err := stakingKeeper.Delegate(ctx, accAddr, balanceDelegate, stakingtypes.Unbonded, validator, true)
+		if i == totalValidatorDelegate-1 {
+			balanceDelegate = totalVestingBalance.Sub(totalBalanceDelegate)
+		}
+		newShare, err := stakingKeeper.Delegate(ctx, accAddr, balanceDelegate, stakingtypes.Unbonded, validator, true)
 		if err != nil {
 			return err
 		}
+		fmt.Printf("delegate %v to validator %v, newShare: %v\n", balanceDelegate, validator.OperatorAddress, newShare)
+		totalBalanceDelegate = totalBalanceDelegate.Add(balanceDelegate)
 	}
 	return nil
 }
