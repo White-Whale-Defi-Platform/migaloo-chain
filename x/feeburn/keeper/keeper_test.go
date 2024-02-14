@@ -31,7 +31,7 @@ type KeeperTestSuite struct {
 
 // SetupTest setups a new test, with new app, context, and anteHandler.
 func (suite *KeeperTestSuite) SetupTest() {
-	suite.Setup(suite.T(), apptesting.SimAppChainID)
+	suite.Setup(suite.T())
 
 	// Set up TxConfig.
 	encodingConfig := config.MakeEncodingConfig()

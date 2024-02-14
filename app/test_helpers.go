@@ -2,16 +2,28 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
+
+	"cosmossdk.io/math"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/types/tx/signing"
+	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	stakinghelper "github.com/cosmos/cosmos-sdk/x/staking/testutil"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
-	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	tmtypes "github.com/cometbft/cometbft/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
@@ -36,23 +48,26 @@ const (
 type KeeperTestHelper struct {
 	suite.Suite
 
-	App         *MigalooApp
-	Ctx         sdk.Context // ctx is deliver ctx
-	CheckCtx    sdk.Context
-	QueryHelper *baseapp.QueryServiceTestHelper
-	TestAccs    []sdk.AccAddress
+	App           *MigalooApp
+	Ctx           sdk.Context // ctx is deliver ctx
+	CheckCtx      sdk.Context
+	QueryHelper   *baseapp.QueryServiceTestHelper
+	TestAccs      []sdk.AccAddress
+	StakingHelper *stakinghelper.Helper
 }
 
-func (s *KeeperTestHelper) Setup(_ *testing.T, chainID string) {
-	s.App = SetupApp(s.T())
-	s.Ctx = s.App.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: chainID, Time: time.Now().UTC()})
-	s.CheckCtx = s.App.BaseApp.NewContext(true, tmproto.Header{Height: 1, ChainID: chainID, Time: time.Now().UTC()})
+func (s *KeeperTestHelper) Setup(_ *testing.T) {
+	t := s.T()
+	s.App = SetupApp(t)
+	s.Ctx = s.App.BaseApp.NewContext(false, tmproto.Header{Height: 1, ChainID: "", Time: time.Now().UTC()})
 	s.QueryHelper = &baseapp.QueryServiceTestHelper{
 		GRPCQueryRouter: s.App.GRPCQueryRouter(),
 		Ctx:             s.Ctx,
 	}
+	s.TestAccs = CreateRandomAccounts(3)
 
-	s.TestAccs = s.RandomAccountAddresses(3)
+	s.StakingHelper = stakinghelper.NewHelper(s.Suite.T(), s.Ctx, s.App.StakingKeeper)
+	s.StakingHelper.Denom = "uwhale"
 }
 
 // DefaultConsensusParams defines the default Tendermint consensus params used
@@ -252,4 +267,178 @@ type EmptyBaseAppOptions struct{}
 // Get implements AppOptions
 func (ao EmptyBaseAppOptions) Get(_ string) interface{} {
 	return nil
+}
+
+// CreateTestContext creates a test context.
+func (s *KeeperTestHelper) Commit() {
+	oldHeight := s.Ctx.BlockHeight()
+	oldHeader := s.Ctx.BlockHeader()
+	s.App.Commit()
+	newHeader := tmproto.Header{Height: oldHeight + 1, ChainID: "testing", Time: oldHeader.Time.Add(time.Second)}
+	s.App.BeginBlock(abci.RequestBeginBlock{Header: newHeader})
+	s.Ctx = s.App.NewContext(false, newHeader)
+}
+
+// FundModuleAcc funds target modules with specified amount.
+func (s *KeeperTestHelper) FundModuleAcc(moduleName string, amounts sdk.Coins) {
+	err := banktestutil.FundModuleAccount(s.App.BankKeeper, s.Ctx, moduleName, amounts)
+	s.Require().NoError(err)
+}
+
+func (s *KeeperTestHelper) MintCoins(coins sdk.Coins) {
+	err := s.App.BankKeeper.MintCoins(s.Ctx, minttypes.ModuleName, coins)
+	s.Require().NoError(err)
+}
+
+// SetupValidator sets up a validator and returns the ValAddress.
+func (s *KeeperTestHelper) SetupValidator(bondStatus stakingtypes.BondStatus) sdk.ValAddress {
+	valPriv := secp256k1.GenPrivKey()
+	valPub := valPriv.PubKey()
+	valAddr := sdk.ValAddress(valPub.Address())
+	bondDenom := s.App.StakingKeeper.GetParams(s.Ctx).BondDenom
+	selfBond := sdk.NewCoins(sdk.Coin{Amount: sdk.NewInt(100), Denom: bondDenom})
+
+	s.FundAcc(sdk.AccAddress(valAddr), selfBond)
+
+	msg := s.StakingHelper.CreateValidatorMsg(valAddr, valPub, selfBond[0].Amount)
+	res, err := s.StakingHelper.CreateValidatorWithMsg(s.Ctx, msg)
+	s.Require().NoError(err)
+	s.Require().NotNil(res)
+
+	val, found := s.App.StakingKeeper.GetValidator(s.Ctx, valAddr)
+	s.Require().True(found)
+
+	val = val.UpdateStatus(bondStatus)
+	s.App.StakingKeeper.SetValidator(s.Ctx, val)
+
+	consAddr, err := val.GetConsAddr()
+	s.Suite.Require().NoError(err)
+
+	signingInfo := slashingtypes.NewValidatorSigningInfo(
+		consAddr,
+		s.Ctx.BlockHeight(),
+		0,
+		time.Unix(0, 0),
+		false,
+		0,
+	)
+	s.App.SlashingKeeper.SetValidatorSigningInfo(s.Ctx, consAddr, signingInfo)
+
+	return valAddr
+}
+
+// BeginNewBlock starts a new block.
+func (s *KeeperTestHelper) BeginNewBlock() {
+	var valAddr []byte
+
+	validators := s.App.StakingKeeper.GetAllValidators(s.Ctx)
+	if len(validators) >= 1 {
+		valAddrFancy, err := validators[0].GetConsAddr()
+		s.Require().NoError(err)
+		valAddr = valAddrFancy.Bytes()
+	} else {
+		valAddrFancy := s.SetupValidator(stakingtypes.Bonded)
+		validator, _ := s.App.StakingKeeper.GetValidator(s.Ctx, valAddrFancy)
+		valAddr2, _ := validator.GetConsAddr()
+		valAddr = valAddr2.Bytes()
+	}
+
+	s.BeginNewBlockWithProposer(valAddr)
+}
+
+// BeginNewBlockWithProposer begins a new block with a proposer.
+func (s *KeeperTestHelper) BeginNewBlockWithProposer(proposer sdk.ValAddress) {
+	validator, found := s.App.StakingKeeper.GetValidator(s.Ctx, proposer)
+	s.Assert().True(found)
+
+	valConsAddr, err := validator.GetConsAddr()
+	s.Require().NoError(err)
+
+	valAddr := valConsAddr.Bytes()
+
+	newBlockTime := s.Ctx.BlockTime().Add(5 * time.Second)
+
+	header := tmproto.Header{Height: s.Ctx.BlockHeight() + 1, Time: newBlockTime}
+	newCtx := s.Ctx.WithBlockTime(newBlockTime).WithBlockHeight(s.Ctx.BlockHeight() + 1)
+	s.Ctx = newCtx
+	lastCommitInfo := abci.CommitInfo{
+		Votes: []abci.VoteInfo{{
+			Validator:       abci.Validator{Address: valAddr, Power: 1000},
+			SignedLastBlock: true,
+		}},
+		Round: 0,
+	}
+	reqBeginBlock := abci.RequestBeginBlock{Header: header, LastCommitInfo: lastCommitInfo}
+
+	fmt.Println("beginning block ", s.Ctx.BlockHeight())
+	s.App.BeginBlocker(s.Ctx, reqBeginBlock)
+}
+
+// EndBlock ends the block.
+func (s *KeeperTestHelper) EndBlock() {
+	reqEndBlock := abci.RequestEndBlock{Height: s.Ctx.BlockHeight()}
+	s.App.EndBlocker(s.Ctx, reqEndBlock)
+}
+
+// AllocateRewardsToValidator allocates reward tokens to a distribution module then allocates rewards to the validator address.
+func (s *KeeperTestHelper) AllocateRewardsToValidator(valAddr sdk.ValAddress, rewardAmt math.Int) {
+	validator, found := s.App.StakingKeeper.GetValidator(s.Ctx, valAddr)
+	s.Require().True(found)
+
+	// allocate reward tokens to distribution module
+	coins := sdk.Coins{sdk.NewCoin(config.BaseDenom, rewardAmt)}
+	err := banktestutil.FundModuleAccount(s.App.BankKeeper, s.Ctx, distrtypes.ModuleName, coins)
+	s.Require().NoError(err)
+
+	// allocate rewards to validator
+	s.Ctx = s.Ctx.WithBlockHeight(s.Ctx.BlockHeight() + 1)
+	decTokens := sdk.DecCoins{{Denom: config.BaseDenom, Amount: sdk.NewDec(20000)}}
+	s.App.DistrKeeper.AllocateTokensToValidator(s.Ctx, validator, decTokens)
+}
+
+// BuildTx builds a transaction.
+func (s *KeeperTestHelper) BuildTx(
+	txBuilder client.TxBuilder,
+	msgs []sdk.Msg,
+	sigV2 signing.SignatureV2,
+	memo string, txFee sdk.Coins,
+	gasLimit uint64,
+) authsigning.Tx {
+	err := txBuilder.SetMsgs(msgs[0])
+	s.Require().NoError(err)
+
+	err = txBuilder.SetSignatures(sigV2)
+	s.Require().NoError(err)
+
+	txBuilder.SetMemo(memo)
+	txBuilder.SetFeeAmount(txFee)
+	txBuilder.SetGasLimit(gasLimit)
+
+	return txBuilder.GetTx()
+}
+
+func (s *KeeperTestHelper) ConfirmUpgradeSucceeded(upgradeName string, upgradeHeight int64) {
+	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight - 1)
+	plan := upgradetypes.Plan{Name: upgradeName, Height: upgradeHeight}
+	err := s.App.UpgradeKeeper.ScheduleUpgrade(s.Ctx, plan)
+	s.Require().NoError(err)
+	_, exists := s.App.UpgradeKeeper.GetUpgradePlan(s.Ctx)
+	s.Require().True(exists)
+
+	s.Ctx = s.Ctx.WithBlockHeight(upgradeHeight)
+	s.Require().NotPanics(func() {
+		beginBlockRequest := abci.RequestBeginBlock{}
+		s.App.BeginBlocker(s.Ctx, beginBlockRequest)
+	})
+}
+
+// CreateRandomAccounts is a function return a list of randomly generated AccAddresses
+func CreateRandomAccounts(numAccts int) []sdk.AccAddress {
+	testAddrs := make([]sdk.AccAddress, numAccts)
+	for i := 0; i < numAccts; i++ {
+		pk := ed25519.GenPrivKey().PubKey()
+		testAddrs[i] = sdk.AccAddress(pk.Address())
+	}
+
+	return testAddrs
 }
