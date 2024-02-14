@@ -79,7 +79,7 @@ func migrateMultisigVesting(ctx sdk.Context,
 	currentVestingAcc, ok := currentAcc.(*vestingtypes.ContinuousVestingAccount)
 	if !ok {
 		// skip if account invalid
-		fmt.Printf("err currentAcc.(*vestingtypes.ContinuousVestingAccount): %+v", currentAcc)
+		fmt.Printf("err currentAcc.(*vestingtypes.ContinuousVestingAccount): %+v\n", currentAcc)
 		return
 	}
 	// process migrate
