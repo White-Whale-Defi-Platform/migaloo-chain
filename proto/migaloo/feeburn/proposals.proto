@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package migaloo.feeburn;
+
+import "gogoproto/gogo.proto";
+import "migaloo/feeburn/params.proto";
+
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types";
+
+message MsgUpdateTxFeeBurnPercentProposal {
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+  string title = 1;
+  string description = 2;
+  string tx_fee_burn_percent = 3 [(gogoproto.moretags) = "yaml:\"tx_fee_burn_percent\""];
+}

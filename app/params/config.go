@@ -22,6 +22,13 @@ var (
 	Bech32PrefixConsPub = Bech32Prefix + sdk.PrefixValidator + sdk.PrefixConsensus + sdk.PrefixPublic
 )
 
+const (
+	// DisplayDenom defines the denomination displayed to users in client applications.
+	DisplayDenom = "whale"
+	// BaseDenom defines to the default denomination used in Evmos (staking, EVM, governance, etc.)
+	BaseDenom = "uwhale"
+)
+
 // SetAddressPrefixes builds the Config with Bech32 addressPrefix and publKeyPrefix for accounts, validators, and consensus nodes and verifies that addreeses have correct format.
 // Not sealed yet
 func SetAddressPrefixes() {

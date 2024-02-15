@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package migaloo.feeburn;
+
+import "gogoproto/gogo.proto";
+import "migaloo/feeburn/params.proto";
+
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types";
+
+// GenesisState defines the feeburn module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package migaloo.feeburn;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+
+  string tx_fee_burn_percent = 1
+      [ (gogoproto.moretags) = "yaml:\"tx_fee_burn_percent\"" ];
+}

@@ -4,3 +4,12 @@ bin
 */.DS_Store
 
 
+mytestnet
+data
+screenlog.0
+_build
+.idea
+build 
+tmp-swagger-gen
+
+cosmos-sdk
