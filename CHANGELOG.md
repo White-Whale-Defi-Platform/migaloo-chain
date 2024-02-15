@@ -1,6 +1,159 @@
 
+<a name="v4.1.x-testnet-rc4"></a>
+## [v4.1.x-testnet-rc4](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.x-testnet-rc3...v4.1.x-testnet-rc4) (2024-01-30)
+
+### Feat
+
+* add fork fix burning module permissions
+
+
+<a name="v4.1.x-testnet-rc3"></a>
+## [v4.1.x-testnet-rc3](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.0-testnet-rc2...v4.1.x-testnet-rc3) (2024-01-30)
+
+### Chore
+
+* add debugger
+
+### Feat
+
+* add testnet handler upgrade v4.1.1
+* add swagger client
+* gen-swagger scripts
+
+### Fix
+
+* miss burning module permissions
+* gen proto with cosmos sdk
+* gen swagger scripts with ns
+
+### Lint
+
+* add space between comment and text
+
+
+<a name="v4.1.0-testnet-rc2"></a>
+## [v4.1.0-testnet-rc2](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.0-testnet-rc1...v4.1.0-testnet-rc2) (2024-01-19)
+
+### Refactor
+
+* update go.mod
+
+
+<a name="v4.1.0-testnet-rc1"></a>
+## [v4.1.0-testnet-rc1](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.0-testnet...v4.1.0-testnet-rc1) (2024-01-19)
+
+### Refactor
+
+* go lint
+
+### Test
+
+* remove cmd_test
+
+
+<a name="v4.1.0-testnet"></a>
+## [v4.1.0-testnet](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v3.0.4...v4.1.0-testnet) (2024-01-19)
+
+### Chore
+
+* refactor format
+* add changelog and update readme
+* update go mod
+* get upgrade handler
+* change name v3 -> v4
+* update make file
+* fix update test genesis
+* add third-party proto
+* remove code not using
+* update denom in the genesis files
+* remove debug log
+* add terra core 2.5.0 package
+
+### Feat
+
+* add checksum for wasmvm download
+* make file to run test upgrade with multiple nodes
+* base upgrade test
+* setup cosmosvisor to run migalood
+* init genesis with cosmovisor
+* build linux migalood
+* build cosmovisor migalood env linux images
+* docker file to build v3.0.4
+* docker setup to run migaloo
+* fix ibc hooks
+* add codec handler MsgUpdateTxFeeBurnPercentProposal
+* add handler gov feeburn
+* add cli
+* add handler update
+* add proposal types
+* add proposal proto
+* add feeburn to upgrade handler
+* add feeburn module to app
+* add testutil
+* add feeburn clone from chihuahua
+* add miss proto
+* base test framework
+* add script upgrade
+* add upgrade v4.1.0
+* update token factory
+* alliance to 0.3.2
+
+### Fix
+
+* typo integration test
+* add permission to account fee_collector
+* upgrade name
+* golint
+* register ica controller
+* ibc callback
+* bump wasmvm to 1.5.1
+* miss go.sum
+* miss kill old migalood
+* rollback go mod
+* script unused
+* using correct migaloo coin type
+* miss subspace key table
+* miss add chainId
+* **test:** fix cycle import
+
+### Perf
+
+* add three more nodes
+* not build if the image is already created
+* reduce voting period
+* set gas price to 0 stake for test
+
+### Refactor
+
+* add SetBech32 account
+* update proto
+* move v3 code to migalood-env
+* golint ([#303](https://github.com/White-Whale-Defi-Platform/migaloo-chain/issues/303))
+* update script
+* update name convention
+* update name convention
+* update UPGRADE_HEIGHT
+* logic upgrade
+* update wasm option
+* update Makefile
+
+### Test
+
+* add test upgrade
+* init with 50% feeburn
+* ica integration test
+* ibc callback with timeout
+* ibc hooks
+* add alliance test
+* update test ante
+* refactor app test
+* add ante test
+* adjust gas and fee doing tx token factory
+* can init relayer
+
+
 <a name="v3.0.4"></a>
-## [v3.0.4](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v3.0.2...v3.0.4) (2024-01-10)
+## [v3.0.4](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v3.0.3...v3.0.4) (2024-01-10)
 
 ### Build
 
@@ -11,8 +164,6 @@
 * **deps:** bump golang.org/x/crypto from 0.9.0 to 0.17.0 ([#285](https://github.com/White-Whale-Defi-Platform/migaloo-chain/issues/285))
 * **deps:** bump github/codeql-action from 2 to 3 ([#283](https://github.com/White-Whale-Defi-Platform/migaloo-chain/issues/283))
 * **deps:** bump actions/setup-go from 4 to 5 ([#279](https://github.com/White-Whale-Defi-Platform/migaloo-chain/issues/279))
-* bump version wasmd hot fix bugs by @hoank101 in https://github.com/White-Whale-Defi-Platform/migaloo-chain/pull/312
-
 
 
 <a name="v3.0.3"></a>
@@ -70,15 +221,15 @@
 
 
 <a name="v2.2.5"></a>
-## [v2.2.5](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v2.2.3...v2.2.5) (2023-07-12)
-
-
-<a name="v2.2.3"></a>
-## [v2.2.3](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v2.2.4...v2.2.3) (2023-07-12)
+## [v2.2.5](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v2.2.4...v2.2.5) (2023-07-12)
 
 
 <a name="v2.2.4"></a>
-## [v2.2.4](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v2.2.2...v2.2.4) (2023-07-12)
+## [v2.2.4](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v2.2.3...v2.2.4) (2023-07-12)
+
+
+<a name="v2.2.3"></a>
+## [v2.2.3](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v2.2.2...v2.2.3) (2023-07-12)
 
 
 <a name="v2.2.2"></a>
