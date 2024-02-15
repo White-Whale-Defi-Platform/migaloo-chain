@@ -6,7 +6,7 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
-// small security fix, can be a no-op, running mm.RunMigarions just to be sure
+// CreateUpgradeHandler small security fix, can be a no-op, running mm.RunMigarions just to be sure
 func CreateUpgradeHandler(
 	mm *module.Manager,
 	configurator module.Configurator,
