@@ -1,58 +1,6 @@
 
-<a name="v4.1.x-testnet-rc4"></a>
-## [v4.1.x-testnet-rc4](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.x-testnet-rc3...v4.1.x-testnet-rc4) (2024-01-30)
-
-### Feat
-
-* add fork fix burning module permissions
-
-
-<a name="v4.1.x-testnet-rc3"></a>
-## [v4.1.x-testnet-rc3](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.0-testnet-rc2...v4.1.x-testnet-rc3) (2024-01-30)
-
-### Chore
-
-* add debugger
-
-### Feat
-
-* add testnet handler upgrade v4.1.1
-* add swagger client
-* gen-swagger scripts
-
-### Fix
-
-* miss burning module permissions
-* gen proto with cosmos sdk
-* gen swagger scripts with ns
-
-### Lint
-
-* add space between comment and text
-
-
-<a name="v4.1.0-testnet-rc2"></a>
-## [v4.1.0-testnet-rc2](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.0-testnet-rc1...v4.1.0-testnet-rc2) (2024-01-19)
-
-### Refactor
-
-* update go.mod
-
-
-<a name="v4.1.0-testnet-rc1"></a>
-## [v4.1.0-testnet-rc1](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v4.1.0-testnet...v4.1.0-testnet-rc1) (2024-01-19)
-
-### Refactor
-
-* go lint
-
-### Test
-
-* remove cmd_test
-
-
-<a name="v4.1.0-testnet"></a>
-## [v4.1.0-testnet](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v3.0.4...v4.1.0-testnet) (2024-01-19)
+<a name="v4.1.0"></a>
+## [v4.1.0](https://github.com/White-Whale-Defi-Platform/migaloo-chain/compare/v3.0.4...v4.1.0) (2024-02-16)
 
 ### Chore
 
