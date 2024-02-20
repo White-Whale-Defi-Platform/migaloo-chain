@@ -2,8 +2,9 @@ package v4
 
 import (
 	"fmt"
-	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"time"
+
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 
 	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -60,10 +61,10 @@ func CreateUpgradeHandler(
 	}
 }
 
-// migrateMultisigVesting moves the unvested from the ContinuousVestingAccount -> the new multisig vesting account.
+// migrateMultisigVesting moves the unvested from the ContinuousVestingAccount -> the new ContinuousVestingAccount
 // - Retrieves the old multisig vesting account
 // - Instantly finish all redelegations, then unbond all tokens.
-// - Transfer all tokens unvested token to the new multisig vesting account
+// - Transfer unvested token to the new multisign ContinuousVestingAccount
 func migrateMultisigVesting(ctx sdk.Context,
 	stakingKeeper stakingKeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
@@ -116,14 +117,14 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 		ctx.BlockTime().Unix(), oldAcc.EndTime)
 	accountKeeper.SetAccount(ctx, newVestingAcc)
 
-	// end old continuous vesting account
+	// end current ContinuousVestingAccount
 	oldAcc.OriginalVesting = oldAcc.OriginalVesting.Sub(vestingCoin[0])
 	oldAcc.DelegatedFree = sdk.NewCoins()
 	oldAcc.DelegatedVesting = sdk.NewCoins()
 	oldAcc.EndTime = ctx.BlockTime().Unix()
 	accountKeeper.SetAccount(ctx, oldAcc)
 
-	// move vesting coin to newAddr
+	// move vesting coin to new ContinuousVestingAccount
 	err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, vestingCoin)
 	if err != nil {
 		panic(err)
