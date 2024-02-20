@@ -13,6 +13,11 @@ import (
 	banktestutil "github.com/cosmos/cosmos-sdk/x/bank/testutil"
 )
 
+const (
+	TestDenom  = "test"
+	TestAmount = 1000000
+)
+
 func CreateMainnetVestingAccount(ctx sdk.Context,
 	bankKeeper bankKeeper.Keeper,
 	accountKeeper authkeeper.AccountKeeper,
@@ -28,6 +33,12 @@ func CreateMainnetVestingAccount(ctx sdk.Context,
 
 	err := banktestutil.FundAccount(bankKeeper, ctx, acc.BaseAccount.GetAddress(),
 		acc.GetOriginalVesting())
+	if err != nil {
+		panic(err)
+	}
+
+	err = banktestutil.FundAccount(bankKeeper, ctx, acc.BaseAccount.GetAddress(),
+		sdk.NewCoins(sdk.NewCoin(TestDenom, sdk.NewInt(TestAmount))))
 	if err != nil {
 		panic(err)
 	}

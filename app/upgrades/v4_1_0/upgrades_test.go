@@ -32,7 +32,6 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 
 	accVestingBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, vestingAddr)
 	fmt.Printf("Acc vesting bal: %s\n", accVestingBalance)
-
 	// create many validators to confirm the unbonding code works
 	newVal1 := s.SetupValidator(stakingtypes.Bonded)
 	newVal2 := s.SetupValidator(stakingtypes.Bonded)
@@ -81,25 +80,34 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 
 	// VERIFY MULTISIGN MIGRATION
 	accAfter := s.App.AccountKeeper.GetAccount(s.Ctx, vestingAddr)
-	_, ok := accAfter.(*vestingtypes.ContinuousVestingAccount)
+	accAfterVestingAccount, ok := accAfter.(*vestingtypes.ContinuousVestingAccount)
 	s.Require().True(ok)
 
-	s.Require().Equal(0, len(s.App.BankKeeper.GetAllBalances(s.Ctx, vestingAddr)))
-	// now delegated to top 10 validator
-	s.Require().Equal(10, len(s.App.StakingKeeper.GetAllDelegatorDelegations(s.Ctx, vestingAddr)))
+	newNotionalAcc := s.App.AccountKeeper.GetAccount(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigAccount))
+	newNotionalAccVesting, ok := newNotionalAcc.(*vestingtypes.ContinuousVestingAccount)
+	s.Require().True(ok)
+
+	s.Require().Equal(2, len(s.App.BankKeeper.GetAllBalances(s.Ctx, vestingAddr)))
+	// only move uwhale token
+	s.Require().Equal(1, len(s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigAccount))))
+	s.Require().Equal(0, len(s.App.StakingKeeper.GetAllDelegatorDelegations(s.Ctx, vestingAddr)))
 	s.Require().Equal(0, len(s.App.StakingKeeper.GetRedelegations(s.Ctx, vestingAddr, 65535)))
 
+	vestingBalance := cVesting.GetVestingCoins(s.Ctx.BlockTime())
 	// check old multisign address balance
+	expectedBalance := accVestingBalance.AmountOf(params.BaseDenom).Sub(vestingBalance.AmountOf(params.BaseDenom))
 	oldMultisigBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NotionalMultisigVestingAccount))
-	fmt.Printf("Old multisign address Upgrade Balance: %s\n", oldMultisigBalance)
-	s.Require().True(oldMultisigBalance.Empty())
-	totalDelegateBalance := s.App.StakingKeeper.GetDelegatorBonded(s.Ctx, sdk.MustAccAddressFromBech32(v4.NotionalMultisigVestingAccount))
-	fmt.Printf("old multisign address totalDelegateBalance %v\n", totalDelegateBalance)
-	s.Require().True(totalDelegateBalance.Equal(unvested))
+	fmt.Printf("Old multisign address Upgrade Balance: %s, expectedBalance %s\n", oldMultisigBalance, expectedBalance)
+	s.Require().True(oldMultisigBalance.AmountOf(params.BaseDenom).Equal(expectedBalance))
+	s.Require().True(accAfterVestingAccount.OriginalVesting.AmountOf(params.BaseDenom).Equal(expectedBalance))
+
+	s.Require().True(oldMultisigBalance.AmountOf(v4.TestDenom).Equal(sdk.NewInt(v4.TestAmount)))
 
 	// check new multisign address balance
-	newBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigAccount))
-	vestedBalance := cVesting.GetVestedCoins(s.Ctx.BlockTime())
-	fmt.Printf("New multisign Upgrade Balance: %s, vestedBalance %s\n", newBalance, vestedBalance)
-	s.Require().True(vestedBalance.AmountOf(params.BaseDenom).Equal(newBalance.AmountOf(params.BaseDenom)))
+	fmt.Printf("New multisign Upgrade Balance: %s, vestingBalance %s\n", newNotionalAccVesting.GetOriginalVesting(), vestingBalance)
+	s.Require().True(vestingBalance.AmountOf(params.BaseDenom).
+		Equal(newNotionalAccVesting.GetOriginalVesting().AmountOf(params.BaseDenom)))
+
+	newMultisigBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, sdk.MustAccAddressFromBech32(v4.NewNotionalMultisigAccount))
+	s.Require().True(newMultisigBalance.AmountOf(params.BaseDenom).Equal(vestingBalance.AmountOf(params.BaseDenom)))
 }

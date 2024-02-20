@@ -2,6 +2,7 @@ package v4
 
 import (
 	"fmt"
+	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	"time"
 
 	"cosmossdk.io/math"
@@ -10,13 +11,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	vestingtypes "github.com/cosmos/cosmos-sdk/x/auth/vesting/types"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	stakingKeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
 	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
@@ -61,11 +60,10 @@ func CreateUpgradeHandler(
 	}
 }
 
-// migrateMultisigVesting moves the vested and reward token from the ContinuousVestingAccount -> the new multisig vesting account.
+// migrateMultisigVesting moves the unvested from the ContinuousVestingAccount -> the new multisig vesting account.
 // - Retrieves the old multisig vesting account
 // - Instantly finish all redelegations, then unbond all tokens.
-// - Transfer all tokens vested and reward tokens to the new multisig account (including the previously held balance)
-// - Delegates the vesting coins to the top 10 validators
+// - Transfer all tokens unvested token to the new multisig vesting account
 func migrateMultisigVesting(ctx sdk.Context,
 	stakingKeeper stakingKeeper.Keeper,
 	bankKeeper bankKeeper.Keeper,
@@ -83,11 +81,13 @@ func migrateMultisigVesting(ctx sdk.Context,
 		return
 	}
 	// process migrate
-	processMigrateMultisig(ctx, stakingKeeper, bankKeeper, currentAddr, newAddr, currentVestingAcc)
+	processMigrateMultisig(ctx, stakingKeeper, bankKeeper, accountKeeper, currentAddr, newAddr, currentVestingAcc)
 }
 
 func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
-	bankKeeper bankKeeper.Keeper, currentAddr, newAddr sdk.AccAddress,
+	bankKeeper bankKeeper.Keeper,
+	accountKeeper authkeeper.AccountKeeper,
+	currentAddr, newAddr sdk.AccAddress,
 	oldAcc *vestingtypes.ContinuousVestingAccount,
 ) {
 	redelegated, err := completeAllRedelegations(ctx, ctx.BlockTime(), stakingKeeper, currentAddr)
@@ -103,20 +103,30 @@ func processMigrateMultisig(ctx sdk.Context, stakingKeeper stakingKeeper.Keeper,
 	fmt.Printf("currentAddr Instant Redelegations: %s\n", redelegated)
 	fmt.Printf("currentAddr Instant Unbonding: %s\n", unbonded)
 
-	// delegate vesting coin to validator
-	err = delegateToValidator(ctx, stakingKeeper, currentAddr, oldAcc.GetVestingCoins(ctx.BlockTime())[0].Amount)
-	if err != nil {
+	// get vesting balance
+	vestingCoin := oldAcc.GetVestingCoins(ctx.BlockTime())
+	fmt.Printf("Total vesting balance %v\n", vestingCoin)
+	if vestingCoin.Empty() {
 		panic(err)
 	}
 
-	// get vested + reward balance
-	for _, coin := range bankKeeper.GetAllBalances(ctx, currentAddr) {
-		fmt.Printf("demom %s, total balance send to new multisig addr: %v\n", coin.Denom, coin.Amount)
-		// send vested + reward balance no newAddr
-		err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, sdk.NewCoins(sdk.NewCoin(coin.Denom, coin.Amount)))
-		if err != nil {
-			panic(err)
-		}
+	// setup NewContinuousVestingAccount
+	newAccount := authtypes.NewBaseAccountWithAddress(newAddr)
+	newVestingAcc := vestingtypes.NewContinuousVestingAccount(newAccount, vestingCoin,
+		ctx.BlockTime().Unix(), oldAcc.EndTime)
+	accountKeeper.SetAccount(ctx, newVestingAcc)
+
+	// end old continuous vesting account
+	oldAcc.OriginalVesting = oldAcc.OriginalVesting.Sub(vestingCoin[0])
+	oldAcc.DelegatedFree = sdk.NewCoins()
+	oldAcc.DelegatedVesting = sdk.NewCoins()
+	oldAcc.EndTime = ctx.BlockTime().Unix()
+	accountKeeper.SetAccount(ctx, oldAcc)
+
+	// move vesting coin to newAddr
+	err = bankKeeper.SendCoins(ctx, currentAddr, newAddr, vestingCoin)
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -190,31 +200,4 @@ func unbondAllAndFinish(ctx sdk.Context, now time.Time,
 	}
 
 	return unbondedAmt, nil
-}
-
-// delegate to top 10 validator
-func delegateToValidator(ctx sdk.Context,
-	stakingKeeper stakingKeeper.Keeper,
-	accAddr sdk.AccAddress,
-	totalVestingBalance math.Int,
-) error {
-	listValidator := stakingKeeper.GetBondedValidatorsByPower(ctx)
-	totalValidatorDelegate := math.Min(10, len(listValidator))
-	balanceDelegate := totalVestingBalance.Quo(math.NewInt(int64(totalValidatorDelegate)))
-	totalBalanceDelegate := math.ZeroInt()
-	for i, validator := range listValidator {
-		if i >= totalValidatorDelegate {
-			break
-		}
-		if i == totalValidatorDelegate-1 {
-			balanceDelegate = totalVestingBalance.Sub(totalBalanceDelegate)
-		}
-		newShare, err := stakingKeeper.Delegate(ctx, accAddr, balanceDelegate, stakingtypes.Unbonded, validator, true)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("delegate %v to validator %v, newShare: %v\n", balanceDelegate, validator.OperatorAddress, newShare)
-		totalBalanceDelegate = totalBalanceDelegate.Add(balanceDelegate)
-	}
-	return nil
 }
