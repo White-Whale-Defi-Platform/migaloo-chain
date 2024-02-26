@@ -46,10 +46,12 @@ GENERATED_PACKET=$($BINARY tx interchain-accounts host generate-packet-data '{
         "denom": "'"$DENOM"'",
         "amount": "'"$ICS_ACCOUNT_BALANCE"'"
     }
-}')
+}' --memo memo --encoding proto3json)
 
 
-SEND_TX_RESULT=$($BINARY tx interchain-accounts controller send-tx connection-0 $GENERATED_PACKET --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --fees 3000000$DENOM --node tcp://localhost:16657  --keyring-backend test -y)
+$BINARY tx interchain-accounts controller send-tx connection-0 $GENERATED_PACKET --from $WALLET_1 --chain-id test-1 --home $CHAIN_DIR/test-1 --fees 3000000$DENOM --node tcp://localhost:16657  --keyring-backend test -y
+
+
 
 PRE_VALIDATOR_DELEGATIONS=""
 while [[ "$VALIDATOR_DELEGATIONS" != "$ICS_ACCOUNT_BALANCE" ]]; do 
