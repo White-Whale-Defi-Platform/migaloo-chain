@@ -9,8 +9,8 @@ require (
 	github.com/CosmWasm/wasmd v0.45.0
 	github.com/cometbft/cometbft v0.37.4
 	github.com/cometbft/cometbft-db v0.8.0
-	github.com/cosmos/cosmos-proto v1.0.0-beta.3
-	github.com/cosmos/cosmos-sdk v0.47.7
+	github.com/cosmos/cosmos-proto v1.0.0-beta.4
+	github.com/cosmos/cosmos-sdk v0.47.9
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20230906222317-d88d4028e5c9
 	github.com/cosmos/ibc-go/v7 v7.3.0
@@ -30,7 +30,7 @@ require (
 )
 
 require (
-	cosmossdk.io/log v1.3.0 // indirect
+	cosmossdk.io/log v1.3.1 // indirect
 	github.com/cockroachdb/errors v1.10.0 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
@@ -43,7 +43,7 @@ require (
 	github.com/linxGnu/grocksdb v1.7.16 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
-	github.com/rs/zerolog v1.31.0 // indirect
+	github.com/rs/zerolog v1.32.0 // indirect
 	golang.org/x/sync v0.4.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20231212172506-995d672761c0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240108191215-35c7eff3a6b1 // indirect
@@ -99,7 +99,7 @@ require (
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/dvsekhvalnov/jose2go v1.5.0 // indirect
+	github.com/dvsekhvalnov/jose2go v1.6.0 // indirect
 	github.com/felixge/httpsnoop v1.0.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-kit/kit v0.12.0 // indirect
@@ -192,7 +192,7 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	nhooyr.io/websocket v1.8.6 // indirect
-	pgregory.net/rapid v0.5.5 // indirect
+	pgregory.net/rapid v1.1.0 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
