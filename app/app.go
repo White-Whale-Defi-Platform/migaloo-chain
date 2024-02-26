@@ -650,15 +650,16 @@ func NewMigalooApp(
 	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
 	// ICQ Keeper
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName).String()
 	app.ICQKeeper = icqkeeper.NewKeeper(
 		appCodec,
 		keys[icqtypes.StoreKey],
-		app.GetSubspace(icqtypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper, // may be replaced with middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedICQKeeper,
-		app.BaseApp, // may be replaced
+		app.BaseApp.GRPCQueryRouter(),
+		authority,
 	)
 
 	// Create Transfer Stack
@@ -770,7 +771,7 @@ func NewMigalooApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		icaModule,
-		icq.NewAppModule(app.ICQKeeper),
+		icq.NewAppModule(app.ICQKeeper, app.GetSubspace(icqtypes.ModuleName)),
 		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry, app.GetSubspace(alliancemoduletypes.ModuleName)),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
