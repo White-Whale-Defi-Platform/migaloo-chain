@@ -157,7 +157,7 @@ import (
 	"github.com/rakyll/statik/fs"
 
 	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
-	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_1"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_2"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/client/docs/statik"
@@ -1149,8 +1149,6 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.ConsensusParamsKeeper,
 			app.ICAControllerKeeper,
 			app.AccountKeeper,
-			*app.StakingKeeper,
-			app.BankKeeper,
 		),
 	)
 
