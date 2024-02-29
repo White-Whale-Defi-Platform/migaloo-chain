@@ -12,18 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4   
-    - uses: actions/setup-go@v4
+    - uses: actions/setup-go@v5
     - name: build
       run: make build
     - name: sha512sum
       run: sha512sum bin/migalood > migalood_sha512.txt
     - name: 'Upload Binary'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: migalood
         path: bin/migalood
     - name: 'Upload SHA512'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sha512
         path: migalood_sha512.txt

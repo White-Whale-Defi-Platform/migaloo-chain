@@ -45,9 +45,9 @@ import (
 	crisistypes "github.com/cosmos/cosmos-sdk/x/crisis/types"
 	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	govtypesv1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
+	icq "github.com/cosmos/ibc-apps/modules/async-icq/v7"
 	solomachine "github.com/cosmos/ibc-go/v7/modules/light-clients/06-solomachine"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	icq "github.com/strangelove-ventures/async-icq/v7"
 
 	distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
 	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
@@ -107,12 +107,12 @@ import (
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 
+	"github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router"
+	routerkeeper "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/keeper"
+	routertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/router/types"
+	icqkeeper "github.com/cosmos/ibc-apps/modules/async-icq/v7/keeper"
+	icqtypes "github.com/cosmos/ibc-apps/modules/async-icq/v7/types"
 	ibcmock "github.com/cosmos/ibc-go/v7/testing/mock"
-	icqkeeper "github.com/strangelove-ventures/async-icq/v7/keeper"
-	icqtypes "github.com/strangelove-ventures/async-icq/v7/types"
-	"github.com/strangelove-ventures/packet-forward-middleware/v7/router"
-	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v7/router/keeper"
-	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v7/router/types"
 
 	terracustombank "github.com/terra-money/core/v2/custom/bank"
 	custombankkeeper "github.com/terra-money/core/v2/custom/bank/keeper"
@@ -650,15 +650,16 @@ func NewMigalooApp(
 	app.Ics20WasmHooks.ContractKeeper = &app.WasmKeeper
 
 	// ICQ Keeper
+	authority := authtypes.NewModuleAddress(govtypes.ModuleName).String()
 	app.ICQKeeper = icqkeeper.NewKeeper(
 		appCodec,
 		keys[icqtypes.StoreKey],
-		app.GetSubspace(icqtypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper, // may be replaced with middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		scopedICQKeeper,
-		app.BaseApp, // may be replaced
+		app.BaseApp.GRPCQueryRouter(),
+		authority,
 	)
 
 	// Create Transfer Stack
@@ -770,7 +771,7 @@ func NewMigalooApp(
 		params.NewAppModule(app.ParamsKeeper),
 		transfer.NewAppModule(app.TransferKeeper),
 		icaModule,
-		icq.NewAppModule(app.ICQKeeper),
+		icq.NewAppModule(app.ICQKeeper, app.GetSubspace(icqtypes.ModuleName)),
 		alliancemodule.NewAppModule(appCodec, app.AllianceKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry, app.GetSubspace(alliancemoduletypes.ModuleName)),
 		ibcfee.NewAppModule(app.IBCFeeKeeper),
 		ica.NewAppModule(&app.ICAControllerKeeper, &app.ICAHostKeeper),
