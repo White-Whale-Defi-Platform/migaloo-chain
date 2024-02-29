@@ -24,7 +24,7 @@ require (
 	github.com/strangelove-ventures/async-icq/v7 v7.0.0-20230413165143-a3b65ccdc897
 	github.com/strangelove-ventures/packet-forward-middleware/v7 v7.0.0-20230523193151-73dea436e53f
 	github.com/stretchr/testify v1.8.4
-	github.com/terra-money/alliance v0.3.2
+	github.com/terra-money/alliance v0.3.4
 	github.com/terra-money/core/v2 v2.5.0
 	google.golang.org/grpc v1.60.1
 )
