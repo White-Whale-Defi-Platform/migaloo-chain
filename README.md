@@ -22,7 +22,7 @@ Because of this, branching is like:
 * `release/v1.0.x` is the tip of the mainnet branch, and reflects working mainnet state until the launch of v2
 * `release/v2.0.x` is the tip of the branch for v2, which enables alliance.
 * `release/v3.0.x` is the tip of the branch for v3, which will add osmosis ibc hooks, async-icq.
-* `release/v4.1.x` is the current development branch, which upgrades to ibc v7, sdk 47, cometbft 37, and wasmd v0.45.0
+* `release/v4.1.x` is the current development branch, which upgrades to ibc v7, sdk 47.10, cometbft 37, and wasmd v0.45.0
 
 
 ## Resources
