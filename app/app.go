@@ -157,8 +157,7 @@ import (
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 
-	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
-	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_1"
 )
 
 const (
@@ -1120,10 +1119,6 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers() {
-	app.UpgradeKeeper.SetUpgradeHandler(
-		v3_0_2.UpgradeName,
-		v3_0_2.CreateUpgradeHandler(app.mm, app.configurator),
-	)
 
 	// !! ATTENTION !!
 	// v4 upgrade handler
@@ -1138,6 +1133,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.ParamsKeeper,
 			app.ConsensusParamsKeeper,
 			app.ICAControllerKeeper,
+			app.AccountKeeper,
 		),
 	)
 
