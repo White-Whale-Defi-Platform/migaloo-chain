@@ -8,6 +8,7 @@ import (
 )
 
 func UpdateAlliance(ctx sdk.Context, alk alliancekeeper.Keeper) {
+	// change alliance param
 	allianceParams := alk.GetParams(ctx)
 	allianceParams.RewardDelayTime = 10 * time.Minute
 	_ = alk.SetParams(ctx, allianceParams)
