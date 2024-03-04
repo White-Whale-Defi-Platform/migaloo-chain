@@ -154,6 +154,8 @@ import (
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	appparams "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_0"
+
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
 )
@@ -1117,6 +1119,52 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers() {
+	// !! ATTENTION !!
+	// v4 upgrade handler
+	// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
+	// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md#xconsensus
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v4.UpgradeName,
+		v4.CreateUpgradeHandler(
+			app.mm,
+			app.configurator,
+			app.IBCKeeper.ClientKeeper,
+			app.ParamsKeeper,
+			app.ConsensusParamsKeeper,
+			app.ICAControllerKeeper,
+		),
+	)
+
+	// When a planned update height is reached, the old binary will panic
+	// writing on disk the height and name of the update that triggered it
+	// This will read that value, and execute the preparations for the upgrade.
+	upgradeInfo, err := app.UpgradeKeeper.ReadUpgradeInfoFromDisk()
+	if err != nil {
+		panic(fmt.Errorf("failed to read upgrade info from disk: %w", err))
+	}
+
+	if app.UpgradeKeeper.IsSkipHeight(upgradeInfo.Height) {
+		return
+	}
+
+	if upgradeInfo.Name == v4.UpgradeName {
+		// !! ATTENTION !!
+		// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
+		// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md
+		storeUpgrades := &storetypes.StoreUpgrades{
+			Added: []string{
+				consensusparamtypes.StoreKey,
+				crisistypes.StoreKey,
+				icqtypes.StoreKey,
+				feeburnmoduletypes.StoreKey,
+			},
+			Deleted: []string{
+				"intertx",
+			},
+		}
+		// configure store loader that checks if version == upgradeHeight and applies store upgrades
+		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))
+	}
 }
 
 // GetMaccPerms returns a copy of the module account permissions

@@ -1,9 +1,10 @@
 package v4
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	alliancekeeper "github.com/terra-money/alliance/x/alliance/keeper"
-	"time"
 )
 
 func UpdateAlliance(ctx sdk.Context, alk alliancekeeper.Keeper) {
