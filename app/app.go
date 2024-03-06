@@ -1130,7 +1130,6 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers() {
-
 	// !! ATTENTION !!
 	// v4 upgrade handler
 	// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
