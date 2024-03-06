@@ -3,13 +3,13 @@
 # the upgrade is a fork, "true" otherwise
 FORK=${FORK:-"false"}
 
-OLD_VERSION=v3.0.4
+OLD_VERSION=v4.1.x-testnet-rc8
 UPGRADE_WAIT=${UPGRADE_WAIT:-20}
 HOME=mytestnet
 ROOT=$(pwd)
 DENOM=uwhale
 CHAIN_ID=localmigaloo
-SOFTWARE_UPGRADE_NAME="v4.1.0"
+SOFTWARE_UPGRADE_NAME="v4.1.3"
 ADDITIONAL_PRE_SCRIPTS=${ADDITIONAL_PRE_SCRIPTS:-""}
 ADDITIONAL_AFTER_SCRIPTS=${ADDITIONAL_AFTER_SCRIPTS:-""}
 
@@ -101,19 +101,19 @@ run_upgrade () {
 
     ./_build/old/migalood keys list --home $HOME --keyring-backend test
 
-    ./_build/old/migalood tx gov submit-legacy-proposal software-upgrade "$SOFTWARE_UPGRADE_NAME" --upgrade-height $UPGRADE_HEIGHT --upgrade-info "$UPGRADE_INFO" --title "upgrade" --description "upgrade"  --from test1 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
+    ./_build/old/migalood tx gov submit-legacy-proposal software-upgrade "$SOFTWARE_UPGRADE_NAME" --upgrade-height $UPGRADE_HEIGHT --upgrade-info "$UPGRADE_INFO" --title "upgrade" --description "upgrade" --gas="1000000" --gas-prices="1000${DENOM}" --from test1 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
 
     sleep 5
 
-    ./_build/old/migalood tx gov deposit 1 "20000000${DENOM}" --from test1 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
+    ./_build/old/migalood tx gov deposit 1 "20000000${DENOM}" --gas="1000000" --gas-prices="1000${DENOM}" --from test1 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
 
     sleep 5
 
-    ./_build/old/migalood tx gov vote 1 yes --from test0 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
+    ./_build/old/migalood tx gov vote 1 yes --gas="1000000" --gas-prices="1000${DENOM}" --from test0 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
 
     sleep 5
 
-    ./_build/old/migalood tx gov vote 1 yes --from test1 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
+    ./_build/old/migalood tx gov vote 1 yes --gas="1000000" --gas-prices="1000${DENOM}" --from test1 --keyring-backend test --chain-id $CHAIN_ID --home $HOME -y
 
     sleep 5
 
