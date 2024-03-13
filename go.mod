@@ -12,7 +12,7 @@ require (
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/cosmos-sdk v0.47.10
 	github.com/cosmos/gogoproto v1.4.10
-	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20230906222317-d88d4028e5c9
+	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20231017170841-8fd49ec0f017
 	github.com/cosmos/ibc-go/v7 v7.3.2
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
@@ -49,7 +49,7 @@ require (
 
 require (
 	cosmossdk.io/errors v1.0.1
-	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.0.0
+	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.1.3-0.20240228213828-cce7f56d000b
 	github.com/cosmos/ibc-apps/modules/async-icq/v7 v7.1.1
 	github.com/golang/protobuf v1.5.3
 	gopkg.in/yaml.v2 v2.4.0
@@ -216,5 +216,5 @@ replace (
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
 	// use terra core 2.5.0
-	github.com/terra-money/core/v2 => github.com/terra-money/core/v2 v2.5.0
+	github.com/terra-money/core/v2 => github.com/notional-labs/terra-core/v2 v2.5.1-pfm
 )
