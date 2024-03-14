@@ -667,7 +667,6 @@ func NewMigalooApp(
 	// Create Transfer Stack
 	var transferStack ibcporttypes.IBCModule
 	transferStack = transfer.NewIBCModule(app.TransferKeeper)
-	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
 	transferStack = ibchooks.NewIBCMiddleware(transferStack, &app.HooksICS4Wrapper)
 	transferStack = packetforward.NewIBCMiddleware(
 		transferStack,
@@ -676,6 +675,7 @@ func NewMigalooApp(
 		packetforwardkeeper.DefaultForwardTransferPacketTimeoutTimestamp,
 		packetforwardkeeper.DefaultRefundTransferPacketTimeoutTimestamp,
 	)
+	transferStack = ibcfee.NewIBCMiddleware(transferStack, app.IBCFeeKeeper)
 	// Hooks Middleware
 	app.TransferStack = &transferStack
 
