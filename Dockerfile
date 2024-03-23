@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS go-builder
+FROM golang:1.22-alpine AS go-builder
 
 # this comes from standard alpine nightly file
 #  https://github.com/rust-lang/docker-rust-nightly/blob/master/alpine3.12/Dockerfile
@@ -34,7 +34,7 @@ RUN LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true make build \
   && (file /code/bin/migalood | grep "statically linked")
 
 # --------------------------------------------------------
-FROM alpine:3.16
+FROM alpine
 
 COPY --from=go-builder /code/bin/migalood /usr/bin/migalood
 ENV HOME /.migalood
