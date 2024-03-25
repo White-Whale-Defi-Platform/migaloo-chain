@@ -7,7 +7,7 @@ require (
 	cosmossdk.io/simapp v0.0.0-20230602123434-616841b9704d
 	cosmossdk.io/tools/rosetta v0.2.1
 	github.com/CosmWasm/wasmd v0.45.0
-	github.com/cometbft/cometbft v0.37.4
+	github.com/cometbft/cometbft v0.37.5
 	github.com/cometbft/cometbft-db v0.11.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/cosmos-sdk v0.47.10
@@ -20,7 +20,7 @@ require (
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.6.0
 	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.16.0
+	github.com/spf13/viper v1.18.1
 	github.com/stretchr/testify v1.8.4
 	github.com/terra-money/alliance v0.3.4
 	github.com/terra-money/core/v2 v2.5.0
@@ -211,6 +211,7 @@ replace (
 	// Fix upstream GHSA-h395-qcrw-5vmq and GHSA-3vp4-m3rf-835h vulnerabilities.
 	// TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.0
+	github.com/spf13/viper => github.com/spf13/viper v1.16.0
 	// Downgraded to avoid bugs in following commits which caused simulations to fail.
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 
