@@ -157,8 +157,7 @@ import (
 	// unnamed import of statik for swagger UI support
 	"github.com/rakyll/statik/fs"
 
-	v3_0_2 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v3_0_2"
-	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_3"
+	v4 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_1_4"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/client/docs/statik"
@@ -400,7 +399,6 @@ func NewMigalooApp(
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedWasmKeeper := app.CapabilityKeeper.ScopeToModule(wasmtypes.ModuleName)
-	app.CapabilityKeeper.Seal()
 
 	// add keepers
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
@@ -539,18 +537,6 @@ func NewMigalooApp(
 		AddRoute(alliancemoduletypes.RouterKey, alliancemodule.NewAllianceProposalHandler(app.AllianceKeeper)).
 		AddRoute(feeburnmoduletypes.RouterKey, feeburnmodule.NewFeeBurnProposalHandler(app.FeeBurnKeeper))
 
-	// RouterKeeper must be created before TransferKeeper
-	app.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
-		appCodec,
-		app.keys[packetforwardtypes.StoreKey],
-		app.TransferKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		app.DistrKeeper,
-		app.BankKeeper,
-		app.IBCKeeper.ChannelKeeper,
-		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
-	)
-
 	// Configure the hooks keeper
 	hooksKeeper := ibchookskeeper.NewKeeper(
 		app.keys[ibchookstypes.StoreKey],
@@ -567,10 +553,13 @@ func NewMigalooApp(
 
 	// IBC Fee Module keeper
 	app.IBCFeeKeeper = ibcfeekeeper.NewKeeper(
-		appCodec, keys[ibcfeetypes.StoreKey],
-		app.HooksICS4Wrapper, // may be replaced with IBC middleware
+		appCodec,
+		keys[ibcfeetypes.StoreKey],
+		app.IBCKeeper.ChannelKeeper, // may be replaced with IBC middleware
 		app.IBCKeeper.ChannelKeeper,
-		&app.IBCKeeper.PortKeeper, app.AccountKeeper, app.BankKeeper,
+		&app.IBCKeeper.PortKeeper,
+		app.AccountKeeper,
+		app.BankKeeper,
 	)
 
 	// Create Transfer Keepers
@@ -578,7 +567,7 @@ func NewMigalooApp(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.IBCFeeKeeper, // ISC4 Wrapper: fee IBC middleware
+		app.HooksICS4Wrapper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
@@ -586,7 +575,16 @@ func NewMigalooApp(
 		scopedTransferKeeper,
 	)
 
-	app.PacketForwardKeeper.SetTransferKeeper(app.TransferKeeper)
+	app.PacketForwardKeeper = packetforwardkeeper.NewKeeper(
+		appCodec,
+		app.keys[packetforwardtypes.StoreKey],
+		app.TransferKeeper, // Will be zero-value here. Reference is set later on with SetTransferKeeper.
+		app.IBCKeeper.ChannelKeeper,
+		app.DistrKeeper,
+		app.BankKeeper,
+		app.IBCKeeper.ChannelKeeper,
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
+	)
 
 	// ICA Host keeper
 	app.ICAHostKeeper = icahostkeeper.NewKeeper(
@@ -635,10 +633,10 @@ func NewMigalooApp(
 		app.BankKeeper,
 		app.StakingKeeper,
 		distrkeeper.NewQuerier(app.DistrKeeper),
-		app.IBCKeeper.ChannelKeeper, // ISC4 Wrapper: fee IBC middleware
+		app.IBCFeeKeeper, // ISC4 Wrapper: fee IBC middleware
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
-		app.ScopedWasmKeeper,
+		scopedWasmKeeper,
 		app.TransferKeeper,
 		bApp.MsgServiceRouter(),
 		bApp.GRPCQueryRouter(),
@@ -716,6 +714,7 @@ func NewMigalooApp(
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	govConfig := govtypes.DefaultConfig()
+	govConfig.MaxMetadataLen = 5100 // define the length of the governance proposal's title and description
 	/*
 		Example of setting gov params:
 		govConfig.MaxMetadataLen = 10000
@@ -973,6 +972,8 @@ func NewMigalooApp(
 		if err := app.WasmKeeper.InitializePinnedCodes(ctx); err != nil {
 			tmos.Exit(fmt.Sprintf("failed initialize pinned codes %s", err))
 		}
+
+		app.CapabilityKeeper.Seal()
 	}
 
 	return app
@@ -1134,24 +1135,10 @@ func RegisterSwaggerAPI(rtr *mux.Router) {
 // Setup Upgrade Handler
 func (app *MigalooApp) setupUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler(
-		v3_0_2.UpgradeName,
-		v3_0_2.CreateUpgradeHandler(app.mm, app.configurator),
-	)
-
-	// !! ATTENTION !!
-	// v4 upgrade handler
-	// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
-	// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md#xconsensus
-	app.UpgradeKeeper.SetUpgradeHandler(
 		v4.UpgradeName,
 		v4.CreateUpgradeHandler(
 			app.mm,
 			app.configurator,
-			app.IBCKeeper.ClientKeeper,
-			app.ParamsKeeper,
-			app.ConsensusParamsKeeper,
-			app.ICAControllerKeeper,
-			app.AccountKeeper,
 		),
 	)
 
@@ -1172,16 +1159,8 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 		// !! WHEN UPGRADING TO SDK v0.47 MAKE SURE TO INCLUDE THIS
 		// source: https://github.com/cosmos/cosmos-sdk/blob/release/v0.47.x/UPGRADING.md
 		storeUpgrades := &storetypes.StoreUpgrades{
-			Added: []string{
-				consensusparamtypes.StoreKey,
-				crisistypes.StoreKey,
-				icqtypes.StoreKey,
-				feeburnmoduletypes.StoreKey,
-				authtypes.FeeCollectorName,
-			},
-			Deleted: []string{
-				"intertx",
-			},
+			Added:   []string{},
+			Deleted: []string{},
 		}
 		// configure store loader that checks if version == upgradeHeight and applies store upgrades
 		app.SetStoreLoader(upgradetypes.UpgradeStoreLoader(upgradeInfo.Height, storeUpgrades))

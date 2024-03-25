@@ -34,7 +34,7 @@ RUN LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true make build \
   && (file /code/bin/migalood | grep "statically linked")
 
 # --------------------------------------------------------
-FROM alpine:3.16
+FROM alpine
 
 COPY --from=go-builder /code/bin/migalood /usr/bin/migalood
 ENV HOME /.migalood
