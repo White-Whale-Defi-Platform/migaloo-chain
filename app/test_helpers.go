@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"fmt"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	"testing"
 	"time"
 
@@ -111,7 +112,7 @@ func SetupApp(t *testing.T) *MigalooApp {
 		Coins:   sdk.NewCoins(sdk.NewCoin(config.BaseDenom, sdk.NewInt(100000000000000))),
 	}
 
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "", balance)
 
 	return app
 }
@@ -120,21 +121,28 @@ func SetupApp(t *testing.T) *MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the app from first genesis
 // account. A Nop logger is set in app.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *MigalooApp {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
 
-	migalooApp, genesisState := setup(true)
+	migalooApp, genesisState := setup(true, chainID)
 	genesisState = genesisStateWithValSet(t, migalooApp, genesisState, valSet, genAccs, balances...)
+
+	consensusParams := simtestutil.DefaultConsensusParams
+	consensusParams.Block.MaxGas = 100 * simtestutil.DefaultGenTxGas
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 	require.NoError(t, err)
 
+	if chainID == "" {
+		chainID = SimAppChainID
+	}
+
 	// init chain will set the validator set and initialize the genesis accounts
 	migalooApp.InitChain(
 		abci.RequestInitChain{
-			ChainId:         SimAppChainID,
+			ChainId:         chainID,
 			Validators:      []abci.ValidatorUpdate{},
-			ConsensusParams: DefaultConsensusParams,
+			ConsensusParams: consensusParams,
 			AppStateBytes:   stateBytes,
 		},
 	)
@@ -142,7 +150,7 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	// commit genesis changes
 	migalooApp.Commit()
 	migalooApp.BeginBlock(abci.RequestBeginBlock{Header: tmproto.Header{
-		ChainID:            SimAppChainID,
+		ChainID:            chainID,
 		Height:             migalooApp.LastBlockHeight() + 1,
 		AppHash:            migalooApp.LastCommitID().Hash,
 		ValidatorsHash:     valSet.Hash(),
@@ -152,10 +160,10 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	return migalooApp
 }
 
-func setup(withGenesis bool, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
+func setup(withGenesis bool, chainID string, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
 	db := dbm.NewMemDB()
 	migalooApp := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{},
-		DefaultNodeHome, 5, MakeEncodingConfig(), EmptyBaseAppOptions{}, opts)
+		DefaultNodeHome, 5, MakeEncodingConfig(), EmptyBaseAppOptions{}, opts, baseapp.SetChainID(chainID))
 
 	if withGenesis {
 		return migalooApp, NewDefaultGenesisState()
@@ -214,22 +222,27 @@ func genesisStateWithValSet(t *testing.T,
 	stakingGenesis := stakingtypes.NewGenesisState(stParams, validators, delegations)
 	genesisState[stakingtypes.ModuleName] = app.AppCodec().MustMarshalJSON(stakingGenesis)
 
+	signingInfos := make([]slashingtypes.SigningInfo, len(valSet.Validators))
+	for i, val := range valSet.Validators {
+		signingInfos[i] = slashingtypes.SigningInfo{
+			Address:              sdk.ConsAddress(val.Address).String(),
+			ValidatorSigningInfo: slashingtypes.ValidatorSigningInfo{},
+		}
+	}
+	slashingGenesis := slashingtypes.NewGenesisState(slashingtypes.DefaultParams(), signingInfos, nil)
+	genesisState[slashingtypes.ModuleName] = app.AppCodec().MustMarshalJSON(slashingGenesis)
+
+	// add bonded amount to bonded pool module account
+	balances = append(balances, banktypes.Balance{
+		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
+		Coins:   sdk.Coins{sdk.NewCoin(config.BaseDenom, bondAmt.MulRaw(int64(len(valSet.Validators))))},
+	})
+
 	totalSupply := sdk.NewCoins()
 	for _, b := range balances {
 		// add genesis acc tokens to total supply
 		totalSupply = totalSupply.Add(b.Coins...)
 	}
-
-	for range delegations {
-		// add delegated tokens to total supply
-		totalSupply = totalSupply.Add(sdk.NewCoin(config.BaseDenom, bondAmt))
-	}
-
-	// add bonded amount to bonded pool module account
-	balances = append(balances, banktypes.Balance{
-		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
-		Coins:   sdk.Coins{sdk.NewCoin(config.BaseDenom, bondAmt)},
-	})
 
 	// update total supply
 	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{},
