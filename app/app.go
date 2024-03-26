@@ -252,8 +252,10 @@ var (
 // MigalooApp extended ABCI application
 type MigalooApp struct {
 	*baseapp.BaseApp
-	legacyAmino       *codec.LegacyAmino
-	appCodec          codec.Codec
+	legacyAmino *codec.LegacyAmino
+	appCodec    codec.Codec
+	txConfig    client.TxConfig
+
 	interfaceRegistry types.InterfaceRegistry
 
 	invCheckPeriod uint
@@ -342,8 +344,9 @@ func NewMigalooApp(
 	wasmOpts []wasmkeeper.Option,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *MigalooApp {
-	appCodec, legacyAmino, txConfig := encodingConfig.Codec, encodingConfig.Amino, encodingConfig.TxConfig
+	appCodec, legacyAmino := encodingConfig.Codec, encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
+	txConfig := encodingConfig.TxConfig
 
 	bApp := baseapp.NewBaseApp(appName, logger, db, encodingConfig.TxConfig.TxDecoder(), baseAppOptions...)
 	bApp.SetCommitMultiStoreTracer(traceStore)
@@ -368,6 +371,7 @@ func NewMigalooApp(
 		BaseApp:           bApp,
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
+		txConfig:          txConfig,
 		interfaceRegistry: interfaceRegistry,
 		invCheckPeriod:    invCheckPeriod,
 		keys:              keys,
@@ -1110,6 +1114,11 @@ func (app *MigalooApp) RegisterTendermintService(clientCtx client.Context) {
 
 func (app *MigalooApp) AppCodec() codec.Codec {
 	return app.appCodec
+}
+
+// TxConfig returns MigalooApp's TxConfig
+func (app *MigalooApp) TxConfig() client.TxConfig {
+	return app.txConfig
 }
 
 // RegisterSwaggerAPI registers swagger route with API Server

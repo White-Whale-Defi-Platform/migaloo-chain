@@ -69,7 +69,7 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) []byte {
 
 	txBuilder.SetGasLimit(1000000)
 	gasPrice := sdk.NewInt(1)
-	fees := &sdk.Coins{{Denom: config.BaseDenom, Amount: gasPrice.MulRaw(DefaultFee)}}
+	fees := &sdk.Coins{{Denom: sdk.DefaultBondDenom, Amount: gasPrice.MulRaw(DefaultFee)}}
 	txBuilder.SetFeeAmount(*fees)
 	err := txBuilder.SetMsgs(msgs...)
 	s.Require().NoError(err)

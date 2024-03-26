@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
+
 	"cosmossdk.io/math"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -18,7 +20,6 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	dbm "github.com/cometbft/cometbft-db"
 	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -108,10 +109,10 @@ func SetupApp(t *testing.T) *MigalooApp {
 	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
 	balance := banktypes.Balance{
 		Address: acc.GetAddress().String(),
-		Coins:   sdk.NewCoins(sdk.NewCoin(config.BaseDenom, sdk.NewInt(100000000000000))),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
 	}
 
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "", nil, balance)
 
 	return app
 }
@@ -120,21 +121,28 @@ func SetupApp(t *testing.T) *MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the app from first genesis
 // account. A Nop logger is set in app.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *MigalooApp {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasmkeeper.Option, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
 
-	migalooApp, genesisState := setup(true)
+	migalooApp, genesisState := setup(true, chainID, opts...)
 	genesisState = genesisStateWithValSet(t, migalooApp, genesisState, valSet, genAccs, balances...)
+
+	consensusParams := simtestutil.DefaultConsensusParams
+	consensusParams.Block.MaxGas = 100 * simtestutil.DefaultGenTxGas
 
 	stateBytes, err := json.MarshalIndent(genesisState, "", " ")
 	require.NoError(t, err)
 
+	if chainID == "" {
+		chainID = SimAppChainID
+	}
+
 	// init chain will set the validator set and initialize the genesis accounts
 	migalooApp.InitChain(
 		abci.RequestInitChain{
-			ChainId:         SimAppChainID,
+			ChainId:         chainID,
 			Validators:      []abci.ValidatorUpdate{},
-			ConsensusParams: DefaultConsensusParams,
+			ConsensusParams: consensusParams,
 			AppStateBytes:   stateBytes,
 		},
 	)
@@ -142,7 +150,7 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	// commit genesis changes
 	migalooApp.Commit()
 	migalooApp.BeginBlock(abci.RequestBeginBlock{Header: tmproto.Header{
-		ChainID:            SimAppChainID,
+		ChainID:            chainID,
 		Height:             migalooApp.LastBlockHeight() + 1,
 		AppHash:            migalooApp.LastCommitID().Hash,
 		ValidatorsHash:     valSet.Hash(),
@@ -152,10 +160,10 @@ func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs 
 	return migalooApp
 }
 
-func setup(withGenesis bool, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
+func setup(withGenesis bool, chainID string, opts ...wasmkeeper.Option) (*MigalooApp, GenesisState) {
 	db := dbm.NewMemDB()
 	migalooApp := NewMigalooApp(log.NewNopLogger(), db, nil, true, map[int64]bool{},
-		DefaultNodeHome, 5, MakeEncodingConfig(), EmptyBaseAppOptions{}, opts)
+		DefaultNodeHome, 5, MakeEncodingConfig(), EmptyBaseAppOptions{}, opts, baseapp.SetChainID(chainID))
 
 	if withGenesis {
 		return migalooApp, NewDefaultGenesisState()
@@ -206,7 +214,7 @@ func genesisStateWithValSet(t *testing.T,
 		defaultStParams.MaxValidators,
 		defaultStParams.MaxEntries,
 		defaultStParams.HistoricalEntries,
-		config.BaseDenom,
+		sdk.DefaultBondDenom,
 		defaultStParams.MinCommissionRate,
 	)
 
@@ -214,22 +222,27 @@ func genesisStateWithValSet(t *testing.T,
 	stakingGenesis := stakingtypes.NewGenesisState(stParams, validators, delegations)
 	genesisState[stakingtypes.ModuleName] = app.AppCodec().MustMarshalJSON(stakingGenesis)
 
+	signingInfos := make([]slashingtypes.SigningInfo, len(valSet.Validators))
+	for i, val := range valSet.Validators {
+		signingInfos[i] = slashingtypes.SigningInfo{
+			Address:              sdk.ConsAddress(val.Address).String(),
+			ValidatorSigningInfo: slashingtypes.ValidatorSigningInfo{},
+		}
+	}
+	slashingGenesis := slashingtypes.NewGenesisState(slashingtypes.DefaultParams(), signingInfos, nil)
+	genesisState[slashingtypes.ModuleName] = app.AppCodec().MustMarshalJSON(slashingGenesis)
+
+	// add bonded amount to bonded pool module account
+	balances = append(balances, banktypes.Balance{
+		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
+		Coins:   sdk.Coins{sdk.NewCoin(sdk.DefaultBondDenom, bondAmt.MulRaw(int64(len(valSet.Validators))))},
+	})
+
 	totalSupply := sdk.NewCoins()
 	for _, b := range balances {
 		// add genesis acc tokens to total supply
 		totalSupply = totalSupply.Add(b.Coins...)
 	}
-
-	for range delegations {
-		// add delegated tokens to total supply
-		totalSupply = totalSupply.Add(sdk.NewCoin(config.BaseDenom, bondAmt))
-	}
-
-	// add bonded amount to bonded pool module account
-	balances = append(balances, banktypes.Balance{
-		Address: authtypes.NewModuleAddress(stakingtypes.BondedPoolName).String(),
-		Coins:   sdk.Coins{sdk.NewCoin(config.BaseDenom, bondAmt)},
-	})
 
 	// update total supply
 	bankGenesis := banktypes.NewGenesisState(banktypes.DefaultGenesisState().Params, balances, totalSupply, []banktypes.Metadata{},
@@ -386,13 +399,13 @@ func (s *KeeperTestHelper) AllocateRewardsToValidator(valAddr sdk.ValAddress, re
 	s.Require().True(found)
 
 	// allocate reward tokens to distribution module
-	coins := sdk.Coins{sdk.NewCoin(config.BaseDenom, rewardAmt)}
+	coins := sdk.Coins{sdk.NewCoin(sdk.DefaultBondDenom, rewardAmt)}
 	err := banktestutil.FundModuleAccount(s.App.BankKeeper, s.Ctx, distrtypes.ModuleName, coins)
 	s.Require().NoError(err)
 
 	// allocate rewards to validator
 	s.Ctx = s.Ctx.WithBlockHeight(s.Ctx.BlockHeight() + 1)
-	decTokens := sdk.DecCoins{{Denom: config.BaseDenom, Amount: sdk.NewDec(20000)}}
+	decTokens := sdk.DecCoins{{Denom: sdk.DefaultBondDenom, Amount: sdk.NewDec(20000)}}
 	s.App.DistrKeeper.AllocateTokensToValidator(s.Ctx, validator, decTokens)
 }
 
