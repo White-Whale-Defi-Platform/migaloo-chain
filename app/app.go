@@ -1116,7 +1116,7 @@ func (app *MigalooApp) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
-// TxConfig returns WasmApp's TxConfig
+// TxConfig returns MigalooApp's TxConfig
 func (app *MigalooApp) TxConfig() client.TxConfig {
 	return app.txConfig
 }
