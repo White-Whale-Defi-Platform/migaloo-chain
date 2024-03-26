@@ -18,7 +18,7 @@ import (
 // InstantiateReflectContract store and instantiate a reflect contract instance
 func InstantiateReflectContract(t *testing.T, chain *ibctesting.TestChain) sdk.AccAddress {
 	t.Helper()
-	codeID := chain.StoreCodeFile("../../x/wasm/keeper/testdata/reflect_1_1.wasm").CodeID
+	codeID := chain.StoreCodeFile("testdata/reflect_1_1.wasm").CodeID
 	contractAddr := chain.InstantiateContract(codeID, []byte(`{}`))
 	require.NotEmpty(t, contractAddr)
 	return contractAddr

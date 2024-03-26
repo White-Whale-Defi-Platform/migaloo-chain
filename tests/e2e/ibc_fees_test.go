@@ -4,10 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	tmtypes "github.com/cometbft/cometbft/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"testing"
 	"time"
 
@@ -26,12 +22,6 @@ import (
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 )
-
-// DefaultMigalooAppFactory instantiates and sets up the default Migaloo app
-func DefaultMigalooAppFactory(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasmkeeper.Option, balances ...banktypes.Balance) wasmibctesting.ChainApp {
-	t.Helper()
-	return app.SetupWithGenesisValSet(t, valSet, genAccs, chainID, balances...)
-}
 
 func TestIBCFeesTransfer(t *testing.T) {
 	// scenario:
