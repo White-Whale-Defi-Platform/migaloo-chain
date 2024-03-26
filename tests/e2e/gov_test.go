@@ -1,9 +1,10 @@
 package e2e_test
 
 import (
-	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/tests/e2e"
 	"testing"
 	"time"
+
+	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/tests/e2e"
 
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	"github.com/stretchr/testify/assert"

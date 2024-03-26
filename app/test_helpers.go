@@ -3,9 +3,10 @@ package app
 import (
 	"encoding/json"
 	"fmt"
-	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	"testing"
 	"time"
+
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 
 	"cosmossdk.io/math"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -111,7 +112,7 @@ func SetupApp(t *testing.T) *MigalooApp {
 		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
 	}
 
-	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "", balance)
+	app := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, "", nil, balance)
 
 	return app
 }
@@ -120,10 +121,10 @@ func SetupApp(t *testing.T) *MigalooApp {
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the app from first genesis
 // account. A Nop logger is set in app.
-func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, balances ...banktypes.Balance) *MigalooApp {
+func SetupWithGenesisValSet(t *testing.T, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, chainID string, opts []wasmkeeper.Option, balances ...banktypes.Balance) *MigalooApp {
 	t.Helper()
 
-	migalooApp, genesisState := setup(true, chainID)
+	migalooApp, genesisState := setup(true, chainID, opts...)
 	genesisState = genesisStateWithValSet(t, migalooApp, genesisState, valSet, genAccs, balances...)
 
 	consensusParams := simtestutil.DefaultConsensusParams
