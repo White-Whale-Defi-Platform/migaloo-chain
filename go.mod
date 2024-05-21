@@ -217,6 +217,7 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.0
 	// Downgraded to avoid bugs in following commits which caused simulations to fail.
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
+	github.com/terra-money/alliance => github.com/terra-money/alliance v0.0.0-20240521095709-cce57dd904d8
 
 	// use terra core 2.5.0
 	github.com/terra-money/core/v2 => github.com/notional-labs/terra-core/v2 v2.5.1-pfm
@@ -224,4 +225,5 @@ replace (
 	golang.org/x/exp => golang.org/x/exp v0.0.0-20230711153332-06a737ee72cb
 	// stick with compatible version of rapid in v0.47.x line
 	pgregory.net/rapid => pgregory.net/rapid v0.5.5
+
 )
