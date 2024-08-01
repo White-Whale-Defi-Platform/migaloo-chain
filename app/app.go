@@ -1197,6 +1197,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 		v421.UpgradeName,
 		v421.CreateUpgradeHandler(
 			app.mm,
+			app.StakingKeeper,
 			app.configurator,
 		),
 	)
