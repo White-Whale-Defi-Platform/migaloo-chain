@@ -10,7 +10,7 @@ import (
 // CreateUpgradeHandler that migrates the chain from v4.2.2 to v4.2.3
 func CreateUpgradeHandler(
 	mm *module.Manager,
-	sk *stakingKeeper.Keeper,
+	_ *stakingKeeper.Keeper,
 	configurator module.Configurator,
 ) upgradetypes.UpgradeHandler {
 	return func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
