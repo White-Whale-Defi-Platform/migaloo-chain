@@ -7,7 +7,7 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
-// CreateUpgradeHandler that migrates the chain from v4.2.2 to v4.2.3
+// CreateUpgradeHandler that migrates the chain from v4.2.2 to v4.2.4
 func CreateUpgradeHandler(
 	mm *module.Manager,
 	_ *stakingKeeper.Keeper,
