@@ -3,17 +3,22 @@ module github.com/White-Whale-Defi-Platform/migaloo-chain/v4
 go 1.22.9
 
 require (
+	cosmossdk.io/errors v1.0.1
 	cosmossdk.io/math v1.4.0
 	cosmossdk.io/simapp v0.0.0-20230608160436-666c345ad23d
 	cosmossdk.io/tools/rosetta v0.2.1
 	github.com/CosmWasm/wasmd v0.46.0
+	github.com/CosmWasm/wasmvm v1.5.5
 	github.com/cometbft/cometbft v0.37.13
 	github.com/cometbft/cometbft-db v0.12.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
 	github.com/cosmos/cosmos-sdk v0.47.15
 	github.com/cosmos/gogoproto v1.7.0
+	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.1.3
+	github.com/cosmos/ibc-apps/modules/async-icq/v7 v7.1.1
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20231017170841-8fd49ec0f017
 	github.com/cosmos/ibc-go/v7 v7.8.0
+	github.com/golang/protobuf v1.5.4
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/prometheus/client_golang v1.20.4
@@ -25,6 +30,7 @@ require (
 	github.com/terra-money/alliance v0.3.6
 	github.com/terra-money/core/v2 v2.11.4
 	google.golang.org/grpc v1.67.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -45,15 +51,6 @@ require (
 	golang.org/x/sync v0.8.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
-)
-
-require (
-	cosmossdk.io/errors v1.0.1
-	github.com/CosmWasm/wasmvm v1.5.5
-	github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7 v7.1.3
-	github.com/cosmos/ibc-apps/modules/async-icq/v7 v7.1.1
-	github.com/golang/protobuf v1.5.4
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
