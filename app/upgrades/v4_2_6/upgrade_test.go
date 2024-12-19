@@ -63,5 +63,4 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 	foundationBalance := s.App.BankKeeper.GetAllBalances(s.Ctx, foundationAddr)
 	s.T().Logf("balance: %v", foundationBalance)
 	s.Require().Equal(int64(MockDeadContractBalance), foundationBalance.AmountOf(v4.Denom).Int64()) // Add int64 cast
-
 }

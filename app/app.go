@@ -164,6 +164,7 @@ import (
 	v424 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_4"
 	v425 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_5"
 	v426 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_6"
+	v427 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_7"
 	"github.com/rakyll/statik/fs"
 
 	// unnamed import of statik for swagger UI support
@@ -1229,6 +1230,14 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.configurator,
 		),
 	)
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v427.UpgradeName,
+		v427.CreateUpgradeHandler(
+			app.mm,
+			app.StakingKeeper,
+			app.configurator,
+		),
+	)
 
 	// When a planned update height is reached, the old binary will panic
 	// writing on disk the height and name of the update that triggered it
@@ -1242,7 +1251,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 		return
 	}
 
-	if upgradeInfo.Name == v426.UpgradeName {
+	if upgradeInfo.Name == v427.UpgradeName {
 		storeUpgrades := &storetypes.StoreUpgrades{
 			Added:   []string{},
 			Deleted: []string{},

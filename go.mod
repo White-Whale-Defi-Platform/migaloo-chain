@@ -3,14 +3,14 @@ module github.com/White-Whale-Defi-Platform/migaloo-chain/v4
 go 1.22.9
 
 require (
-	cosmossdk.io/math v1.3.0
+	cosmossdk.io/math v1.4.0
 	cosmossdk.io/simapp v0.0.0-20230608160436-666c345ad23d
 	cosmossdk.io/tools/rosetta v0.2.1
 	github.com/CosmWasm/wasmd v0.46.0
 	github.com/cometbft/cometbft v0.37.13
 	github.com/cometbft/cometbft-db v0.12.0
 	github.com/cosmos/cosmos-proto v1.0.0-beta.5
-	github.com/cosmos/cosmos-sdk v0.47.14
+	github.com/cosmos/cosmos-sdk v0.47.15
 	github.com/cosmos/gogoproto v1.7.0
 	github.com/cosmos/ibc-apps/modules/ibc-hooks/v7 v7.0.0-20231017170841-8fd49ec0f017
 	github.com/cosmos/ibc-go/v7 v7.8.0
