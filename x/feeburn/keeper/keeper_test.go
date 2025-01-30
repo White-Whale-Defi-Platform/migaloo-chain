@@ -1,8 +1,10 @@
 package keeper_test
 
 import (
+	"context"
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -68,7 +70,7 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) []byte {
 	txBuilder := encodingConfig.TxConfig.NewTxBuilder()
 
 	txBuilder.SetGasLimit(1000000)
-	gasPrice := sdk.NewInt(1)
+	gasPrice := sdkmath.NewInt(1)
 	fees := &sdk.Coins{{Denom: sdk.DefaultBondDenom, Amount: gasPrice.MulRaw(DefaultFee)}}
 	txBuilder.SetFeeAmount(*fees)
 	err := txBuilder.SetMsgs(msgs...)
@@ -82,7 +84,7 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) []byte {
 	sigV2 := signing.SignatureV2{
 		PubKey: priv.PubKey(),
 		Data: &signing.SingleSignatureData{
-			SignMode:  encodingConfig.TxConfig.SignModeHandler().DefaultMode(),
+			SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
 			Signature: nil,
 		},
 		Sequence: seq,
@@ -101,7 +103,8 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) []byte {
 		Sequence:      seq,
 	}
 	sigV2, err = tx.SignWithPrivKey(
-		encodingConfig.TxConfig.SignModeHandler().DefaultMode(), signerData,
+		context.TODO(),
+		signing.SignMode_SIGN_MODE_DIRECT, signerData,
 		txBuilder, priv, encodingConfig.TxConfig,
 		seq,
 	)

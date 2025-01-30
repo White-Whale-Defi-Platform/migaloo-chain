@@ -1,10 +1,12 @@
 package v4
 
 import (
+	"context"
+
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	bankKeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
 // CreateUpgradeHandler that migrates the chain from v4.2.5 to v4.2.6
@@ -13,10 +15,11 @@ func CreateUpgradeHandler(
 	bankKeeper bankKeeper.Keeper,
 	configurator module.Configurator,
 ) upgradetypes.UpgradeHandler {
-	return func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+	return func(ctx context.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
 		// ignore the error if any
-		if err := migrateFundFromDeadContacts(ctx, bankKeeper); err != nil {
-			ctx.Logger().Error("migrateFundFromDeadContacts", "error", err)
+		if err := migrateFundFromDeadContacts(sdkCtx, bankKeeper); err != nil {
+			sdkCtx.Logger().Error("migrateFundFromDeadContacts", "error", err)
 		}
 
 		return mm.RunMigrations(ctx, configurator, fromVM)

@@ -27,6 +27,10 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 // performed if the requested authority is the Cosmos SDK governance module
 // account.
 func (k MsgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {
+	if err := req.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
 	if k.authority.String() != req.Authority {
 		return nil, errorsmod.Wrapf(govtypes.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.authority.String(), req.Authority)
 	}

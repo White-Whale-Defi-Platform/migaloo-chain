@@ -6,7 +6,9 @@ import (
 
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/tests/e2e"
 
-	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
+	sdkmath "cosmossdk.io/math"
+	"github.com/CosmWasm/wasmd/tests/ibctesting"
+	wasmvmtypes "github.com/CosmWasm/wasmvm/v2/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -15,7 +17,6 @@ import (
 	distributiontypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	v1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1"
 
-	"github.com/CosmWasm/wasmd/x/wasm/ibctesting"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 )
 
@@ -28,7 +29,7 @@ func TestGovVoteByContract(t *testing.T) {
 	coord := ibctesting.NewCoordinatorX(t, 1, e2e.DefaultMigalooAppFactory)
 	chain := coord.GetChain(ibctesting.GetChainID(1))
 	contractAddr := e2e.InstantiateReflectContract(t, chain)
-	chain.Fund(contractAddr, sdk.NewIntFromUint64(1_000_000_000))
+	chain.Fund(contractAddr, sdkmath.NewIntFromUint64(1_000_000_000))
 	// a contract with a high delegation amount
 	delegateMsg := wasmvmtypes.CosmosMsg{
 		Staking: &wasmvmtypes.StakingMsg{
@@ -49,7 +50,9 @@ func TestGovVoteByContract(t *testing.T) {
 	communityPoolBalance := chain.Balance(accountKeeper.GetModuleAccount(chain.GetContext(), distributiontypes.ModuleName).GetAddress(), sdk.DefaultBondDenom)
 	require.False(t, communityPoolBalance.IsZero())
 
-	initialDeposit := govKeeper.GetParams(chain.GetContext()).MinDeposit
+	params, err := govKeeper.Params.Get(chain.GetContext())
+	require.NoError(t, err)
+	initialDeposit := params.MinDeposit
 	govAcctAddr := govKeeper.GetGovernanceAccount(chain.GetContext()).GetAddress()
 
 	specs := map[string]struct {
@@ -58,25 +61,25 @@ func TestGovVoteByContract(t *testing.T) {
 	}{
 		"yes": {
 			vote: &wasmvmtypes.VoteMsg{
-				Vote: wasmvmtypes.Yes,
+				Option: wasmvmtypes.Yes,
 			},
 			expPass: true,
 		},
 		"no": {
 			vote: &wasmvmtypes.VoteMsg{
-				Vote: wasmvmtypes.No,
+				Option: wasmvmtypes.No,
 			},
 			expPass: false,
 		},
 		"abstain": {
 			vote: &wasmvmtypes.VoteMsg{
-				Vote: wasmvmtypes.Abstain,
+				Option: wasmvmtypes.Abstain,
 			},
 			expPass: true,
 		},
 		"no with veto": {
 			vote: &wasmvmtypes.VoteMsg{
-				Vote: wasmvmtypes.NoWithVeto,
+				Option: wasmvmtypes.NoWithVeto,
 			},
 			expPass: false,
 		},
@@ -89,7 +92,7 @@ func TestGovVoteByContract(t *testing.T) {
 			payloadMsg := &distributiontypes.MsgCommunityPoolSpend{
 				Authority: govAcctAddr.String(),
 				Recipient: recipientAddr.String(),
-				Amount:    sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.OneInt())),
+				Amount:    sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.OneInt())),
 			}
 			msg, err := v1.NewMsgSubmitProposal(
 				[]sdk.Msg{payloadMsg},
@@ -98,13 +101,14 @@ func TestGovVoteByContract(t *testing.T) {
 				"",
 				"my proposal",
 				"testing",
+				false,
 			)
 			require.NoError(t, err)
 			rsp, gotErr := chain.SendMsgs(msg)
 			require.NoError(t, gotErr)
-			require.Len(t, rsp.MsgResponses, 1)
-			got, ok := rsp.MsgResponses[0].GetCachedValue().(*v1.MsgSubmitProposalResponse)
-			require.True(t, ok)
+			var got v1.MsgSubmitProposalResponse
+			chain.UnwrapExecTXResult(rsp, &got)
+
 			propID := got.ProposalId
 
 			// with other delegators voted yes
@@ -121,8 +125,8 @@ func TestGovVoteByContract(t *testing.T) {
 			e2e.MustExecViaReflectContract(t, chain, contractAddr, voteMsg)
 
 			// then proposal executed after voting period
-			proposal, ok := govKeeper.GetProposal(chain.GetContext(), propID)
-			require.True(t, ok)
+			proposal, err := govKeeper.Proposals.Get(chain.GetContext(), propID)
+			require.NoError(t, err)
 			coord.IncrementTimeBy(proposal.VotingEndTime.Sub(chain.GetContext().BlockTime()) + time.Minute)
 			coord.CommitBlock(chain)
 
@@ -132,7 +136,7 @@ func TestGovVoteByContract(t *testing.T) {
 				assert.True(t, recipientBalance.IsZero())
 				return
 			}
-			expBalanceAmount := sdk.NewCoin(sdk.DefaultBondDenom, sdk.OneInt())
+			expBalanceAmount := sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.OneInt())
 			assert.Equal(t, expBalanceAmount.String(), recipientBalance.String())
 		})
 	}

@@ -7,20 +7,22 @@ import (
 	"testing"
 	"time"
 
-	ibcfee "github.com/cosmos/ibc-go/v7/modules/apps/29-fee/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
-	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
-	ibctesting "github.com/cosmos/ibc-go/v7/testing"
+	sdkmath "cosmossdk.io/math"
+	ibcfee "github.com/cosmos/ibc-go/v8/modules/apps/29-fee/types"
+	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	clienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 
-	wasmibctesting "github.com/CosmWasm/wasmd/x/wasm/ibctesting"
+	wasmibctesting "github.com/CosmWasm/wasmd/tests/ibctesting"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
+	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 )
 
 func TestIBCFeesTransfer(t *testing.T) {
@@ -29,7 +31,7 @@ func TestIBCFeesTransfer(t *testing.T) {
 	//   with an ics-20 channel established
 	// when an ics-29 fee is attached to an ibc package
 	// then the relayer's payee is receiving the fee(s) on success
-	codec := app.MakeEncodingConfig().Codec
+	codec := config.MakeEncodingConfig().Codec
 	// coord := wasmibctesting.NewCoordinator(t, 2)
 	coord := wasmibctesting.NewCoordinatorX(t, 2, DefaultMigalooAppFactory)
 	chainA := coord.GetChain(wasmibctesting.GetChainID(1))
@@ -39,7 +41,7 @@ func TestIBCFeesTransfer(t *testing.T) {
 	actorChainB := sdk.AccAddress(chainB.SenderPrivKey.PubKey().Address())
 	receiver := sdk.AccAddress(bytes.Repeat([]byte{1}, address.Len))
 	payee := sdk.AccAddress(bytes.Repeat([]byte{2}, address.Len))
-	oneToken := sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1)))
+	oneToken := sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(1)))
 
 	path := wasmibctesting.NewPath(chainA, chainB)
 	path.EndpointA.ChannelConfig = &ibctesting.ChannelConfig{
@@ -67,7 +69,7 @@ func TestIBCFeesTransfer(t *testing.T) {
 	require.NoError(t, err)
 
 	// when a transfer package is sent
-	transferCoin := sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1))
+	transferCoin := sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(1))
 	ibcPayloadMsg := ibctransfertypes.NewMsgTransfer(path.EndpointA.ChannelConfig.PortID, path.EndpointA.ChannelID, transferCoin, actorChainA.String(), receiver.String(), clienttypes.Height{}, uint64(time.Now().Add(time.Minute).UnixNano()), "testing")
 	ibcPackageFee := ibcfee.NewFee(oneToken, oneToken, sdk.Coins{})
 	feeMsg := ibcfee.NewMsgPayPacketFee(ibcPackageFee, ibctransfertypes.PortID, path.EndpointA.ChannelID, actorChainA.String(), nil)
@@ -110,7 +112,7 @@ func TestIBCFeesTransfer(t *testing.T) {
 	gotBalance = chainA.Balance(receiver, expBalance.Denom)
 	assert.Equal(t, expBalance.String(), gotBalance.String())
 	payeeBalance = chainB.AllBalances(payee)
-	assert.Equal(t, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(2)).String(), payeeBalance.String())
+	assert.Equal(t, sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(2)).String(), payeeBalance.String())
 }
 
 func TestIBCFeesWasm(t *testing.T) {
@@ -119,7 +121,7 @@ func TestIBCFeesWasm(t *testing.T) {
 	//   and an ibc channel established
 	// when an ics-29 fee is attached to an ibc package
 	// then the relayer's payee is receiving the fee(s) on success
-	codec := app.MakeEncodingConfig().Codec
+	codec := config.MakeEncodingConfig().Codec
 	coord := wasmibctesting.NewCoordinatorX(t, 2, DefaultMigalooAppFactory)
 	chainA := coord.GetChain(wasmibctesting.GetChainID(1))
 	chainB := coord.GetChain(ibctesting.GetChainID(2))
@@ -138,7 +140,7 @@ func TestIBCFeesWasm(t *testing.T) {
 	ibcContractPortID := chainA.ContractInfo(ibcContractAddr).IBCPortID
 
 	payee := sdk.AccAddress(bytes.Repeat([]byte{2}, address.Len))
-	oneToken := sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(1)))
+	oneToken := sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(1)))
 
 	path := wasmibctesting.NewPath(chainA, chainB)
 	path.EndpointA.ChannelConfig = &ibctesting.ChannelConfig{
@@ -187,11 +189,11 @@ func TestIBCFeesWasm(t *testing.T) {
 	require.NoError(t, err)
 	assert.JSONEq(t, `{"balance":"99999900"}`, string(gotCW20Balance))
 	payeeBalance := chainA.AllBalances(payee)
-	assert.Equal(t, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(2)).String(), payeeBalance.String())
+	assert.Equal(t, sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(2)).String(), payeeBalance.String())
 	// and on chain B
 	pendingIncentivisedPackages = appA.IBCFeeKeeper.GetIdentifiedPacketFeesForChannel(chainA.GetContext(), ibcContractPortID, path.EndpointA.ChannelID)
 	assert.Len(t, pendingIncentivisedPackages, 0)
-	expBalance := ibctransfertypes.GetTransferCoin(path.EndpointB.ChannelConfig.PortID, path.EndpointB.ChannelID, "cw20:"+cw20ContractAddr.String(), sdk.NewInt(100))
+	expBalance := ibctransfertypes.GetTransferCoin(path.EndpointB.ChannelConfig.PortID, path.EndpointB.ChannelID, "cw20:"+cw20ContractAddr.String(), sdkmath.NewInt(100))
 	gotBalance := chainB.Balance(actorChainB, expBalance.Denom)
 	assert.Equal(t, expBalance.String(), gotBalance.String(), chainB.AllBalances(actorChainB))
 
@@ -220,5 +222,5 @@ func TestIBCFeesWasm(t *testing.T) {
 	assert.JSONEq(t, `{"balance":"100000000"}`, string(gotCW20Balance))
 	// and on chain B
 	payeeBalance = chainB.AllBalances(payee)
-	assert.Equal(t, sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(2)).String(), payeeBalance.String())
+	assert.Equal(t, sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(2)).String(), payeeBalance.String())
 }

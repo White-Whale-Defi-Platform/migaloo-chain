@@ -48,7 +48,7 @@ func (s *UpgradeTestSuite) TestUpgrade() {
 	s.MockBankBalances()
 
 	// == UPGRADE ==
-	upgradeHeight := int64(5)
+	upgradeHeight := s.App.LastBlockHeight() + 1
 
 	// Execute upgrade
 	s.ConfirmUpgradeSucceeded(v4.UpgradeName, upgradeHeight)

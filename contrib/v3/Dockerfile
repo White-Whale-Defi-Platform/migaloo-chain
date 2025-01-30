@@ -11,8 +11,8 @@ WORKDIR /code
 ENV OLD_VERSION v3.0.4
 ENV ROOT /code
 
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.2.6/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.2.6/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
+ADD https://github.com/CosmWasm/wasmvm/v2/releases/download/v1.2.6/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+ADD https://github.com/CosmWasm/wasmvm/v2/releases/download/v1.2.6/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
 
 
 # Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
