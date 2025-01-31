@@ -106,6 +106,8 @@ import (
 	ibctransferkeeper "github.com/cosmos/ibc-go/v8/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibc "github.com/cosmos/ibc-go/v8/modules/core"
+	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
+	ibcconnectiontypes "github.com/cosmos/ibc-go/v8/modules/core/03-connection/types"
 	ibcporttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
 
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
@@ -163,6 +165,7 @@ import (
 	v425 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_5"
 	v426 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_6"
 	v427 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_7"
+	v428 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_8"
 	"github.com/rakyll/statik/fs"
 
 	// unnamed import of statik for swagger UI support
@@ -1147,21 +1150,12 @@ func (app *MigalooApp) AutoCliOpts() autocli.AppOptions {
 
 // RegisterSwaggerAPI registers swagger route with API Server
 func RegisterSwaggerAPI(rtr *mux.Router) {
-	cosmosStatikFs, err := fs.New()
-	if err != nil {
-		panic(err)
-	}
-
-	cosmosStaticServer := http.FileServer(cosmosStatikFs)
-
 	statikFS, err := fs.NewWithNamespace("migaloo")
 	if err != nil {
 		panic(err)
 	}
 
 	staticServer := http.FileServer(statikFS)
-
-	rtr.PathPrefix("/swagger/cosmos-sdk/").Handler(http.StripPrefix("/swagger/cosmos-sdk/", cosmosStaticServer))
 	rtr.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger/", staticServer))
 }
 
@@ -1251,6 +1245,13 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.configurator,
 		),
 	)
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v428.UpgradeName,
+		v428.CreateUpgradeHandler(
+			app.mm,
+			app.configurator,
+		),
+	)
 
 	// When a planned update height is reached, the old binary will panic
 	// writing on disk the height and name of the update that triggered it
@@ -1264,7 +1265,7 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 		return
 	}
 
-	if upgradeInfo.Name == v427.UpgradeName {
+	if upgradeInfo.Name == v428.UpgradeName {
 		storeUpgrades := &storetypes.StoreUpgrades{
 			Added:   []string{},
 			Deleted: []string{},
@@ -1297,7 +1298,9 @@ func stringMapKeys(m map[string][]string) []string {
 //nolint:staticcheck // ParamsKeyTable is deprecated but used here for migration
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey storetypes.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
-
+	keyTable := ibcclienttypes.ParamKeyTable()
+	keyTable.RegisterParamSet(&ibcconnectiontypes.Params{})
+	paramsKeeper.Subspace(ibcexported.ModuleName).WithKeyTable(keyTable)
 	paramsKeeper.Subspace(authtypes.ModuleName).WithKeyTable(authtypes.ParamKeyTable())
 	paramsKeeper.Subspace(banktypes.ModuleName).WithKeyTable(banktypes.ParamKeyTable())
 	paramsKeeper.Subspace(stakingtypes.ModuleName).WithKeyTable(stakingtypes.ParamKeyTable())
@@ -1306,11 +1309,10 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(slashingtypes.ModuleName).WithKeyTable(slashingtypes.ParamKeyTable())
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypesv1.ParamKeyTable())
 	paramsKeeper.Subspace(crisistypes.ModuleName).WithKeyTable(crisistypes.ParamKeyTable())
-	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
-	paramsKeeper.Subspace(ibcexported.ModuleName)
-	paramsKeeper.Subspace(icahosttypes.SubModuleName)
+	paramsKeeper.Subspace(ibctransfertypes.ModuleName).WithKeyTable(ibctransfertypes.ParamKeyTable())
+	paramsKeeper.Subspace(icahosttypes.SubModuleName).WithKeyTable(icahosttypes.ParamKeyTable())
 	paramsKeeper.Subspace(tokenfactorytypes.ModuleName).WithKeyTable(tokenfactorytypes.ParamKeyTable())
-	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
+	paramsKeeper.Subspace(icacontrollertypes.SubModuleName).WithKeyTable(icacontrollertypes.ParamKeyTable())
 	paramsKeeper.Subspace(icqtypes.ModuleName).WithKeyTable(icqtypes.ParamKeyTable())
 	paramsKeeper.Subspace(wasmtypes.ModuleName)
 	paramsKeeper.Subspace(packetforwardtypes.ModuleName)
