@@ -15,12 +15,11 @@ WORKDIR /code
 COPY . /code/
 
 # See https://github.com/CosmWasm/wasmvm/releases 
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.5.1/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
-ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.5.1/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
-
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.4/libwasmvm_muslc.aarch64.a /lib/libwasmvm_muslc.aarch64.a
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.4/libwasmvm_muslc.x86_64.a /lib/libwasmvm_muslc.x86_64.a
 # check sums
-RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep b89c242ffe2c867267621a6469f07ab70fc204091809d9c6f482c3fdf9293830
-RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep c0f4614d0835be78ac8f3d647a70ccd7ed9f48632bc1374db04e4df2245cb467
+RUN sha256sum /lib/libwasmvm_muslc.aarch64.a | grep 090b97641157fae1ae45e7ed368a1a8c091f3fef67958d3bc7c2fa7e7c54b6b4
+RUN sha256sum /lib/libwasmvm_muslc.x86_64.a | grep a4a3d09b36fabb65b119d5ba23442c23694401fcbee4451fe6b7e22e325a4bac
 
 # Copy the library you want to the final location that will be found by the linker flag `-lwasmvm_muslc`
 RUN cp "/lib/libwasmvm_muslc.$(uname -m).a" /lib/libwasmvm_muslc.a
