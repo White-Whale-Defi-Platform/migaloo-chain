@@ -1,6 +1,9 @@
 package v4
 
 import (
+	"context"
+
+	upgradetypes "cosmossdk.io/x/upgrade/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
@@ -9,11 +12,10 @@ import (
 	consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	icacontrollerkeeper "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/keeper"
-	icacontrollertypes "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts/controller/types"
-	clientkeeper "github.com/cosmos/ibc-go/v7/modules/core/02-client/keeper"
-	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	icacontrollerkeeper "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/keeper"
+	icacontrollertypes "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts/controller/types"
+	clientkeeper "github.com/cosmos/ibc-go/v8/modules/core/02-client/keeper"
+	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 )
 
 // CreateUpgradeHandler that migrates the chain from v3.0.2 to v4.1.2
@@ -26,19 +28,20 @@ func CreateUpgradeHandler(
 	icacontrollerKeeper icacontrollerkeeper.Keeper,
 	accountKeeper authkeeper.AccountKeeper,
 ) upgradetypes.UpgradeHandler {
-	return func(ctx sdk.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+	return func(ctx context.Context, _ upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {
+		sdkCtx := sdk.UnwrapSDKContext(ctx)
 		// READ: https://github.com/cosmos/cosmos-sdk/blob/v0.47.4/UPGRADING.md#xconsensus
 		baseAppLegacySS := paramsKeeper.Subspace(baseapp.Paramspace).
 			WithKeyTable(paramstypes.ConsensusParamsKeyTable())
-		baseapp.MigrateParams(ctx, baseAppLegacySS, &consensusParamsKeeper)
+		baseapp.MigrateParams(sdkCtx, baseAppLegacySS, &consensusParamsKeeper.ParamsStore)
 
 		// READ: https://github.com/cosmos/ibc-go/blob/v7.2.0/docs/migrations/v7-to-v7_1.md#chains
-		params := clientKeeper.GetParams(ctx)
+		params := clientKeeper.GetParams(sdkCtx)
 		params.AllowedClients = append(params.AllowedClients, ibcexported.Localhost)
-		clientKeeper.SetParams(ctx, params)
+		clientKeeper.SetParams(sdkCtx, params)
 
 		// READ: https://github.com/terra-money/core/issues/166
-		icacontrollerKeeper.SetParams(ctx, icacontrollertypes.DefaultParams())
+		icacontrollerKeeper.SetParams(sdkCtx, icacontrollertypes.DefaultParams())
 
 		// Burning module permissions
 		moduleAccI := accountKeeper.GetModuleAccount(ctx, authtypes.FeeCollectorName)

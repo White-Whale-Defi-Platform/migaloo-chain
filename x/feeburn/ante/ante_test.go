@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 
+	sdkmath "cosmossdk.io/math"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/x/feeburn/ante"
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -31,18 +32,18 @@ func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 		privNew := secp256k1.GenPrivKey()
 		addrRecv := getAddr(privNew)
 
-		accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
+		accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdkmath.NewInt(int64(math.Pow10(18) * 2))}}
 		err := suite.FundAccount(suite.Ctx, addr, accBalance)
 		suite.Require().NoError(err)
 
-		sendAmount := sdk.NewCoin(config.BaseDenom, sdk.NewInt(10))
+		sendAmount := sdk.NewCoin(config.BaseDenom, sdkmath.NewInt(10))
 		amount := sdk.Coins{sendAmount}
 		sendMsg := banktypes.NewMsgSend(accountAddress, addrRecv, amount)
 		supplyBefore := suite.App.BankKeeper.GetSupply(s.Ctx, config.BaseDenom).Amount
 		fmt.Println("supplyBefore", supplyBefore)
 		txBuilder := prepareCosmosTx(priv, sendMsg)
 		// turn block for validator updates
-		suite.App.EndBlock(abci.RequestEndBlock{Height: suite.Ctx.BlockHeight()})
+		suite.App.FinalizeBlock(&abci.RequestFinalizeBlock{Height: suite.Ctx.BlockHeight()})
 		suite.App.Commit()
 		_, err = antehandler(suite.Ctx, txBuilder.GetTx(), false)
 		suite.Require().NoError(err, "Did not error on invalid tx")
@@ -50,7 +51,7 @@ func (suite *AnteTestSuite) TestFeeBurnDecorator() {
 		fmt.Println("supplyAfter", supplyAfter)
 		totalTxFee := txBuilder.GetTx().GetFee()[0].Amount
 		txFeeBurnPercentInt, _ := strconv.Atoi(percent)
-		totalFeeBurn := totalTxFee.Mul(sdk.NewInt(int64(txFeeBurnPercentInt))).Quo(sdk.NewInt(100))
+		totalFeeBurn := totalTxFee.Mul(sdkmath.NewInt(int64(txFeeBurnPercentInt))).Quo(sdkmath.NewInt(100))
 		fmt.Printf("totalTxFee %v, totalFeeBurn %v\n", totalTxFee, totalFeeBurn)
 		suite.Require().True(totalFeeBurn.Equal(supplyBefore.Sub(supplyAfter)))
 	}
@@ -65,7 +66,7 @@ func (suite *AnteTestSuite) TestFeeBurnDecoratorWhenTxNull() {
 
 	priv := secp256k1.GenPrivKey()
 	addr := getAddr(priv)
-	accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdk.NewInt(int64(math.Pow10(18) * 2))}}
+	accBalance := sdk.Coins{{Denom: config.BaseDenom, Amount: sdkmath.NewInt(int64(math.Pow10(18) * 2))}}
 	err := suite.FundAccount(suite.Ctx, addr, accBalance)
 	suite.Require().NoError(err)
 	_, err = antehandler(suite.Ctx, nil, false)

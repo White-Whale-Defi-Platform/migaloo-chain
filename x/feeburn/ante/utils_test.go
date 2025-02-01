@@ -1,8 +1,10 @@
 package ante_test
 
 import (
+	"context"
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	apptesting "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 	config "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/params"
 	"github.com/cosmos/cosmos-sdk/client/tx"
@@ -10,13 +12,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
 	authsigning "github.com/cosmos/cosmos-sdk/x/auth/signing"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/cosmos/ibc-go/v7/testing/simapp"
 
 	"github.com/stretchr/testify/suite"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/module/testutil"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 )
 
@@ -37,7 +39,7 @@ func (suite *AnteTestSuite) SetupTest() {
 	suite.Setup(suite.T())
 
 	// Set up TxConfig.
-	encodingConfig := simapp.MakeTestEncodingConfig()
+	encodingConfig := testutil.MakeTestEncodingConfig()
 	// We're using TestMsg encoding in some tests, so register it here.
 	encodingConfig.Amino.RegisterConcrete(&testdata.TestMsg{}, "testdata.TestMsg", nil)
 	testdata.RegisterInterfaces(encodingConfig.InterfaceRegistry)
@@ -75,7 +77,7 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) client.TxBuilder
 	txBuilder := encodingConfig.TxConfig.NewTxBuilder()
 
 	txBuilder.SetGasLimit(1000000)
-	gasPrice := sdk.NewInt(1)
+	gasPrice := sdkmath.NewInt(1)
 	fees := &sdk.Coins{{Denom: config.BaseDenom, Amount: gasPrice.MulRaw(DefaultFee)}}
 	txBuilder.SetFeeAmount(*fees)
 	err := txBuilder.SetMsgs(msgs...)
@@ -89,7 +91,7 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) client.TxBuilder
 	sigV2 := signing.SignatureV2{
 		PubKey: priv.PubKey(),
 		Data: &signing.SingleSignatureData{
-			SignMode:  encodingConfig.TxConfig.SignModeHandler().DefaultMode(),
+			SignMode:  signing.SignMode_SIGN_MODE_DIRECT,
 			Signature: nil,
 		},
 		Sequence: seq,
@@ -108,7 +110,8 @@ func prepareCosmosTx(priv cryptotypes.PrivKey, msgs ...sdk.Msg) client.TxBuilder
 		Sequence:      seq,
 	}
 	sigV2, err = tx.SignWithPrivKey(
-		encodingConfig.TxConfig.SignModeHandler().DefaultMode(), signerData,
+		context.TODO(),
+		signing.SignMode_SIGN_MODE_DIRECT, signerData,
 		txBuilder, priv, encodingConfig.TxConfig,
 		seq,
 	)

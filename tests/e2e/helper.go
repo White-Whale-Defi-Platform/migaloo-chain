@@ -3,7 +3,7 @@ package e2e
 import (
 	"testing"
 
-	wasmibctesting "github.com/CosmWasm/wasmd/x/wasm/ibctesting"
+	wasmibctesting "github.com/CosmWasm/wasmd/tests/ibctesting"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app"
 	tmtypes "github.com/cometbft/cometbft/types"

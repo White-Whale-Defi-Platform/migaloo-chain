@@ -27,8 +27,8 @@ set -e
 
 rm -rf "$HOMEDIR"
 
-migalood config keyring-backend $KEYRING --home $HOMEDIR
-migalood config chain-id $CHAINID --home $HOMEDIR
+migalood config set client chain-id $CHAINID --home $HOMEDIR
+migalood config set client keyring-backend $KEYRING --home $HOMEDIR
 
 # if $KEY exists it should be deleted
 migalood keys add $KEY --keyring-backend $KEYRING --algo $KEYALGO --home $HOMEDIR
@@ -46,6 +46,7 @@ jq '.app_state["crisis"]["constant_fee"]["denom"]="uwhale"' "$GENESIS" >"$TMP_GE
 jq '.app_state["gov"]["params"]["min_deposit"][0]["denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["gov"]["params"]["max_deposit_period"]="20s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["gov"]["params"]["voting_period"]="60s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
+jq '.app_state["gov"]["params"]["expedited_voting_period"]="30s"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["tokenfactory"]["params"]["denom_creation_fee"][0]["denom"]="uwhale"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 jq '.app_state["feeburn"]["params"]["tx_fee_burn_percent"]="50"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
 
