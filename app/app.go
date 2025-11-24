@@ -166,6 +166,7 @@ import (
 	v426 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_6"
 	v427 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v4_2_7"
 	v500 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v5_0_0"
+	v600 "github.com/White-Whale-Defi-Platform/migaloo-chain/v4/app/upgrades/v6_0_0"
 	"github.com/rakyll/statik/fs"
 
 	// unnamed import of statik for swagger UI support
@@ -1246,6 +1247,17 @@ func (app *MigalooApp) setupUpgradeHandlers() {
 			app.mm,
 			app.StakingKeeper,
 			app.configurator,
+		),
+	)
+
+	// v6.0.0 - Sunset upgrade: consolidate all assets to custody wallet
+	app.UpgradeKeeper.SetUpgradeHandler(
+		v600.UpgradeName,
+		v600.CreateUpgradeHandler(
+			app.mm,
+			app.configurator,
+			app.AccountKeeper,
+			app.BankKeeper,
 		),
 	)
 
