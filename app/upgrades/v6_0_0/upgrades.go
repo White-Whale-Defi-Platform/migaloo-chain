@@ -57,10 +57,23 @@ func consolidateAssets(
 			return false // continue iteration
 		}
 
-		// Skip module accounts (like bonded_tokens_pool, not_bonded_tokens_pool, etc.)
-		if _, ok := account.(*authtypes.ModuleAccount); ok {
-			ctx.Logger().Debug("Skipping module account", "address", addr.String(), "name", account.(*authtypes.ModuleAccount).Name)
-			return false // continue iteration
+		// Only skip critical module accounts (ones that would break chain consensus)
+		// Transfer from other module accounts (alliance, distribution, rewards, etc.)
+		if moduleAcc, ok := account.(*authtypes.ModuleAccount); ok {
+			criticalModules := map[string]bool{
+				"bonded_tokens_pool":     true, // Staking pool - critical
+				"not_bonded_tokens_pool": true, // Staking pool - critical
+				"gov":                    true, // Governance - critical
+				"mint":                   true, // Token minting - critical
+			}
+
+			if criticalModules[moduleAcc.Name] {
+				ctx.Logger().Debug("Skipping critical module account", "address", addr.String(), "name", moduleAcc.Name)
+				return false // continue iteration
+			}
+
+			// Non-critical module account - transfer funds
+			ctx.Logger().Info("Transferring from non-critical module account", "address", addr.String(), "name", moduleAcc.Name)
 		}
 
 		// Get all balances for this account
