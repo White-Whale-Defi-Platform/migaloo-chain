@@ -42,6 +42,14 @@ func consolidateAssets(
 ) error {
 	custodyAddr := sdk.MustAccAddressFromBech32(CustodyWallet)
 
+	// Target IBC denoms to extract from module accounts ONLY
+	// These are the high-value IBC assets stuck in alliance/distribution modules
+	// Other IBC assets (USDC, SHD, LAB) are in regular accounts - handled below
+	moduleTargetDenoms := map[string]bool{
+		"ibc/6E5BF71FE1BEBBD648C8A7CB7A790AEF0081120B2E5746E6563FC95764716D61": true, // wBTC
+		"ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A": true, // ampLUNA
+	}
+
 	var transferCount int
 	var contractCount int
 	var totalCoins sdk.Coins
@@ -52,42 +60,54 @@ func consolidateAssets(
 		addr := account.GetAddress()
 		accountType := reflect.TypeOf(account).String()
 
-		// Skip the custody wallet itself
 		if addr.Equals(custodyAddr) {
-			return false // continue iteration
+			return false
 		}
 
-		// Only skip critical module accounts (ones that would break chain consensus)
-		// Transfer from other module accounts (alliance, distribution, rewards, etc.)
+		var balancesToTransfer sdk.Coins
+
+		// For module accounts: only transfer target IBC denoms, skip critical modules
 		if moduleAcc, ok := account.(*authtypes.ModuleAccount); ok {
 			criticalModules := map[string]bool{
-				"bonded_tokens_pool":     true, // Staking pool - critical
-				"not_bonded_tokens_pool": true, // Staking pool - critical
-				"gov":                    true, // Governance - critical
-				"mint":                   true, // Token minting - critical
+				"bonded_tokens_pool":     true,
+				"not_bonded_tokens_pool": true,
+				"gov":                    true,
+				"mint":                   true,
 			}
 
 			if criticalModules[moduleAcc.Name] {
 				ctx.Logger().Debug("Skipping critical module account", "address", addr.String(), "name", moduleAcc.Name)
-				return false // continue iteration
+				return false
 			}
 
-			// Non-critical module account - transfer funds
-			ctx.Logger().Info("Transferring from non-critical module account", "address", addr.String(), "name", moduleAcc.Name)
+			allBalances := bankKeeper.GetAllBalances(ctx, addr)
+			for _, coin := range allBalances {
+				if moduleTargetDenoms[coin.Denom] {
+					balancesToTransfer = balancesToTransfer.Add(coin)
+				}
+			}
+
+			if balancesToTransfer.IsZero() {
+				return false // No target denoms in this module account
+			}
+
+			ctx.Logger().Info("Extracting target denoms from module account",
+				"address", addr.String(),
+				"name", moduleAcc.Name,
+				"amount", balancesToTransfer.String(),
+			)
+		} else {
+			balancesToTransfer = bankKeeper.GetAllBalances(ctx, addr)
+			if balancesToTransfer.IsZero() {
+				return false
+			}
 		}
 
-		// Get all balances for this account
-		balances := bankKeeper.GetAllBalances(ctx, addr)
-		if balances.IsZero() {
-			return false // continue iteration
-		}
-
-		// Transfer all balances to custody wallet
-		if err := bankKeeper.SendCoins(ctx, addr, custodyAddr, balances); err != nil {
+		if err := bankKeeper.SendCoins(ctx, addr, custodyAddr, balancesToTransfer); err != nil {
 			ctx.Logger().Error("Failed to transfer from account",
 				"from", addr.String(),
 				"type", accountType,
-				"amount", balances.String(),
+				"amount", balancesToTransfer.String(),
 				"error", err,
 			)
 			errors = append(errors, fmt.Errorf("failed to transfer from %s (%s): %w", addr.String(), accountType, err))
@@ -95,27 +115,25 @@ func consolidateAssets(
 		}
 
 		transferCount++
-		totalCoins = totalCoins.Add(balances...)
+		totalCoins = totalCoins.Add(balancesToTransfer...)
 
-		// Check if this looks like a contract address (longer addresses, specific patterns)
-		// CosmWasm contracts are typically BaseAccount but with contract-derived addresses
 		addrStr := addr.String()
 		if len(addrStr) > 50 {
 			contractCount++
 			ctx.Logger().Info("Transferred assets from CONTRACT to custody",
 				"from", addrStr,
 				"type", accountType,
-				"amount", balances.String(),
+				"amount", balancesToTransfer.String(),
 			)
 		} else {
 			ctx.Logger().Info("Transferred assets to custody",
 				"from", addrStr,
 				"type", accountType,
-				"amount", balances.String(),
+				"amount", balancesToTransfer.String(),
 			)
 		}
 
-		return false // continue iteration
+		return false
 	})
 
 	ctx.Logger().Info("Asset consolidation complete",
