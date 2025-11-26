@@ -80,10 +80,23 @@ func consolidateAssets(
 				return false
 			}
 
+			// Leave a generous buffer in module accounts for take_rate operations
+			// Alliance module panics if it can't fulfill take_rate - no graceful handling
+			denomBuffers := map[string]sdk.Int{
+				"ibc/6E5BF71FE1BEBBD648C8A7CB7A790AEF0081120B2E5746E6563FC95764716D61": sdk.NewInt(25000),    // wBTC: 25k units = 0.00025 wBTC
+				"ibc/05238E98A143496C8AF2B6067BABC84503909ECE9E45FBCBAC2CBA5C889FD82A": sdk.NewInt(25000000), // ampLUNA: 25M units = 25 LUNA
+			}
+
 			allBalances := bankKeeper.GetAllBalances(ctx, addr)
 			for _, coin := range allBalances {
 				if moduleTargetDenoms[coin.Denom] {
-					balancesToTransfer = balancesToTransfer.Add(coin)
+					bufferAmount := denomBuffers[coin.Denom]
+					// Calculate how much to transfer (total - buffer)
+					if coin.Amount.GT(bufferAmount) {
+						transferAmt := coin.Amount.Sub(bufferAmount)
+						balancesToTransfer = balancesToTransfer.Add(sdk.NewCoin(coin.Denom, transferAmt))
+					}
+					// If balance <= buffer, don't transfer anything from this denom
 				}
 			}
 
